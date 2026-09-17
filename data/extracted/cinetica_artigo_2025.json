@@ -1,0 +1,116 @@
+{
+  "referencia": {
+    "titulo": "Leaching kinetics of roasted zinc concentrate in sulphuric acid solutions",
+    "autores": "Julio Cezar Balarini, Estêvão Magno Rodrigues Araújo, Fabrício Eduardo Bortot Coelho, Ludmila de Oliveira Polli, Cibele Konzen, Tânia Lúcia Santos Miranda, Adriane Salum",
+    "revista": "Revista Observatorio de la Economía Latinoamericana",
+    "ano": 2025,
+    "volume": 23,
+    "numero": 11,
+    "paginas": "1-26",
+    "doi": "10.55905/oelv23n11-188"
+  },
+  "tabela_1_composicao_calcina_pct_massa": {
+    "Zn": 63.0,
+    "Fe": 4.0,
+    "Pb": 2.3,
+    "Ca": 1.4,
+    "Cu": 0.4,
+    "Cd": 0.4,
+    "Mn": 0.2,
+    "S": 0.5,
+    "outros": 27.8
+  },
+  "tabela_2_distribuicao_tamanho_particula": [
+    {
+      "abertura_peneira_um": 210,
+      "passante_pct": 54.0
+    },
+    {
+      "abertura_peneira_um": 149,
+      "passante_pct": 44.0
+    },
+    {
+      "abertura_peneira_um": 74,
+      "passante_pct": 14.0
+    },
+    {
+      "abertura_peneira_um": 43,
+      "passante_pct": 5.6
+    },
+    {
+      "abertura_peneira_um": 37,
+      "passante_pct": 5.0
+    },
+    {
+      "abertura_peneira_um": "< 37",
+      "passante_pct": 4.5
+    }
+  ],
+  "tabela_3_teste_estatistico_agitacao": {
+    "descricao": "Teste t-Student pareado para curvas cinéticas em diferentes rotações (alfa = 0.05, H0: mu_D = 0)",
+    "conclusao": "Para 660, 840 e 1080 rpm, p-value > 0.05 (estatisticamente idênticas). A rotação de 840 rpm ou superior elimina completamente a resistência de transporte de massa externo.",
+    "pares_testados": [
+      {
+        "par": "660 vs 840 rpm",
+        "media_1": 0.785,
+        "media_2": 0.75,
+        "p_value": 0.316,
+        "diferenca_significativa": false
+      },
+      {
+        "par": "660 vs 1080 rpm",
+        "media_1": 0.785,
+        "media_2": 0.764,
+        "p_value": 0.58,
+        "diferenca_significativa": false
+      },
+      {
+        "par": "840 vs 1080 rpm",
+        "media_1": 0.75,
+        "media_2": 0.764,
+        "p_value": 0.119,
+        "diferenca_significativa": false
+      },
+      {
+        "par": "270 vs 1080 rpm",
+        "media_1": 0.495,
+        "media_2": 0.764,
+        "p_value": 0.006,
+        "diferenca_significativa": true
+      }
+    ]
+  },
+  "parametros_cineticos_ajustados": {
+    "modelo_cinetico_adotado": "Modelo da Conversão Progressiva (PCM) e Modelo do Núcleo Não Reagido (SCM)",
+    "etapa_controladora": "Reação química interfacial na superfície das partículas",
+    "constante_cinetica_quimica_ks_cm_s": 0.03,
+    "constante_cinetica_quimica_ks_um_min": 18000.0,
+    "energia_ativacao_Ea_kJ_mol": 13.45,
+    "entalpia_ativacao_delta_H_kJ_mol": 11.07,
+    "entropia_ativacao_delta_S_J_mol_K": -256.2,
+    "ordem_reacao_acido_n": 1.0
+  },
+  "faixas_operacionais_investigadas": {
+    "temperaturas_avaliadas_C": [
+      30.0,
+      40.0,
+      50.0,
+      60.0,
+      70.0
+    ],
+    "concentracoes_acido_avaliadas_g_L": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      20.0
+    ],
+    "rotacoes_avaliadas_rpm": [
+      270,
+      660,
+      840,
+      1080
+    ],
+    "rotacao_escolhida_rpm": 840
+  }
+}

@@ -1,0 +1,1446 @@
+--- Page 1 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 1 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Leaching kinetics of roasted zinc concentrate in sulfuric acid solutions 
+ 
+Estudo cinético da lixiviação de concentrado de zinco ustulado em 
+soluções de ácido sulfúrico 
+ 
+Estudio cinético de la lixiviación de concentrado de zinc tostado en 
+soluciones de ácido sulfúrico 
+ 
+DOI: 10.55905/oelv23n11-188 
+ 
+Receipt of originals: 10/27/2025 
+Acceptance for publication: 11/21/2025 
+ 
+Julio Cezar Balarini 
+PhD in Chemical Engineering 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: julio@deq.ufmg.br 
+ 
+Estevão Magno Rodrigues Araújo 
+PhD in Chemical Engineering 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: estevaomagno@gmail.com 
+ 
+Fabrício Eduardo Bortot Coelho 
+PhD in Chemical and Material Sciences 
+Institution: University of Turin (UNITo) 
+Address: Turin, Piedmont, Italy 
+E-mail: feabfc@gmail.com 
+ 
+Ludmila de Oliveira Polli 
+Bachelor's Degree in Chemical Engineering 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: pollifreitasvet@yahoo.com 
+ 
+Cibele Konzen 
+PhD in Chemical Engineering 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: ck@deq.ufmg.br 
+  
+--- Page 2 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 2 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Tânia Lúcia Santos Miranda 
+PhD in Biochemistry and Immunology 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: tania@deq.ufmg.br 
+ 
+Adriane Salum 
+PhD in Metallurgical Engineering 
+Institution: Universidade Federal de Minas Gerais (UFMG) 
+Address: Belo Horizonte, Minas Gerais, Brazil 
+E-mail: adrsalum@uol.com.br 
+ 
+ABSTRACT 
+This work investigates the leaching kinetics of roasted zinc in aqueous solutions of 
+sulphuric acid from an electrolytic zinc production plant. Parameters such as stirring 
+speed, temperature, granulometry, and acid concentration were investigated aiming to 
+model the experimental data according to the shrinking core and progressive conversion 
+models. The kinetic study determined that leaching of the roasted concentrate follows the 
+progressive conversion model and is controlled by the chemical reaction step, whose 
+activation energy, enthalpy, a nd apparent entropy values are 13.45 kJ.mol -1, 
+11.07 kJ.mol-1 and -256.20 J.mol-1.K-1, respectively. The estimated value of the chemical 
+reaction rate constant (ks) is 3.00 x 10-2 cm.s-1. 
+ 
+Keywords: Kinetic Study, Roasted Zinc Concentrate, Shrinking Core Model, Progressive 
+Conversion Model, Leaching. 
+ 
+RESUMO 
+Este trabalho investiga a cinética de lixiviação do concentrado de zinco ustulado em 
+soluções aquosas de ácido sulfúrico provenientes de uma planta de produção de zinco 
+eletrolítico. Foram avaliados par âmetros como velocidade de agitação, temperatura, 
+granulometria e concentração de ácido, com o objetivo de modelar os dados 
+experimentais de acordo com os modelos do núcleo em diminuição  e da conversão 
+progressiva. O estudo cinético determinou que a lixiviação do concentrado ustulado segue 
+o modelo de conversão progressiva e é controlada pela etapa de reação química, cujos 
+valores de energia de ativação, entalpia e entropia aparente são, respectivamente, 13,45 
+kJ·mol⁻¹, 11,07 kJ·mol⁻¹ e −256,20 J·mol⁻¹·K⁻¹.  O valor estimado da constante de 
+velocidade da reação química (ks) é 3,00 × 10⁻² cm·s⁻¹. 
+ 
+Palavras-chave: Estudo Cinético, Concentrado  Ustulado de Zinco, Modelo do Núcleo 
+em Diminuição, Modelo de Conversão Progressiva, Lixiviação. 
+ 
+RESUMEN 
+Este trabajo investiga la cinética de lixiviación del concentrado de zinc calcinado en 
+soluciones acuosas de ácido sulfúrico provenientes de una planta de producción de zinc 
+electrolítico. Se evaluaron parámetros como la velocidad de agitación, la temperatura, la 
+--- Page 3 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 3 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+granulometría y la concentración de ácido, con el objetivo de modelar los datos 
+experimentales de acuerdo con los modelos de núcleo en contracción y de conversión 
+progresiva. El estudio cinético determinó que la lixiviación del concentrado calcinad o 
+sigue el modelo de conversión progresiva y está controlada por la etapa de reacción 
+química, cuyos valores de energía de activación, entalpía y entropía aparente son, 
+respectivamente, 13,45 kJ·mol⁻¹, 11,07 kJ·mol⁻¹ y −256,20 J·mol⁻¹·K⁻¹. El valor estimado 
+de la constante de velocidad de la reacción química (ks) es 3,00 × 10⁻² cm·s⁻¹. 
+ 
+Palabras clave: Estudio Cinético, Concentrado Calcinado de Zinc, Modelo de Núcleo en 
+Contracción, Modelo de Conversión Progresiva, Lixiviación. 
+ 
+ 
+1 INTRODUCTION 
+ 
+The dissolution of ZnO in sulphuric acid solution has been investigated by several 
+authors from both practical and theoretical viewpoints (Bortot Coelho et al., 2020; Coelho 
+et al., 2018; Kashyap and Taylor, 2022; USGS, 2025). Jandová et al. (1999) investigated 
+the leaching behaviour of several ZnO compounds obtained by calcination of zinc 
+hydroxides produced by precipitation of ZnSO 4 solutions. They concluded that ZnO 
+leaching in diluted H 2SO4 solutions is controlled by diffusion processes. Terry (1983) 
+established correlations involving chemical reaction rates of ZnO, Zn2SiO4 and ZnFe2O4 
+individual species and of the different mixture of these compounds in aqueous solutions 
+of H2SO4. Doyle et al. (1987) developed a mathematical model to describe the leaching 
+kinetics of ZnO in diluted sulphuric acid solutions considering that the mass transport 
+controls the dissolution rate. 
+Most studies that seek to understand the dissolution mechanisms use pure species 
+or a mixture of synthetic compounds. However, the approach involving dissolution aspect 
+of roasted zinc concentrates in sulphuric medium obtained in industrial scale is scarce and 
+is relevant as 80% of the zinc presently produced in the world is pr oduced by roasting-
+leaching-electrolysis using zinc sulphide concentrates and, in some cases, associated with 
+the leaching of zinc silicates (Chen and Dutrizac, 2004; Harmer et al., 2007; Souza et al., 
+2007; Balarini et al., 2008). 
+--- Page 4 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 4 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+The literature presents several kinetic models that describe the reaction between a 
+solid and a fluid. Two of these models are largely used and are simple to develop – the 
+shrinking core model, and the progressive conversion model ( LEVENSPIEL, 1974). 
+They separate the leaching pr ocess in two large determining steps: the surface chemical 
+reaction and the mass transport between the fluid and the solid. Considering these two 
+models, this work aimed to study the leaching kinetics of roasted zinc concentrates in 
+diluted solutions of sulphuric acid to determine the process-determining step and estimate 
+the kinetic and thermodynamic parameters, such as specific chemical reaction rate, 
+activation energy, apparent enthalpy, and entropy. 
+ 
+2 METHODOLOGY 
+ 
+2.1 SAMPLES 
+ 
+The samples used in the leaching experiments were produced by roasting zinc 
+sulphide concentrates. Their chemical and crystallographic compositions are presented in 
+Table 1 and Figure 1. The roasted concentrate was homogenized and duly quartered to 
+obtain representative samples. After quartering, the sample was granulometrically sepa-
+rated (-65# +100#, -100# +150#, -150# +200#, and -200# +270#) by wet screening. The 
+particle size distribution is shown in Table 2. Each granulometric fraction was washed 
+with acetone for its quick drying. 
+ 
+Table 1 – Chemical composition of the roasted zinc concentrate. 
+Elements % m/m Elements % m/m Elements % m/m 
+Zn 63 Pb 2.3 Mn 0.2 
+Fe 4.0 Ca 1.4 S 0.5 
+Cu 0.4 Cd 0.4 Others 27.8 
+Source: Prepared by the authors 
+  
+--- Page 5 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 5 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Table 2 – Particle size distribution of roasted zinc concentrate.a %X is the percentage of the mass which 
+passes through an aperture smaller than d*. 
+Aperture size (d* m) %X (d < d*)a 
+210 54 
+149 44 
+74 14 
+43 5.6 
+37 5.0 
+< 37 4.5 
+Source: Balarini et al., 2008 
+ 
+Figure 1 - XRD patterns of zinc concentrates (-400#) after roasting. ( sphalerite (ZnS); quartz (SiO2); 
+ anglesite (PbSO4);  galena (PbS);  pyrite (FeS2); • willemite (Zn2SiO4);  zincite (ZnO);  
+franklinite (ZnFe2O4)).  
+ 
+Source: Balarini et al., 2008 
+ 
+2.2 LEACHING EXPERIMENTS 
+ 
+The discontinued leaching tests were performed in a 500 -mL glass reactor with 
+6.5 cm i.d.  and 15 cm high, an external jacket for the control of the temperature and a 
+condenser couple to the lid to prevent water vapour loss. The stirring system was con-
+trolled with a mechanical agitator with digital control and a glass impeller with two 
+pitched blades at 60°. The temperature range investigated was 30-70 °C and the sulphuric 
+acid concentrations ranged from 4 g.L -1 to 10 g.L-1. The mass of the roasted concentrate 
+was calculated considering an acid consumption at the end of the experiments limited t o 
+10% of its mass. At set intervals, reacted samples were taken, vacuum filtered, and diluted 
+to prevent the chemical reaction continuing. The zinc extraction was determined by 
+atomic absorption spectrophotometry in Thermo Electron Corporation, M Series. T hese 
+results allowed calculating the percentage of zinc extraction as a function of time. 
+2 theta (degrees) 
+Relative Intensity (%) 
+ 
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+100
+0 10 20 30 40 50 60 70 80
+2 teta
+Intensidade Relativa (%)
+• 
+• 
+• 
+• • • • 
+• 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+  
+ 
+  
+ 
+ 
+ 
+ 
+  
+ 
+ 
+--- Page 6 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 6 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+2.3 KINETIC MODELLING 
+ 
+The conversion data were modelled as a function of the time using kinetic equa-
+tions of the shrinking core and progressive conversion models for  the mass transport 
+through the inert product layer (Eq. 1) and surface chemical reaction (Eq. 2) (Levenspiel, 
+1974). 
+ 
+( ) ( )
+23
+BB
+2
+B
+eA
+t 1 3. 1 X 2. 1 X
+a. .R
+6.b.D .C
+ = − − + − =
+ (1) 
+ 
+( )
+13c
+B
+B
+sA
+rt 1 1 1 XR
+a. .R
+b.k .C
+ = − = − − =
+
+ (2) 
+  
+ 
+In Equations 1 and 2, t is the reaction time,  is the time for the complete conver-
+sion of the particle, XB is the conversion of the particle, De is the effective diffusion co-
+efficient of the fluid reagent in the inert product layer, CA is the acid concentration, a and 
+b are the stoichiometry coefficients of the reaction (aA (aq.) + bB(solid) → products), B is 
+the molar density of reagent B in the solid, R is the particle radius, rc is the unreacted 
+core radius, ks is the first order rate constant of the surface reaction. 
+ 
+  
+--- Page 7 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 7 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+3 RESULTS AND DISCUSSION 
+ 
+3.1 PRELIMINARY LEACHING EXPERIMENTS 
+ 
+To determine the operating levels of sulphuric acid concentrations for the present 
+kinetic study, preliminary leaching experiments were performed for the different granu-
+lometric ranges given in Figure 2. 
+ 
+Figure 2 – Preliminary leaching experiments of the zinc roasted concentrate (Cacid = 20 g.L-1, T = 30ºC 
+and Sstirring = 840 rpm). 
+ 
+Source: Prepared by the authors. 
+ 
+Figure 2 shows that in the study conditions, the graph of conversion as a function 
+of time levels off at times shorter than 5 min (1 or 2 min). Even at the lowest temperature 
+level (30 °C) and at the largest granulometry ( -60# +100#) investigated, the time for the 
+complete conversion of the particles was around 2 min. This time shows that a concen-
+tration of 20 g.L-1 in the studied conditions would provide a high extraction rate, which 
+would make obtaining the necessary experimental data for kinetic modelling impossible. 
+It is very common in mineral and concentrate leaching experiments to obtain extraction 
+curves with conversion lower than 100%, as shown in Figure 2, due to the presence of 
+minerals that are more resistant to certain leaching conditions, such as temperatures lower 
+than 60 °C and diluted leaching agent solutions. In the case of roasted zinc sulphide, 
+which was used in this work, Balarini et. al. (2008) observed the presence of ZnFe 2O4, 
+zinc ferrite, whose structure is much similar to that of franklinite. This structure is very 
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+0 5 10 15 20 25 30
+Conversion (X)
+time (min)
+-60# +100#
+-100# +150#
+-150# +200#
+--- Page 8 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 8 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+stable and extremely resistant in mild leaching conditions. We point out that the determi-
+nation of the zinc content in the samples requires acid attack for their complete acid di-
+gestion in extremely aggressive conditions (HCl and HNO3 3:1 (v/v) (aqua regia) at boil-
+ing temperature). In these conditions, all the zinc was solubilized, regardless of its struc-
+ture. Therefore, the amount of zinc can be divided in a readily soluble portion and a leach-
+ing-resistant portion. From the three granulometries investigated (Figure 2), those with 
+smaller particle diameter (-150# +200#) had the largest conversion rates. 
+Figure 3 shows the preliminary leaching results with the respective error bars. It 
+shows that the experiment of the -150# +200# granulometry has the greatest experimental 
+variability, and given its error range, it comprises the other tw o experiments, except for 
+the time of one minute. Consequently, this graph does not allow stating that the extraction 
+rate increased for the finest granulometric range. The -100# +150# range may already 
+correspond to the optimal granulometry. 
+ 
+Figure 3 – Preliminary leaching experiments and error bars. 
+ 
+Source: Prepared by the authors. 
+ 
+The H2SO4 concentration levels were defined by estimation using the theoretical 
+kinetic models. According to Equations 1 and 2, regardless of the controlling step, the 
+time for the complete conversion of the particle () is inversely proportional to the leach-
+ing agent concentration in the solution (C A). Therefore, the estimation relation given by 
+Equation 3 was used. 
+ 
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+1.1
+0 5 10 15 20 25 30
+Conversion (X)
+time (min)
+-60# +100#
+-100# +150#
+-150# +200#
+--- Page 9 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 9 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+𝜏 = 𝑐𝑡𝑒⏟
+𝑐𝑜𝑛𝑠𝑡𝑎𝑛𝑡
+× 1
+𝐶𝐴
+    ∴    𝜏 × 𝐶𝐴⏟  
+𝑒𝑥𝑝𝑒𝑟𝑖𝑚𝑒𝑛𝑡𝑎𝑙
+= 𝜏′ × 𝐶𝐴
+′⏟  
+𝑒𝑠𝑡𝑖𝑚𝑎𝑡𝑒𝑑
+ 
+𝐶𝐴
+′ =
+𝜏×𝐶𝐴
+𝜏′  (3) 
+ 
+From Equation 3, one can estimate the concentration of the leaching solution (C’A) 
+by stipulating the time for the maximum conversion of the particle (’). 
+The preliminary experiments showed that for a concentration of CA = 20 g.L-1, the 
+total conversion time of the particles was   2 min (Figure 2). Stipulating a total conver-
+sion time of ’  5 min, the estimated concentration would be C’A = 8 g.L-1. Theoretically, 
+with this time and sampling intervals of one minute five experimental points in the initial 
+region of the leaching curve would be obtained. Longer times might be chosen; however, 
+the acid concentration would be very low. Consequently, the sample mass of concentrate 
+will be very small in order to keep the acid consumption nearly unaltered. As stated in 
+section 2.2, the acid consumption was determined as being 10% m/m maximum. All mod-
+els considered that the leaching agent concentration remained constant during the whole 
+leaching experiment. 
+After determining the time for the maximum conversion of 5 min, a time of 10 
+min was used in all the following experiments, which theoretically is sufficient to under-
+stand the initial period and the plateau region. At this point, it should be highlighted that 
+the time of 5 min needs to be validated. 
+In the studies for the evaluation of the stirring speed, the temperature and the gran-
+ulometric range on the Zn extraction, the acid concentration was 4 or 6  g.L -1 in order to 
+expand the initial leaching period, which allow a better mathematical modelling of the 
+kinetic equations. 
+ 
+3.2 THE EFFECT OF THE STIRRING SPEED 
+Many leaching processes, mainly those that use fine particles, require a level of 
+stirring that allows both the suspension of the solid particles and the efficient mixture of 
+the leaching solution (Dreisinger and Abed, 2002). Furthermore, it is possible to eliminate 
+--- Page 10 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 10 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+the stirring speed as a variable in the kinetic study, as long as it is fast enough 
+(Wadsworth, 1979). To this end, four leaching experiments at 270, 660, 840, and 
+1,040 rpm were performed. The results are given in Figure  4. In these experiments, the 
+acid concentration used was 4 g.L-1.  
+ 
+Figure 4 – Effect of the stirring speed (a) without error bars and (b) with error bars. (Granulometry = -
+100# +150#, T = 30 ºC and C = 4 g.L-1) 
+ 
+Source: Prepared by the authors. 
+ 
+The analysis of Figure 4(a) shows that at high stirring speeds (660, 840, and 1,080 
+rpm), the extraction rate (initial curve slope) was greater, as expected. The similar behav-
+iour for 840 and 1,080 rpm indicates that the boundary layer around the particles reached 
+a minimum and that the stirring speed did not influence the extraction rate any longer. 
+The same holds for 660 rpm. Apparently, the extraction rate in this condition is higher 
+than for higher stirring speeds. However, the critical analysis of the expe rimental errors, 
+Figure 4(b), shows that the error margin of the two first experimental points of the curve 
+for 660 rpm comprises the experimental points of the curves for higher speeds, suggesting 
+that these points may be equal. Likewise, the same happens for the last three points of the 
+same curve. We suppose that in these conditions, from the stirring speed of 660 rpm, this 
+parameter does not influence the leaching process any more. However, the limit that de-
+termines the influence of stirring speed on th e zinc extraction may be smaller than 660 
+rpm, as no experiments were carried out in the 270 to 660 rpm range. 
+The paired samples t -test is another statistic method that could be used to deter-
+mine if the leaching curves for 660, 840 and 1080 rpm are similar. For a fixed significance 
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+270 rpm
+660 rpm
+840 rpm
+1080 rpm
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+270 rpm
+660 rpm
+840 rpm
+1080 rpm
+--- Page 11 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 11 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+level of 5% ( = 0,05), i.e. a confidence interval of 95%, four comparisons were made 
+(660 e 840 rpm, 660 e 1.080 rpm, 840 e 1.080 rpm e 270 e 1.080 rpm). The last compar-
+ison pair (270 e 1.080 rpm) was chosen to validate the inf ormation given by the paired 
+samples t-tests, since both curves are visibly different (Fig. 3). The statistical results are 
+presented in Table 3. 
+ 
+Table 3 – Paired samples t-tests for the kinetic leaching curves in different stirring speeds. Parameters for  
+the statistical hypothesis tests ( = 0,05 e H0: µD = 0). 
+Variable 660 rpm 840 rpm Variable 660 rpm 1080 rpm 
+Mean 0.785 0.750 Mean 0.785 0.764 
+Variance 0.126 0.129 Variance 0.126 0.137 
+Observations 7 7 Observations 7 7 
+p-value (two 
+tailed) 0.316 p-value (two 
+tailed) 0.580 
+Variable 840 rpm 1080 rpm Variable 270 rpm 1080 rpm 
+Mean 0.750 0.764 Mean 0.495 0.764 
+Variance 0.129 0.137 Variance 0.097 0.137 
+Observations 7 7 Observations 7 7 
+p-value (two 
+tailed) 0.119 p-value (two 
+tailed) 0.006 
+Source: Prepared by the authors 
+ 
+From the results of Table 3, all the three tests comparing the curves for 660, 840 
+and 1080 rpm present a p -value higher than 5%, which lead to a rejection of the null 
+hypothesis (H0: µD = 0). This rejection indicates that the three curves (660, 840 and 1080 
+rpm) are statistically considered the same. As expected, the p -value for the pair 270 and 
+1080 rpm are lower than 5%, corroborating the difference between those two curves and 
+validating the data of the paired samples t-tests. 
+According to the previous results, the stirring speed of 840 rpm were chosen as a 
+fixed parameter for the subsequent experiments, since the effect of the mixing on the 
+leaching rate, at this level, was surely eliminated. 
+ 
+3.3 THE EFFECT OF TEMPERATURE 
+ 
+The dependence on the temperature may be used to estimate the activation energy 
+and the apparent activation enthalpy and activation entropy (Dreisinger and Abed, 2002). 
+--- Page 12 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 12 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+The activation energy is an extremely useful  parameter for the identification of the pro-
+cess determining step; however, this is not consensual. According to Prosser (1996), val-
+ues lower than 25 kJ.mol-1 characterize a mass transfer-controlled process (through fluid 
+and/or product layer) and processe s controlled by chemical reaction may have either 
+lower or higher activation energy values. According to  Levenspiel (1972) apud 
+Dreisinger and Abed (2002), it is widely accepted that systems with activation energy 
+higher than 40 kJ.mol-1 are controlled by chemical reaction (linear leaching), while those 
+with activation energy less than 40 kJ.mol -1 are controlled by mass transport processes 
+(parabolic leaching), whether in the product layer or a boundary fluid film. 
+Figure 5(a) shows that the temperature has a discrete effect on the leaching curves 
+and that a small increase in the extraction rate (curve slope) can be noted at one min, when 
+the temperature rises from 40 to 50°C and from 60 to 70°C. Furthermore, one can notice 
+that all the cu rves, with the exception of that of 30°C, level off after 3  min of reaction. 
+The slight difference between this curve and the others after 3 min of reaction and the 
+small increase in the extraction observed at one minute are within the experimental errors, 
+as shown in Figure 5(b). This figure also shows that the higher temperature curve (70 °C) 
+also have comparatively larger experimental errors. This high data dispersion for 70 °C 
+is due to the difficulty in controlling the system at this temperature. Despite the use of the 
+condenser and jacket, the water vapour and heat losses increase with the increase in tem-
+perature. 
+ 
+  
+--- Page 13 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 13 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Figure 5 – Effect of temperature on leaching (a) without error bars and (b) with error bars. (Granulometry 
+= -60# +100#, C = 4 g.L-1 and Sstirring = 840 rpm) 
+ 
+Source: Prepared by the authors. 
+ 
+The lack of significant differences in the reaction rate with the increase in the 
+temperature shown in Figure 5 seems to indicate that mass transfer may be the process 
+controlling step. One way to verify this hypothesis is to use theoretical kinetic models. 
+Figures 5(a) and 5(b) display the linearization curves of the shrinking core model consid-
+ering the diffusion in the product layer and the chemical reaction as the determining steps, 
+respectively. 
+From the analysis of the determination coefficients (R2) and of the curves in Fig-
+ure 6, we can see that the data demonstrate a slightly better fitting for the control by the 
+diffusion in the product layer than for the chemical reaction control. However, the pre-
+sented linearizations are not sufficient to define  the controlling step of the investigated 
+system. The study of other variables, such as granulometry, acid concentration, which 
+will be discussed below, are also required. Until other parameters are evaluated, both 
+steps will be considered as controlling the leaching process. 
+ 
+ 
+  
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+30°C
+40°C
+50°C
+60°C
+70°C
+0.00
+0.10
+0.20
+0.30
+0.40
+0.50
+0.60
+0.70
+0.80
+0.90
+1.00
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+30°C
+40°C
+50°C
+60°C
+70°C
+--- Page 14 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 14 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Figure 6 – Linearization curves of the shrinking core model – effect of temperature: (a) diffusion on the 
+product layer; (b) chemical reaction. 
+ 
+Source: Prepared by the authors. 
+ 
+With the values of the slopes (K) of the curves in Figure 6, it is possible to deter-
+mine the activation energy ( Ea) of each controlling step, which is calculated with the 
+Arrhenius Equation (Eq. 4) and determine the activation entropy and enthalpy using the 
+equation of the theory of the transition state o r the absolute reaction rate (Eq. 5) 
+(Wadsworth (1979) apud Glasstone et al. (1941)). 
+ 
+( ) ( ) a
+0
+E 1ln K ln K RT
+= −  
+ (4) 
+ 
+‡‡K H 1 k Sln ln expT R T h R
+    =−  +          
+ (5) 
+ 
+In Equations 4 and 5, parameter K, in the non -catalytic heterogeneous kinetics 
+context, represents the slopes of all the linearized data, K0 is the is the pre -exponential 
+factor or the factor of frequency, Ea is the activation energy in J.mol -1 or cal.mol-1, R is 
+the universal constant of gases (8.14 Jmol-1K-1 or 1.987 calmol-1K-1), T is the absolute 
+temperature in Kelvin, H‡ and S‡ are the apparent activation enthalpy and entropy, 
+respectively, k, is Boltzmann’s constant (k = 1.3810-23 JK-1), and h is Planck’s constant 
+(h = 6.6310-34 Js). Figure 7 displays the Arrhenius and of the theory of transaction state 
+curves. 
+y = 0.1945x
+R² = 0.9932
+y = 0.2668x
+R² = 0.9809
+y = 0.2978x
+R² = 0.9818
+y = 0.3389x
+R² = 0.9324
+y = 0.3882x
+R² = 0.9999
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+0 1 2 3 4 5 6
+1-3(1-XB/XMÁX)2/3+2(1-XB/XMÁX)
+t (min)
+30ºC
+40ºC
+50ºC
+60ºC
+70ºC
+y = 0.1821x
+R² = 0.984
+y = 0.2521x
+R² = 0.9967
+y = 0.2751x
+R² = 0.9711y = 0.3093x
+R² = 0.9199
+y = 0.3625x
+R² = 0.9789
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6
+1-(1-XB/XMÁX)1/3
+t (min)
+30ºC
+40ºC
+50ºC
+60ºC
+70ºC
+--- Page 15 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 15 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Figure 7 – (a) Arrhenius curves; (b) Theory of transition state curves for the diffusion on the product layer 
+and chemical reaction steps. 
+ 
+Source: Prepared by the authors. 
+ 
+From the data in Figure 7 were calculated the values of activation energy, fre-
+quency factor, activation enthalpy and entropy for the two controlling steps shown in 
+Table 4. Both activation energy values given in Table 4 have the same order of magnitude 
+and are below the values established as limits by Levenspiel (1972) and Prosser (1996) 
+(40 kJ.mol -1 and 25 kJ.mol -1, respectively). According to Prosser (1996), this results  
+would be inconclusive to define the process controlling step, while by Levenspiel’s 
+(1974) analysis, the diffusion step would control the process (parabolic leaching), which 
+agrees with the inference from Figure 5 earlier in this section. The work of Jandová et al. 
+(1999) on the leaching of zinc compound in sulphuric acid solutions has results that are 
+similar to the ones in this current study. These researchers studied several types of zinc 
+oxide leaching in sulphuric acid solutions. The activation energy  values calculated by 
+Jandová et al. (1999) for the zinc oxide dissolution process (containing Al, Cr, Cu, Fe, 
+Ni, Mg, and Mn) in 0.5 mol.L -1 sulphuric acid and temperature range of 40 -60°C were 
+7.9 kJ.mol-1 and 24.2 kJ.mol-1. The difference between the va lues resulted from the cal-
+cination temperature used in the preparation of the oxides, 800 and 1000°C, respectively. 
+Comparing the data in Table 4 with the results obtained by Jandová et al. (1999), the 
+activation energy values of the diffusion and chemical  reaction steps in this work were 
+intermediate to those found by the latter. We point out they used synthetic zinc oxide and 
+in the present work zinc oxide resulting from the roasting of a concentrate was used. 
+  
+y = -1.6966x + 4.0207
+R² = 0.9621
+y = -1.6539x + 3.816
+R² = 0.9526
+-1.8
+-1.6
+-1.4
+-1.2
+-1.0
+-0.8
+-0.6
+2.8 2.9 3.0 3.1 3.2 3.3 3.4
+ln (Slope)
+1/T (K-1 x 103)
+Diffusion Chemical Reaction
+y = -1.3744x - 2.7556
+R² = 0.9419
+y = -1.3317x - 2.9602
+R² = 0.9275
+-7.5
+-7.4
+-7.3
+-7.2
+-7.1
+-7.0
+-6.9
+-6.8
+-6.7
+-6.6
+-6.5
+2.80 2.90 3.00 3.10 3.20 3.30 3.40
+ln (k'/T)
+1/T (K-1 x 103)
+Diffusion Chemical Reaction
+--- Page 16 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 16 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Table 4 – Thermodynamic parameters for different rate-controlling step. 
+ Diffusion Chemical reaction 
+k0 55.74 45.42 
+Ea (kJ.mol-1) 14.11 13.75 
+H* (kJ.mol-1) 11.43 11.07 
+S* (J.mol-1.K-1) -254.50 -256.20 
+Source: Prepared by the authors. 
+ 
+From the data in Table 4, we can see for both controlling steps that the activation 
+enthalpy values and the activation energy have the same order of magnitude. According 
+to Wadsworth (1979), in hydrometallurgical systems, in which the temperatures are rela-
+tively low, the difference between the experimental activation energy (Ea) and the activa-
+tion enthalpy (H*) is generally smaller than 1.0 kcal.mol -1 (4.187 kJ.mol-1). The values 
+of E a and H* also suggest that the leaching system must receive heat to facilitate the 
+reactions (endothermic processes, H* > 0). However, according to the behaviour of the 
+extraction curves presented in Figure 5(a), the influence of the temperature on the system 
+is relatively low, which explains the small order of magnitude of the activation energy 
+(Ea < 25 kJ.mol-1 (Prosser, 1996) and Ea < 40 kJ.mol-1 (Levenspiel, 1972)). In relation to 
+S*, the values found in the present work ( -254.50 kJ.mol -1 (diffusion model) and – 
+256.20 kJ.mol-1 (chemical reaction model) has the same order of magnitude of that found 
+by Dreisinger and Abed (2002) (-212.4 Jmol-1K-1). 
+ 
+3.4 EFFECT OF GRANULOMETRY 
+ 
+Another important parameter on leaching is the particle size (granulometry). The 
+granulometry is directly related to the degree of liberation of the minerals present in the 
+ores and concentrates. The curves of extraction as a function of the granulometric range 
+are given in Figure 8. The analysis of the effect of this parameter also contributes to define 
+the process determining step. 
+ 
+--- Page 17 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 17 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Figure 8 – Effect of granulometry on leaching (a) without error bars and (b) with error bars. (T = 30 ºC, C 
+= 6 g.L-1 and Sstirring = 840 rpm). 
+ 
+Source: Prepared by the authors. 
+ 
+Figure 9 – Linearization curves of the shrinking core model – effect of granulometry: (a) diffusion on the 
+product layer; (b) chemical reaction. 
+ 
+Source: Prepared by the authors. 
+ 
+Generally, the reduction in the particle size implies a considerable increase in the 
+final conversion and an increase in the extraction rate due to the liberation of the mineral, 
+as can be seen in Figure 8. Another important aspect that can be observed is that the 
+decrease in the particle size did not result in an increase in the maximum conversion of 
+the particle (around 90% for all curves), only a reduction in the time for the maximum 
+conversion of the particle (). The value of  decreased from 5 min for the larger particle 
+size (-65# +100#) to 1.0 min for the smaller particle size ( -200# +270#). According to 
+Figure 8(b), we can see that the largest experimental errors were those of fraction -100# 
++150#. It is noteworthy that for this granulometry the experiments were carried out in 
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+-65# +100#
+-100# +150#
+-150# +200#
+-200# +270#
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+0 1 2 3 4 5 6 7 8 9 10
+Conversion (X)
+time (min)
+-65# +100#
+-100# +150#
+-150# +200#
+-200# +270#
+y = 0.1945x
+R² = 0.9932
+y = 0.3363x
+R² = 0.9872
+y = 0.4735x
+R² = 0.9957
+y = 0.7688x
+R² = 1
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+0 1 2 3 4 5 6
+1-3(1-XB/XMÁX)2/3+2(1-XB/XMÁX)
+tempo (min)
+-65# +100#
+-100# +150#
+-150# +200#
+-200# +270#
+y = 0.1821x
+R² = 0.984y = 0.3247x
+R² = 0.995
+y = 0.4358x
+R² = 0.9816
+y = 0.6881x
+R² = 1
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 1 2 3 4 5 6
+1-(1-XB/XMÁX)1/3
+tempo (min)
+-65# +100#
+-100# +150#
+-150# +200#
+-200# +270#
+--- Page 18 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 18 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+duplicate, while for the other fractions the experiments were done in triplicate. Figure 9 
+presents the modelling for the diffusion on the product layer and the chemical reaction. 
+ 
+Figure 10 – Correlation between the maximum conversion time and the radius: (a) linear relationship; (b) 
+quadratic relationship. 
+ 
+Source: Prepared by the authors. 
+ 
+The analysis of the determination coefficients (R 2) alone did not allow to deter-
+mine the controlling step, as in some granulometric ranges the linearization fits better (R2 
+closer to the unity) considering the diffusion control, while in others the chemical reaction 
+fits the results better. Another important point worth noting is the number of experimental 
+points available for linearization. Due to the rapid leaching kinetics of the roasted con-
+centrate, only the experiment of the thicker fraction ( -65# +100#) allowed modelling 
+more than three experimental points (Fig. 8). Conseque ntly, the modelling of the other 
+granulometric fractions was relatively compromised in respect to the linear behaviour. 
+As previously said, it is possible to identify the process controlling steps by the 
+analysis of the value of  in relation to the particle radius (R). This analysis was done for 
+every curve and controlling step. The data are given in Figure 10. 
+Both linearizations,   R and   R², must intercept the origin of the Cartesian 
+plan, as the value of  is zero when the particle radius is zero. It can be noted that although 
+both the data given in Figure 10(a) and 10(b) can be represented by a straight line, when 
+the origin interception condition is considered, a first order polynomial fits the experi-
+mental data given in Figure 10(a) better. This  is an indication that the chemical reaction 
+probably is the system determining step, as systems controlled by chemical reaction 
+y = 5.5455E-02x
+R² = 9.3511E-01
+y = 0.0521x
+R² = 0.9389
+0.0
+1.0
+2.0
+3.0
+4.0
+5.0
+6.0
+0 10 20 30 40 50 60 70 80 90
+ (min)
+R (m)
+Chemical Reaction
+Diffusion
+y = 6.841E-01x
+R² = 8.652E-01
+y = 7.278E-01x
+R² = 8.483E-01
+0.0
+1.0
+2.0
+3.0
+4.0
+5.0
+6.0
+7.0
+0 1 2 3 4 5 6 7 8 9
+ (min)
+R² x 10-3 (m²)
+Diffusion
+Chemical Reaction
+--- Page 19 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 19 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+present a linear behaviour (  R), while systems controlled by diffusion on the product 
+layer have a quadratic behaviour (  R²). We point out that this observation is not con-
+clusive, as in the experiments with the thinner fractions the number of modelling experi-
+mental points was smaller than or equal to three (Fig. 8). Once the determination of  
+depends on the slope of the li nearized curves of the model, the errors resulted by this 
+determination is much larger because of a lack of experimental data. 
+According to Jandová et al. (1999), the reaction products of the zinc oxide disso-
+lution in sulphuric medium do not form an insoluble protective layer at the surface.  Bala-
+rini et al. (2008) analysed the residues obtained from the digestion of the same roasted 
+concentrate of the present work with a solution of sulphuric acid (50% v/v) and they ob-
+served the presence of tiny particles of quartz (SiO 2), sphalerite (ZnS), and anglesite 
+(PbSO4) but not the presence of the leaching product (ZnSO 4) what suggests that the 
+product layer was not formed around the particles. As a result, the possible mechanism 
+which physically describes the leaching of ZnO in sulphuric acid solution is the chemical 
+reaction at the particle surface. 
+The constant rate for the first order chemical reaction (kS) was estimated from the 
+slope of the   R curve given in Figure 10(a). According to this model, the relation 
+between  and R is given by Equation (6): 
+ 
+𝜏 = (
+𝑎.𝜌𝐵
+𝑏.𝑘𝑠.𝐶𝐴
+)⏟    
+slope
+× 𝑅 (6) 
+ 
+In this equation, a and b are the stoichiometry coefficients of the reaction of ZnO 
+and H2SO4 (in this case, a = b = 1), B is the molar density of ZnO (B = 6.92104 molm-
+3 (Perry and Green (1984))), and CA is the concentration of hydrogen of H 2SO4 (in this 
+case, for CH2SO4 = 6 gL-1, [H+] = 6.8910-2 mol.L-1). With these data, kS was estimated 
+as approximately 3.00 x 10 -2 cm.s-1. According to the considerations of the theoretical 
+models, the value of ks is related to a first order reaction; therefore, it is necessary to 
+--- Page 20 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 20 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+demonstrate if the modelling of the experimental data actually satisfies this condition. For 
+such, the effect of the concentration of the acid on the extraction of zinc was studied. 
+ 
+3.5 EFFECT OF THE ACID CONCENTRATION 
+ 
+The concentration of the leaching agent is directly linked to the chemical reaction 
+rate. In the case of the leaching of roasted zinc concentrates in sulphuric medium, object 
+of this study, the main chemical reaction can be represented by Equation (7). As the 
+roasted concentrate has several other elements (impurities), parallel reactions of these 
+components with the leaching agent may occur. An example is the ferrous oxide, which 
+consumes H+ and releases ferrous ions to the aqueous solution, and then Fe2+ reacts with 
+dissolved oxygen from the medium and/or an oxidizing agent to raise its oxidation num-
+ber from +2 to +3 using even more H+ (Eq. (8)). 
+ 
+2
+(s) (aq) (aq) 2ZnO 2H Zn H O+++ → +
+ (7) 
+ 
+2
+(s) (aq) (aq) 2
+23
+(aq) 2(dissolv) (aq) (aq) 2
+2 3 2
+(aq) 2(s) (aq) (aq) (aq) 2
+oxidizing agent
+FeO 2H Fe H O
+4Fe O 4H 4Fe 2H O
+2Fe MnO 4H 2Fe Mn 2H O
+++
++ + +
++ + + +
++ → +
++ + → +
++ + → + +
+ (8) 
+ 
+Other species than FeO can also consume H +; however, the influence of these 
+species will depend on their content in the concentrate. Figure 11 presents the curves of  
+extraction for four concentrations of sulphuric acid (4, 6, 8, and 10 gL-1). 
+  
+--- Page 21 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 21 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Figure 11 – Effect of acid concentration on leaching (a) without error bars and (b) with error bars. (T = 30 
+ºC, granulometry= -100# +150# and Sstirring = 840 rpm) 
+  
+Source: Prepared by the authors. 
+ 
+Figure 12 – Linearization curves of the shrinking core model (chemical reaction) – effect of the acid 
+concentration. 
+ 
+Source: Prepared by the authors. 
+ 
+Figure 11(a) shows a slight increase in the final conversion from the condition of 
+4 g.L-1 of H2SO4 to the condition of 6 g.L-1, a decrease in the conversion from 6 g.L -1 to 
+8 g.L -1, and an increase in the conversion from the latter to 10  g.L-1. A more detailed 
+analysis of the results (see Fig. 10(b)) shows that all the curves are within the confidence 
+intervals with a significance level of 5% (except the curve for 6 g.L -1, for which it was 
+not obtained any replicate and which therefore does not have an error bars). One of the 
+three replicates of the experiment of 4 g.L -1 of H2SO4 was lost, which explains why its 
+error bar values were relatively high. Due to these problems, these results could not be 
+conclusive. To obtain further information on the effect of the concentration of the acid on 
+the extraction curves, the exper imental data were modelled using the chemical reaction 
+as the controlling step (Figure 12).  
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 2 4 6 8 10 12
+Conversion (X)
+time (min)
+4 g/L
+6 g/L
+8 g/L
+10 g/L
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+0 2 4 6 8 10 12
+Conversion (X)
+time (min)
+4 g/L
+6 g/L
+8 g/L
+10 g/L
+y = 0.2207x
+R² = 0.9944
+y = 0.3192x
+R² = 0.9957
+y = 0.3338x
+R² = 0.9646
+y = 0.4004x
+R² = 0.987
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+0 0.5 1 1.5 2 2.5 3 3.5
+1-(1-XB/XMÁX)1/3
+time (min)
+4 g/L
+6 g/L
+8 g/L
+10 g/L
+--- Page 22 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 22 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+Differently from the initial observation made based on Figure 11(a), the analysis 
+of the slopes of the models as a function of time shows an increase in the extrac tion rate 
+of zinc with the increase in the concentration of the acid. It can also be observed that the 
+slope of the curve of 6 g.L-1 for the linearized data is similar to that of the curve of 8 g.L-
+1. As this curve was plotted without replicate, it was eliminated from the following anal-
+yses. 
+According to Equation (6), the time for the maximum conversion of the particle 
+() is inversely proportional to the leaching agent concentration (CA) (  1/CA). CA gen-
+erally is the leaching agent species that is effective in the extraction of the solute (in this 
+case H+). [H+] is calculated from the total concentration of sulphuric acid using the acid 
+and water ionization equations together with the mass and charge balances. The relation-
+ship between  and [H+] are presented in Figure 13. 
+ 
+Figure 13 – Maximum conversion time of the particles as a function of the reciprocal of the hydrogen ion 
+concentration. The dashed line represents the linear regression that crosses the origin, while the 
+continuous line represents the linear regression without restriction. 
+ 
+Source: Prepared by the authors. 
+ 
+In relation to the data in Figure 13, two types of linearization were performed, a 
+linear regression crossing the origin (dashed line) and a free linear regression without 
+restrictions (continuous line). Although in the first case the value of the determin ation 
+coefficient R² = 0.8113 is relatively acceptable, the small number of experimental points 
+for higher concentrations compromises a broader analysis. In the second regression, it 
+was obtained a greater coefficient of determination than in the first cas e (R² = 0.9949); 
+however, the presence of an additional term in the linear equation (constant b in the 
+y = 0.2343x
+R² = 0.8113
+y = 0.1671x + 1.0514
+R² = 0.9949
+0.0
+1.0
+2.0
+3.0
+4.0
+5.0
+6.0
+0 5 10 15 20 25
+ (min)
+1/[H+] (mol/L)-1
+--- Page 23 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 23 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+polynomial y = aX + b) indicates it is not adequate for the physical meaning of the rela-
+tionship between  and 1/[H+]. Both regressions, with and withou t restriction, suggest a 
+linear tendency for the correlation between  and 1/[H+], indicating that the chemical 
+reaction between ZnO and H2SO4 can be considered a first order reaction in a first attempt. 
+A way to directly evaluate the order of the reaction is the same used in Figure 14, based 
+on the plot of ln()  ln([H+]). The slope of this curve corresponds to the exponent of the 
+term [H+] (Figure 13). 
+From the value of the slope of the linear regression of Figure 14, the order of the 
+chemical reaction was determined as approximately 0.7 (relatively close to the unity). 
+The negative value means the inverse relationship between  and [H+]. 
+ 
+Figure 14 – Curve of ln() versus ln([H+]) for the determination of the order of the reaction. 
+ 
+Source: Prepared by the authors. 
+ 
+4 CONCLUSIONS 
+ 
+The present work evaluated kinetic aspects of leaching of roasted zinc in diluted 
+solutions of sulphuric acid (4, 6, 8 and 10 g.L -1). It was observed that the extraction of 
+zinc is very rapid (  5 min), even in milder leaching conditions (C A = 4 g.L-1 and T = 
+30 ºC). The experimental analysis using the shrinking core model and the progressive 
+conversion model mathematically demonstrated that both diffusion on the ash layer and 
+chemical reaction describe these leaching experiments. From the physical viewpoint, the 
+particle size decreases with time, although small inert particles basically constituted of 
+quartz (SiO 2), sphalerite (ZnS), and anglesite (PbSO 4) remained at the end of the 
+y = -0.6994x - 0.6099
+R² = 0.9961
+0
+0.2
+0.4
+0.6
+0.8
+1
+1.2
+1.4
+1.6
+-3.5 -3 -2.5 -2 -1.5 -1 -0.5 0
+ln ()
+ln ([H+])
+--- Page 24 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 24 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+extraction. Thus, the chemical reaction described the leaching process in question more 
+appropriately. It is noteworthy that the conclusion obtained from the kinetic leaching ex-
+periments was not restricted in the setting of mathematical equations, but also on a careful 
+analysis of the phenomenon of solid-liquid extraction. The estimated thermodynamic pa-
+rameter values were: 13.45  kJ.mol-1, 11.07 kJ.mol -1, and -256.20 J.mol-1.K-1 for the ap-
+parent activation energy, and enthalpy and entropy, respectively. The small value of the 
+activation energy suggested that the temperature had  no substantial influence on the 
+leaching of ZnO in sulphuric acid solutions. The analysis of the extraction curves as a 
+function of the acid concentration showed that the overall chemical reaction has an order 
+value of 0.7. With this result, the reaction can be considered as a first -order one and the 
+estimated value of the chemical reaction rate constant (ks) was 3.00 x 10-2 cm.s-1. 
+ 
+  
+--- Page 25 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 25 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+REFERENCES 
+ 
+BALARINI, J. C.; POLLI, L. O.; MIRANDA, T. L. S.; CASTRO, R. M. Z.; SALUM, 
+A. Importance of roasted sulphide concentrates characterization in the hydrometallurgi-
+cal extraction of zinc. Miner. Eng. 2008, 21, 100. DOI: 10.1016/j.mineng.2007.10.002 
+ 
+BORTOT COELHO, F.E., BALARINI, J.C., ARAÚJO, E.M.R., MIRANDA, T.L.S., 
+PERES, A.E.C., MARTINS, A.H., SALUM, A. A population balance approach to pre-
+dict the performance of continuous leaching reactors: Model validation in a pilot plant 
+using a roasted zinc concentrate. Hydrometallurgy, v. 194, p. 105301, 2020. DOI: 
+10.1016/j.hydromet.2020.105301. 
+ 
+CHEN, T. T.; Dutrizac, J. E. Mineralogical Changes Occurring during the Fluid-Bed 
+Roasting of Zinc Sulfide Concentrates. JOM. 2004, 56 (12), 46. DOI:10.1007/s11837-
+004-0235-y 
+ 
+COELHO, F.E.B., BALARINI, J.C., ARAÚJO, E.M.R., MIRANDA, T.L.S., PERES, 
+A.E.C., MARTINS, A.H., SALUM, A. Roasted zinc concentrate leaching: Population 
+balance modeling and validation. Hydrometallurgy, v. 175, p. 208–217, 2018. DOI: 
+10.1016/j.hydromet.2017.11.013. 
+ 
+DOYLE, F. M.; RANJAN, N.; PETERS, E. Mathematical model of zinc oxide leaching 
+in dilute acid solutions. Trans. Inst. Min. Metall., Sect. C. 1987, 96, C69. 
+ 
+DREISINGER, D.; ABED, N. A fundamental study of the reductive leaching of chalco-
+pyrite using metallic iron part I: kinetic analysis. Hydrometallurgy. 2002, 66, 37. DOI: 
+10.1016/S0304-386X(02)00079-8 
+ 
+GLASSTONE, S.; LAIDLER, K. J.; EYRING, H. The Theory of Rate Processes; 
+McGraw-Hill: New York, 1941. 
+ 
+HARMER, S. L.; GONCHAROVA, L. V.; KOLAROVA, R.; LENNARD, W. N.; 
+MUÑOZ-MÁRQUEZ, M. A.; MITCHELL, I.V.; NESBITT, H. N. Surface Structure of 
+Sphalerite Studied by Medium Energy Ion Scattering and XPS. Surface Science. 2007, 
+601, 352. DOI: 10.1016/j.susc.2006.10.001 
+ 
+JANDOVÁ, J.; PROŠEK, T.; MAIXNER, J. Leaching of zinc oxide in aqueous sul-
+phuric acid solutions. Acta Metallurgica Slovaca, 1999, 3, 172. 
+ 
+KASHYAP, V.; TAYLOR, P. Extraction and recovery of zinc and indium from residue 
+rich in zinc ferrite. Miner. Eng., v. 176, n. December 2021, p. 107364, 2022. DOI: 
+10.1016/j.mineng.2021.107364. 
+ 
+--- Page 26 ---
+ 
+ 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA 
+ 
+ISSN: 1696-8352 
+Page 26 
+REVISTA OBSERVATORIO DE LA ECONOMIA LATINOAMERICANA , Curitiba, v.23, n.11, p. 01-26. 2025. 
+ 
+LEVENSPIEL, O. Chemical Reaction Engineering; Wiley: New York, 2nd edition, 
+1972. apud Dreisinger, D.; Abed, N. A fundamental study of the reductive leaching of 
+chalcopyrite using metallic iron part I: kinetic analysis. Hydrometallurgy. 2002, 66, 37. 
+DOI: 10.1016/S0304-386X(02)00079-8 
+  
+LEVENSPIEL, O. Engenharia das Reações Químicas; Edgard Blücher: Rio de Janeiro, 
+v.2, 1974.  
+ 
+GREEN, D.; PERRY, R. H. Perry’s Chemical Engineers’ Handbook; McGraw-Hill: 
+USA, 8th Edition, 2007.  
+ 
+PROSSER, A. P. Review of uncertainty in the collection and interpretation of leaching 
+data. Hydrometallurgy. 1996, 41, 119. DOI:  
+ 
+SOUZA, A. D.; PINA, P. S.; LIMA, E. V. O.; SILVA, C. A.; LEÃO, V. A. Kinetics of 
+sulphuric acid leaching of a zinc silicate calcine. Hydrometallurgy. 2007, 89, 337. DOI: 
+10.1016/j.hydromet.2007.08.00510.1016/j.hydromet.2007.08.005 
+ 
+TERRY, B. Specific chemical rate constants for the acid dissolution of oxides and sili-
+cates. Hydrometallurgy. 1983, 11, 315 – 344. DOI: 10.1016/0304-386X(83)90051-8 
+ 
+USGS, U. S. G. S. Mineral commodity summaries 2025. [S.l: s.n.], 2025. Disponível 
+em: <https://pubs.usgs.gov/publication/mcs2025>. 
+ 
+WADSWORTH, M. E. Hydrometallurgical Processes, In: Sohn, H. Y.; Wadsworth, M. 
+E. (Eds.). Rate Processes of Extractive Metallurgy; Plenum Press: New York, 133, 
+1979.  
+ 
+WADSWORTH, M. E. Hydrometallurgical Processes, In: Sohn, H. Y.; Wadsworth, M. 
+E. (Eds.). Rate Processes of Extractive Metallurgy; Plenum Press: New York, 133, 
+1979. apud Glasstone, S.; Laidler, K. J.; Eyring, H. The Theory of Rate Processes; 
+McGraw-Hill: New York, 1941.  

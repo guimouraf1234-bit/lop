@@ -1,0 +1,300 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{cite}
+
+\geometry{
+    a4paper,
+    top=3.0cm,
+    bottom=2.0cm,
+    left=3.0cm,
+    right=2.0cm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{\textbf{Documentação Teórica e Equacionamento do Modelo Mecanicista (White-Box) para a Lixiviação de Concentrado Ustulado de Zinco}\\[0.5em]
+\large Trabalho de Conclusão de Curso -- Engenharia Química -- UFMG}
+
+\author{
+    \textbf{Discentes:}\\
+    Daniel Couto Vieira \quad Guilherme Moura de Sousa Franco\\
+    Matheus Henrique Borba Póvoas \quad Rodrigo Amaral da Mata\\[1em]
+    \textbf{Orientador:}\\
+    Prof. Dr. Fabrício Eduardo Bortot Coelho\\[0.5em]
+    \textit{Departamento de Engenharia Química -- Universidade Federal de Minas Gerais (UFMG)}
+}
+
+\date{Setembro de 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este documento apresenta a fundamentação teórica rigorosa, as hipóteses simplificadoras e o equacionamento matemático do Modelo Mecanicista Baseado em Primeiros Princípios (\textit{White-Box}) para o processo de lixiviação ácida atmosférica de concentrado ustulado de zinco (calcina) em reator batelada. O modelo acopla o Balanço Populacional unidimensional com taxa de crescimento/retração governada pelo Método das Características à distribuição granulométrica inicial de Rosin-Rammler-Bennett (RRB), considerando a cinética química interfacial heterogênea de dissolução da zincita ($\text{ZnO}$) e a estequiometria do consumo de ácido sulfúrico livre. A formulação descrita estabelece a base física do modelo híbrido cinza (\textit{Grey-Box}), fornecendo a referência mecanicista sobre a qual o aprendizado de máquina atua na predição de desvios e fenômenos secundários não modelados.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introdução e Hipóteses do Modelo}
+
+A lixiviação atmosférica de concentrado ustulado de zinco (calcina) em meio de ácido sulfúrico diluído constitui a etapa primordial da rota hidrometalúrgica de recuperação do zinco metálico. O concentrado ustulado é composto majoritariamente por zincita ($\text{ZnO}$), mineral prontamente solúvel, e ferrita de zinco ($\text{ZnFe}_2\text{O}_4$), fase refratária de dissolução lenta em condições brandas.
+
+Para o desenvolvimento do modelo de primeiros princípios (\textit{White-Box}), estabeleceram-se as seguintes premissas físico-químicas e hidrodinâmicas:
+\begin{enumerate}
+    \item \textbf{Regime Hidrodinâmico:} O reator batelada opera sob agitação mecânica intensa ($\ge 1000\text{ rpm}$), garantindo que a resistência difusional na camada limite fluida ao redor da partícula seja desprezível ($Sh \to \infty$).
+    \item \textbf{Mecanismo Controlador:} A dissolução do sólido é controlada pela reação química superficial na interface sólido-líquido, descrita pelo Modelo de Núcleo Não Reagido (\textit{Shrinking Core Model} -- SCM) com encolhimento contínuo do raio da partícula.
+    \item \textbf{Morfologia das Partículas:} Assume-se geometria esférica isotrópica com fator de forma volumétrico constante ($\psi = 1$) para todas as frações granulométricas.
+    \item \textbf{Fenômenos Populacionais:} Ausência de quebra mecânica de partículas e ausência de aglomeração/agregação no meio reacional ($B = D = 0$).
+    \item \textbf{Isotermicidade:} O sistema é mantido isotérmico na temperatura controlada do banho termostático ($T = 40^\circ\text{C} = 313{,}15\text{ K}$).
+    \item \textbf{Seletividade Mineralógica:} Em lixiviação neutra/branda ($T \le 40^\circ\text{C}$), apenas a zincita solúvel ($\text{ZnO}$) participa ativamente da reação no período monitorado ($t \le 15\text{ min}$). A fração de zinco associada à ferrita ($13\%$) permanece inerte.
+\end{enumerate}
+
+---
+
+\section{Estequiometria e Balanço de Massa no Reator Batelada}
+
+A reação de dissolução da zincita por ácido sulfúrico aquoso obedece à estequiometria mássica e molar unitária (1:1):
+\begin{equation}
+    \text{ZnO}_{(s)} + \text{H}_2\text{SO}_{4(aq)} \longrightarrow \text{ZnSO}_{4(aq)} + \text{H}_2\text{O}_{(l)}
+    \label{eq:reacao_quimica}
+\end{equation}
+
+Sejam $n_{A0}$ o número inicial de moles de reagente fluido ($\text{H}_2\text{SO}_4$) e $n_{B0}$ o número inicial de moles de reagente sólido solúvel ($\text{ZnO}$) carregados no reator de volume líquido $V$:
+\begin{align}
+    n_{A0} &= C_{A0} \, V \label{eq:na0} \\
+    n_{B0} &= \frac{m_{B0} \, T_{\text{ZnO}}}{M_{\text{ZnO}}} \label{eq:nb0}
+\end{align}
+onde $C_{A0}$ é a concentração inicial de ácido ($\text{mol}\cdot\text{L}^{-1}$), $m_{B0}$ é a massa total de concentrado ustulado alimentada ($\text{g}$), $T_{\text{ZnO}}$ é o teor em massa de zincita na amostra ($76{,}1\% = 0{,}761$), e $M_{\text{ZnO}} = 81{,}38\text{ g}\cdot\text{mol}^{-1}$ é a massa molar da zincita.
+
+A razão molar estequiométrica $\eta$ entre o ácido sulfúrico e a zincita é definida por:
+\begin{equation}
+    \eta = \frac{n_{A0}}{n_{B0}} = \frac{C_{A0} \, V \, M_{\text{ZnO}}}{m_{B0} \, T_{\text{ZnO}}}
+    \label{eq:razao_molar}
+\end{equation}
+
+Pelo balanço molar de conservação de espécies em sistema fechado, a concentração instantânea de ácido sulfúrico livre em solução, $C_{Af}(t)$, relaciona-se diretamente com a conversão fracionária da zincita, $X(t)$:
+\begin{equation}
+    C_{Af}(t) = \frac{n_{A0} - n_{B0} \, X(t)}{V} = C_{A0} \left( 1 - \frac{n_{B0}}{n_{A0}} X(t) \right)
+\end{equation}
+Substituindo a definição da razão estequiométrica $\eta$, obtém-se a lei de consumo de ácido:
+\begin{equation}
+    C_{Af}(t) = C_{A0} \left( 1 - \frac{X(t)}{\eta} \right)
+    \label{eq:consumo_acido}
+\end{equation}
+
+A análise da Equação~\eqref{eq:consumo_acido} estabelece três regimes operacionais distintos:
+\begin{itemize}
+    \item \textbf{Deficiência de Ácido ($\eta < 1{,}0$):} O ácido livre esgota-se ($C_{Af} \to 0$) antes da solubilização completa do zinco. A reação cessa no patamar estequiométrico máximo teórico:
+    \begin{equation}
+        X_{\text{máx}} = \eta \quad (\text{para } \eta < 1{,}0)
+    \end{equation}
+    Para $\eta = 0{,}5$, a conversão máxima teórica e experimental estabiliza-se rigorosamente em $X \approx 0{,}50$.
+    \item \textbf{Proporção Estequiométrica ($\eta = 1{,}0$):} Ácido e sólido estão em proporções molares equivalentes. Conforme $X \to 1$, $C_{Af} \to 0$, resultando em acentuada desaceleração cinética terminal.
+    \item \textbf{Excesso de Ácido ($\eta > 1{,}0$):} Permanece ácido residual no licor final ($C_{Af} > 0$), permitindo que a conversão da zincita atinja $X \to 1{,}0$ ($100\%$).
+\end{itemize}
+
+---
+
+\section{Cinética Química Heterogênea e Taxa de Retração}
+
+Para uma partícula de diâmetro esférico $D$, o número de moles de zincita remanescente é expresso pelo volume geométrico e pela densidade molar da fase sólida ($\rho_s = 69{,}2\text{ mol}\cdot\text{L}^{-1}$):
+\begin{equation}
+    N_B = \rho_s \, \left( \frac{\pi}{6} D^3 \right)
+\end{equation}
+
+Diferenciando em relação ao tempo:
+\begin{equation}
+    \frac{dN_B}{dt} = \frac{\pi}{2} \rho_s \, D^2 \frac{dD}{dt}
+    \label{eq:dnb_dt}
+\end{equation}
+
+A taxa intrínseca de reação heterogênea na interface sólido-líquido de área superficial $A_p = \pi D^2$ é de primeira ordem em relação ao ácido livre:
+\begin{equation}
+    \left( -\frac{1}{A_p} \frac{dN_B}{dt} \right) = k_s \, C_{Af}(t)
+    \label{eq:taxa_superficial}
+\end{equation}
+onde $k_s$ é a constante cinética superficial ($\mu\text{m}\cdot\text{min}^{-1}$).
+
+Igualando as Equações~\eqref{eq:dnb_dt} e~\eqref{eq:taxa_superficial}, deduz-se a velocidade linear de retração do diâmetro da partícula, $v(t)$:
+\begin{equation}
+    v(t) \equiv -\frac{dD}{dt} = \frac{2 \, k_s}{\rho_s} \, C_{Af}(t)
+    \label{eq:v_puro}
+\end{equation}
+
+\subsection{Dependência com a Temperatura (Arrhenius)}
+A dependência térmica da constante cinética $k_s$ obedece à formulação modificada de Arrhenius centrada na temperatura de referência $T_{\text{ref}} = 313{,}15\text{ K}$ ($40^\circ\text{C}$):
+\begin{equation}
+    k_s(T) = k_{s,\text{ref}} \exp \left[ -\frac{E_a}{R} \left( \frac{1}{T} - \frac{1}{T_{\text{ref}}} \right) \right]
+    \label{eq:arrhenius}
+\end{equation}
+onde $E_a = 13{,}45\text{ kJ}\cdot\text{mol}^{-1}$ é a energia de ativação aparente obtida experimentalmente por Balarini et al. (2025), $R = 8{,}31446\text{ J}\cdot\text{mol}^{-1}\cdot\text{K}^{-1}$, e $k_{s,\text{ref}} = 1{,}8 \times 10^4\ \mu\text{m}\cdot\text{min}^{-1}$.
+
+\subsection{Modelo com Amortecimento Empírico (Tese Bortot Coelho, 2017)}
+Com o objetivo de representar a desaceleração provocada pelo acúmulo de sulfatos e passivação difusional, Bortot Coelho (2017) introduziu um termo empírico de amortecimento governado pelo parâmetro $\alpha$:
+\begin{equation}
+    v(t) = \frac{2}{\rho_s} \max \Big( k_s \, C_{Af}(t) - \alpha \, [C_{A0} - C_{Af}(t)],\ 0 \Big)
+    \label{eq:v_amortecido}
+\end{equation}
+Para $\alpha = 0$, a Equação~\eqref{eq:v_amortecido} reduz-se à física fundamental pura (Equação~\eqref{eq:v_puro}). Na tese de 2017, calibrou-se $\alpha = 5{,}5 \times 10^3\ \mu\text{m}\cdot\text{min}^{-1}$.
+
+---
+
+\section{Balanço Populacional e Método das Características}
+
+\subsection{Equação Diferencial Parcial Populacional}
+A dinâmica temporal da distribuição de tamanho de partículas em suspensão perfeitamente agitada é descrita pela Equação do Balanço Populacional unidimensional:
+\begin{equation}
+    \frac{\partial \psi(D,t)}{\partial t} + \frac{\partial \big[ -v(t) \, \psi(D,t) \big]}{\partial D} = 0
+    \label{eq:pbm}
+\end{equation}
+onde $\psi(D,t)$ representa a função densidade de probabilidade populacional no diâmetro $D$ e tempo $t$.
+
+\subsection{Solução pelo Método das Características}
+Como a taxa de retração $v(t)$ independe do diâmetro $D$ (fenômeno puramente interfacial), todas as curvas características no plano $(t, D)$ são paralelas:
+\begin{equation}
+    \frac{dD}{dt} = -v(t) \implies D(t) = D_0 - \Delta D(t)
+\end{equation}
+onde $\Delta D(t)$ é a retração acumulada do diâmetro no intervalo de tempo $[0, t]$:
+\begin{equation}
+    \Delta D(t) = \int_0^t v(t') \, dt'
+    \label{eq:delta_D}
+\end{equation}
+
+Para partículas cujo diâmetro inicial satisfaz $D_0 \le \Delta D(t)$, a partícula é completamente consumida pela lixiviação ($D(t) = 0$). Assim:
+\begin{equation}
+    D(t) = \max \big( D_0 - \Delta D(t),\ 0 \big)
+\end{equation}
+
+---
+
+\section{Distribuição Granulométrica de Rosin-Rammler-Bennett (RRB)}
+
+A distribuição granulométrica inicial da calcina de zinco é modelada pela função de distribuição cumulativa de Rosin-Rammler-Bennett (RRB):
+\begin{equation}
+    F_0(D) = 1 - \exp \left[ -\left( \frac{D}{D_{63{,}2}} \right)^m \right]
+    \label{eq:rrb_cdf}
+\end{equation}
+onde $D_{63{,}2} = 41{,}65\ \mu\text{m}$ é o diâmetro característico no qual $63{,}2\%$ da massa acumulada passa, e $m = 1{,}022$ é o índice de uniformidade granulométrica (Bortot Coelho, 2017).
+
+A função densidade de probabilidade inicial $f_0(D) = dF_0/dD$ é dada por:
+\begin{equation}
+    f_0(D) = \frac{m}{D_{63{,}2}} \left( \frac{D}{D_{63{,}2}} \right)^{m-1} \exp \left[ -\left( \frac{D}{D_{63{,}2}} \right)^m \right], \quad (D > 0)
+    \label{eq:rrb_pdf}
+\end{equation}
+
+---
+
+\section{Equacionamento da Conversão Fracionária ($X_{\text{PBM}}$)}
+
+A conversão fracionária da zincita, $X_{\text{PBM}}(t)$, corresponde à fração volumétrica (ou mássica) de sólido solubilizada até o instante $t$, calculada pela razão entre o 3º momento volumétrico remanescente e o 3º momento volumétrico inicial:
+\begin{equation}
+    X_{\text{PBM}}(t) = 1 - \frac{\mu_3(t)}{\mu_3(0)} = 1 - \frac{\displaystyle \int_{\Delta D(t)}^\infty \big[ D - \Delta D(t) \big]^3 f_0(D) \, dD}{\displaystyle \int_0^\infty D^3 f_0(D) \, dD}
+    \label{eq:conversao_pbm}
+\end{equation}
+
+\subsection{Solução Analítica do 3º Momento Inicial}
+Para a distribuição de Weibull/RRB, o denominador da Equação~\eqref{eq:conversao_pbm} possui solução analítica exata via função Gamma ($\Gamma$):
+\begin{equation}
+    I_0 \equiv \int_0^\infty D^3 f_0(D) \, dD = D_{63{,}2}^3 \, \Gamma \left( 1 + \frac{3}{m} \right)
+    \label{eq:momento_inicial}
+\end{equation}
+Para $m = 1{,}022$ e $D_{63{,}2} = 41{,}65\ \mu\text{m}$:
+\begin{equation}
+    \Gamma \left( 1 + \frac{3}{1{,}022} \right) = \Gamma(3{,}9354) \approx 5{,}6645 \implies I_0 \approx 4{,}094 \times 10^5\ \mu\text{m}^3
+\end{equation}
+
+\subsection{Sistema de Equações Diferenciais Ordinárias Acopladas}
+A evolução temporal do encolhimento linear $\Delta D(t)$ e da conversão $X_{\text{PBM}}(t)$ constitui um sistema dinâmico acoplado não-linear:
+\begin{align}
+    \frac{d(\Delta D)}{dt} &= v \big( C_{Af}(t) \big) \label{eq:ode_delta_D} \\
+    X_{\text{PBM}}(t) &= 1 - \frac{1}{I_0} \int_{\Delta D(t)}^{D_{\text{máx}}} \big[ D - \Delta D(t) \big]^3 f_0(D) \, dD \label{eq:alg_conversao} \\
+    C_{Af}(t) &= C_{A0} \left( 1 - \frac{X_{\text{PBM}}(t)}{\eta} \right) \label{eq:alg_acido}
+\end{align}
+com a condição inicial:
+\begin{equation}
+    \Delta D(0) = 0{,}0\ \mu\text{m} \implies X_{\text{PBM}}(0) = 0{,}0 \quad \text{e} \quad C_{Af}(0) = C_{A0}
+\end{equation}
+
+O sistema acoplado~(\ref{eq:ode_delta_D}--\ref{eq:alg_acido}) é integrado numericamente pelo algoritmo de Runge-Kutta explícito de passo adaptativo de ordem 4 e 5 (RK45) com quadratura adaptativa de Gauss-Kronrod na integral espacial.
+
+---
+
+\section{Tabela de Parâmetros e Constantes Físico-Químicas}
+
+A Tabela~\ref{tab:parametros} resume os valores numéricos de todas as constantes e propriedades físicas utilizadas na implementação computacional do modelo \textit{White-Box}.
+
+\begin{table}[htbp]
+\centering
+\caption{Parâmetros físico-químicos e operacionais do modelo mecanicista.}
+\label{tab:parametros}
+\begin{tabularx}{\textwidth}{l l c c l}
+\toprule
+\textbf{Símbolo} & \textbf{Descrição} & \textbf{Valor} & \textbf{Unidade} & \textbf{Fonte} \\
+\midrule
+$k_{s,\text{ref}}$ & Constante cinética a $40^\circ\text{C}$ & $1{,}8 \times 10^4$ & $\mu\text{m}\cdot\text{min}^{-1}$ & Balarini et al. (2025) \\
+$E_a$ & Energia de ativação aparente & $13{,}45$ & $\text{kJ}\cdot\text{mol}^{-1}$ & Balarini et al. (2025) \\
+$\rho_s$ & Densidade molar da fase sólida & $69{,}2$ & $\text{mol}\cdot\text{L}^{-1}$ & Bortot Coelho (2017) \\
+$m$ & Índice de uniformidade RRB & $1{,}022$ & adim. & Bortot Coelho (2017) \\
+$D_{63{,}2}$ & Diâmetro característico RRB & $41{,}65$ & $\mu\text{m}$ & Bortot Coelho (2017) \\
+$T_{\text{ZnO}}$ & Teor de zincita na calcina bruta & $76{,}1$ & $\% \text{ m/m}$ & Bortot Coelho (2017) \\
+$f_{\text{ZnO}}$ & Fração de zinco solúvel (zincita) & $0{,}87$ & adim. & Bortot Coelho (2017) \\
+$M_{\text{ZnO}}$ & Massa molar da zincita & $81{,}38$ & $\text{g}\cdot\text{mol}^{-1}$ & Lide (2005) \\
+$M_{\text{H}_2\text{SO}_4}$ & Massa molar do ácido sulfúrico & $98{,}08$ & $\text{g}\cdot\text{mol}^{-1}$ & Lide (2005) \\
+$V$ & Volume reacional de bancada & $0{,}40$ & $\text{L}$ & Bortot Coelho (2017) \\
+$T$ & Temperatura da lixiviação & $40{,}0$ & $^\circ\text{C}$ & Bortot Coelho (2017) \\
+$\alpha$ & Parâmetro de amortecimento da tese & $5{,}5 \times 10^3$ & $\mu\text{m}\cdot\text{min}^{-1}$ & Bortot Coelho (2017) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+---
+
+\section{Justificativa para a Modelagem Híbrida Grey-Box}
+
+Embora o modelo \textit{White-Box} apresente sólida consistência físico-química e explique $92{,}5\%$ da variância dos dados ($R^2 = 0{,}9253$), verifica-se a persistência de um resíduo sistemático:
+\begin{equation}
+    \Delta X(t) = X_{\text{exp}}(t) - X_{\text{PBM}}(t)
+\end{equation}
+
+Este desvio decorre de três classes de fenômenos complexos não contemplados nas hipóteses simplificadoras:
+\begin{enumerate}
+    \item \textbf{Efeito de Íon Comum:} O acúmulo de íons $\text{Zn}^{2+}$ e $\text{SO}_4^{2-}$ durante a reação reduz o coeficiente de atividade do ácido livre $\gamma_{\text{H}^+}$, desacelerando a força motriz química real em relação à estequiometria ideal.
+    \item \textbf{Passivação Difusional por Sílica:} A presença de silicatos solúveis na calcina precipita um gel de sílica amorfa que oclui microporos das partículas, impondo resistência difusional na fase sólida.
+    \item \textbf{Desvios Morfológicos dos Finos:} A presença de partículas ultrafinas com alta rugosidade e cantos vivos acelera a dissolução inicial ($t \le 1\text{ min}$) além do previsto para esferas perfeitamente lisas.
+\end{enumerate}
+
+A inclusão de um módulo orientado a dados (\textit{Black-Box}) encarregado de estimar dinamicamente $\widehat{\Delta X}_{\text{ML}}$ completa a estrutura **Grey-Box**, combinando a robustez dos primeiros princípios à capacidade de ajuste fino do aprendizado de máquina.
+
+---
+
+\section{Referências Bibliográficas}
+
+\begin{enumerate}
+    \item BALARINI, J. C.; ARAÚJO, E. M. R.; COELHO, F. E. B.; POLLI, L. O.; KONZEN, C.; MIRANDA, T. L. S.; SALUM, A. Leaching kinetics of roasted zinc concentrate in sulphuric acid solutions. \textit{Revista Observatorio de la Economía Latinoamericana}, v. 23, n. 11, 2025. DOI: 10.55905/oelv23n11-188.
+    \item BORTOT COELHO, F. E. \textit{Desenvolvimento e Validação de um Modelo de Balanço Populacional para a Lixiviação de um Concentrado Ustulado de Zinco em Bancada e em Escala Piloto}. 2017. 248 f. Dissertação (Mestrado em Engenharia Química) -- Universidade Federal de Minas Gerais, Belo Horizonte, 2017.
+    \item CRUNDWELL, F. K.; BRYSON, A. W. The calculation of the rate of dissolution of minerals in batch and continuous reactors. \textit{Hydrometallurgy}, v. 29, n. 1-3, p. 275-295, 1992.
+    \item FOGLER, H. S. \textit{Elements of Chemical Reaction Engineering}. 4. ed. Boston: Prentice Hall, 2006.
+    \item LEVENSPIEL, O. \textit{Chemical Reaction Engineering}. 3. ed. New York: John Wiley \& Sons, 1999.
+    \item LIDE, D. R. \textit{CRC Handbook of Chemistry and Physics}. 86. ed. Boca Raton: CRC Press, 2005.
+\end{enumerate}
+
+\end{document}

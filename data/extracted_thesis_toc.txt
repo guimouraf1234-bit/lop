@@ -1,0 +1,632 @@
+--- Page 6 ---
+v 
+ 
+   
+ 
+Ao Prof. Roberto Fernando de Sousa Freitas, fundador do Laboratório de Ciência e 
+Tecnologia de Polímeros (LCTP/UFMG),  pelos conhecimentos únicos que somente ele 
+seria capaz de ensinar, seja na ciência, na política e, principalmente, na arte de viver. 
+Agradeço pela sua generosidade e carinho para comigo e para com todos que o cercam.  
+ 
+Aos Professores do Laboratório de Ciência e Tecnologia de Polímeros (LCTP/UFMG), 
+Maria Elisa Scarpelli Ribeiro e Silva  e Ricardo Geraldo de Sousa, por contribuírem 
+substancialmente para que eu me tornasse  o que sou hoje; as oportunidades que vocês e 
+o Prof. Roberto me deram transformaram a minha vida. Agradeço , principalmente, pela 
+amizade e confiança, pois de nada adiantaria chegar até aqui sem ter pessoas como vocês 
+ao meu lado.  
+ 
+Ao Dr. Estêvão Magno Rodrigues Araújo, colega de profissão e amigo, não há palavras 
+para agradecê-lo por toda sua contribuição e parceria . A sua disponibilidade em ajudar 
+sem esperar nada em troca  é inspiradora, e você certamente receberá em dobro tudo de 
+bom que faz a todos. 
+ 
+À Dra. Cibele Konzen, pelas férteis discussões no laboratório, que foram de grande 
+importância para a minha formação.  
+  
+Aos professores do Programa de Pós-Graduação em Engenharia Metalúrgica, Materiais e 
+de Minas, Rodrigo Oréfice, George Valadão, Paulo Bran dão e Andréia Bicalho, pelos 
+inestimáveis ensinamentos. Aos funcionários Isabel Carvalho, Juliana Angélica, Maria 
+Aparecida Pacheco  e Nelson Antônio de Azevedo , cuja ajuda e amizade me foram 
+imprescindíveis. 
+ 
+Aos alunos do LCTP/UFMG, Luis, Guilherme, Ana Beatriz, Ana Luiza, Vinicius , pela 
+troca de experiências, pela amizade e pela paciência.  Às colegas de trabalho e amigas , 
+Emilene Nahum e Cynthia Erbetta, pelos ótimos momentos que passamos juntos e por 
+tudo que vocês me ensinaram; levarei por toda a vida.  
+ 
+--- Page 7 ---
+vi 
+ 
+   
+ 
+À aluna de iniciação científica , Clara Azevedo Mendes de Castro, pela disponibilidade. 
+Ao Sr. Alexandre Batista de Almeida do Departamento de Engenharia Química da 
+UFMG, pelas valiosas análises . E ao Sr. Geraldo  Luiz da Silva , cujos inestimáveis 
+conselhos foram fundamentais neste trabalho. 
+ 
+Aos meus amigos, Rafael, Gisele, Mariana, Marília, Priscila e Nana, colegas de profissão 
+e companheiros de caminhada ; sem você s tudo seria mais difícil. Aos meus amigos, 
+Felipe, Sarah, Isabela, Laís, Gabriela, Douglas, Samuel, Clara , Jéssica, Adriana, Carol, 
+pela amizade sincera, por  estarem sempre presentes e pela alegria que vocês me 
+proporcionam. 
+ 
+Ao meu amigo e irmão, Márcio Carvalho, pela companhia em todos os momentos mais 
+importantes da minha vida. À minha inseparável amiga e colega de profissão, Laura 
+Duarte, pela cumplicidade e paciência, por me fazer rir quando tudo me faria chorar. 
+ 
+À PROEX/CAPES (Programa de Excelência Acadêmica/Coordenação de 
+Aperfeiçoamento de Pessoal de Nível Superior), FAPEMIG (Fundação de Amparo à 
+Pesquisa do Estado de Minas Gerais) e CNPq (Conselho Nacional de Desenvolvi mento 
+Científico e Tecnológico), pelo suporte financeiro. 
+ 
+ 
+  
+--- Page 8 ---
+vii 
+ 
+   
+ 
+SUMÁRIO 
+ 
+1. INTRODUÇÃO ........................................................................................................... 1 
+2. OBJETIVOS ................................................................................................................ 7 
+3. REVISÃO BIBLIOGRÁFICA .................................................................................. 9 
+3.1. Zinco ...................................................................................................................... 9 
+3.1.1. Aplicações e valor econômico ...................................................................... 11 
+3.1.2. Propriedades .................................................................................................. 14 
+3.1.3. Caracterização do concentrado ustulado de zinco ........................................ 15 
+3.2. Processo de Lixiviação de Zinco ......................................................................... 19 
+3.2.1. Diagramas Eh-pH para o sistema Zn-Fe-H20 ............................................... 21 
+3.2.2. Diagrama de especiação do H2SO4 ............................................................... 24 
+3.2.3. Produção de zinco metálico – via hidrometalúrgica ..................................... 25 
+3.2.3.1. Visão global ........................................................................................... 26 
+3.2.3.2. Concentração por flotação ..................................................................... 28 
+3.2.3.3. Ustulação ............................................................................................... 28 
+3.2.3.4. Lixiviação .............................................................................................. 30 
+3.2.3.5. Remoção de ferro ................................................................................... 32 
+3.2.3.6. Purificação ............................................................................................. 34 
+3.2.3.7. Eletrorrecuperação e fundição ............................................................... 34 
+3.3. Reações Heterogêneas Sólido/Fluido Não-Catalíticas ........................................ 36 
+3.3.1. Avaliação do estágio controlador da taxa ..................................................... 39 
+3.3.2. Cinética de lixiviação do concentrado ustulado de zinco ............................. 44 
+3.4. Distribuição de Tempos de Residência (DTR) .................................................... 54 
+3.4.1. Aplicações ..................................................................................................... 55 
+3.4.2. Conceitos básicos .......................................................................................... 55 
+3.4.3. Métodos experimentais para medida da DTR ............................................... 57 
+3.4.3.1. Perturbação em pulso ............................................................................. 58 
+3.4.3.2. Perturbação em degrau ........................................................................... 59 
+--- Page 9 ---
+viii 
+ 
+   
+ 
+3.4.4. Modelos teóricos para funções de distribuição ............................................. 60 
+3.5. Balanço Populacional .......................................................................................... 62 
+3.5.1. Distribuição granulométrica ......................................................................... 62 
+3.5.2. Formulação matemática ................................................................................ 65 
+3.6. Modelos Teóricos da Lixiviação .......................................................................... 69 
+3.6.1. Lixiviação em batelada ................................................................................. 70 
+3.6.2. Lixiviação contínua ....................................................................................... 76 
+3.6.2.1. Modelo de reator com fluxo segregado ................................................. 78 
+3.6.2.2. Modelo de reator com mistura perfeita .................................................. 80 
+4. METODOLOGIA ..................................................................................................... 84 
+4.1. Materiais e Equipamentos .................................................................................... 86 
+4.2. Caracterização do Concentrado Ustulado de Zinco ............................................. 89 
+4.2.1. Análise química e mineralógica .................................................................... 90 
+4.2.2. Distribuição granulométrica e análise granuloquímica ................................ 91 
+4.3. Modelagem da Lixiviação Descontínua .............................................................. 92 
+4.4. Ensaios de Lixiviação Descontínuos em Bancada ............................................... 97 
+4.4.1. Níveis operacionais ....................................................................................... 98 
+4.4.2. Preparo da solução lixiviante ...................................................................... 102 
+4.4.3. Montagem experimental ............................................................................. 102 
+4.4.4. Variáveis-resposta ....................................................................................... 104 
+4.5. Determinação das Distribuições de Tempos de Residência para a Planta Piloto de 
+Lixiviação ................................................................................................................. 106 
+4.6. Modelagem da Lixiviação Contínua .................................................................. 109 
+4.6.1. Modelo de reator com fluxo segregado ...................................................... 111 
+4.6.2. Modelo de reator com mistura perfeita ....................................................... 112 
+4.7. Ensaios de Lixiviação Contínua em Planta Piloto ............................................. 114 
+4.7.1. Determinação da velocidade de agitação .................................................... 115 
+4.7.2. Níveis operacionais ..................................................................................... 116 
+4.7.3. Montagem experimental ............................................................................. 117 
+--- Page 10 ---
+ix 
+ 
+   
+ 
+4.7.4. Variáveis-resposta ....................................................................................... 122 
+5. RESULTADOS E DISCUSSÃO ............................................................................ 124 
+5.1. Caracterização do Concentrado Ustulado de Zinco ........................................... 124 
+5.1.1. Análise química e mineralógica .................................................................. 125 
+5.1.2. Distribuição granulométrica e análise granuloquímica .............................. 128 
+5.2. Lixiviação Descontínua em Bancada ................................................................. 135 
+5.2.1. Efeito da velocidade de agitação ................................................................ 135 
+5.2.2. Efeitos da razão molar (η) e da concentração inicial de ácido (C A0) sobre a 
+extração de zinco .................................................................................................. 137 
+5.2.3. Efeitos da razão molar (η) e da concentração inicial de ácido (C A0) sobre a 
+extração de ferro ................................................................................................... 146 
+5.2.4. Estimativa do parâmetro ajustável (α) ........................................................ 147 
+5.2.5. Análise de sensibilidade do modelo ............................................................ 151 
+5.2.6. Validação do modelo .................................................................................. 154 
+5.3. Distribuições de Tempos de Residência para Planta Piloto de Lixiviação ........ 159 
+5.3.1. Avaliação dos traçadores ............................................................................ 159 
+5.3.2. Determinação da distribuição de tempos de residência para um único reator
+ .............................................................................................................................. 161 
+5.3.3. Determinação da distribuição de tempos de residência para dois e três reatores 
+em série ................................................................................................................. 167 
+5.4. Lixiviação Contínua em Planta Piloto ............................................................... 171 
+5.4.1. Efeito da velocidade de agitação ................................................................ 172 
+5.4.2. Validação do modelo .................................................................................. 172 
+6. CONCLUSÕES ....................................................................................................... 181 
+7. RELEVÂNCIA DOS RESULTADOS .................................................................. 184 
+8. SUGESTÕES PARA TRABALHOS FUTUROS ................................................ 187 
+9. REFERÊNCIAS BIBLIOGRÁFICAS .................................................................. 188 
+APÊNDICE A1. RESULTADOS DOS ENSAIOS DE LIXIVIAÇÃO .................. 200 
+--- Page 11 ---
+x 
+ 
+   
+ 
+A1.1. LIXIVIAÇÃO DESCONTÍNUA EM BANCADA ........................................ 200 
+A1.2. LIXIVIAÇÃO CONTÍNUA NA PLANTA PILOTO .................................... 202 
+APÊNDICE A2. ALGORITMOS UTILIZADOS NA RESOLUÇÃO DO 
+BALANÇO POPULACIONAL ................................................................................. 203 
+A2.1. Algoritmo do s oftware Mathematica 11 para resolução do modelo do balanço 
+populacional da lixiviação em batelada .................................................................... 203 
+A2.2. Algoritmo do s oftware Mathematica 11 para resolução do modelo do balanço 
+populacional para lixiviação contínua utilizando a abordagem do fluxo segregado 204 
+A2.3. Algoritmo do software MATLAB R2016b para resolução do modelo do balanço 
+populacional para lixiviação contínua utilizando a abordagem da mistura perfeita . 205 
+APÊNDICE A3. MÉTODOS ANALÍTICOS ........................................................... 206 
+A3.1. Análise granulométrica ................................................................................... 206 
+A3.2. Espectrofotometria de absorção atômica (EAA) ............................................ 212 
+A3.3. Fluorescência de raios X (FRX) ..................................................................... 214 
+A3.4. Difração de raios X (DRX) ............................................................................. 217 
+A3.5. Microscopia eletrônica de varredura (MEV) associada à espectroscopia por 
+dispersão de energia (EDS) ....................................................................................... 219 
+APÊNDICE A4. CÁLCULO DA ESPECIAÇÃO DO H2SO4................................. 224 
+APÊNDICE A5. REAÇÕES NÃO-CATALÍTICAS ENTRE SÓLIDOS E FLUIDOS
+ ...................................................................................................................................... 226 
+A5.1. Modelo do núcleo em diminuição (modelo do núcleo não reagido para partículas 
+esféricas de tamanho constante) ............................................................................... 227 
+A5.1.1. Controle do processo pela transferência de massa através da camada de 
+fluido ................................................................................................................. 230 
+A5.1.2. Controle do processo por difusão através da camada de cinzas .......... 232 
+A5.1.3. Controle do processo pela reação química ........................................... 234 
+A5.2. Modelo da conversão progressiva ................................................................... 235 
+--- Page 12 ---
+xi 
+ 
+   
+ 
+A5.2.1. Controle do processo por transferência de massa através da camada de 
+fluido ................................................................................................................. 236 
+A5.2.2. Controle do processo pela reação química ........................................... 237 
+  
+--- Page 13 ---
+xii 
+ 
+   
+ 
+LISTA DE FIGURAS 
+ 
+FIGURA 3.1 – Produção anual de zinco ........................................................................ 13 
+FIGURA 3.2 – Difratograma da amostra do (a) concentrado sulfetado e (b) concentrado 
+ustulado de zinco.................................................................................. 17 
+FIGURA 3.3 – Diagrama Eh-pH com as quatro regiões típicas. .................................... 21 
+FIGURA 3.4 – Diagrama Eh–pH para o sistema Zn-Fe-H2O mostrando as espécies de Zn. 
+Condições: T=25°C, P =1atm, {Zn}={Fe}=0,1M (linha cheia) e 1,0M 
+(linha tracejada). .................................................................................. 22 
+FIGURA 3.5 – Diagrama Eh-pH para o sistema Zn-Fe-H2O mostrando as espécies de Fe. 
+Condições: T=25°C, P =1atm, {Zn}={Fe}=0,1M (linha cheia) e 1,0M 
+(linha tracejada). .................................................................................. 22 
+FIGURA 3.6 – Estudo da extração de zinco com a solubilização da ferrita de zinco. 
+Condições: (a) [H 2SO4]=1M, Tempo=60min, (b) Temperatura=85°C, 
+Tempo=60min. ..................................................................................... 24 
+FIGURA 3.7 – Diagrama de distribuição das espécies do H2SO4 para as temperaturas de 
+25 e 40°C. ............................................................................................ 25 
+FIGURA 3.8 – Fluxograma típico de uma planta de produção de zinco ........................ 27 
+FIGURA 3.9 – Diagrama de fases do sistema Zn-Fe-S-O ............................................. 29 
+FIGURA 3.10 – Circuito de lixiviação em duas etapas .................................................. 31 
+FIGURA 3.11 – Fluxograma simplificado da planta de produção de zinco de Três Marias 
+– MG (Patenteado pela Votorantim Metais/Zinco) ............................. 36 
+FIGURA 3.12 – Raio da partícula/núcleo não reagido (rc) e da conversão (XB) em função 
+do tempo adimensional (t/τ) para uma partícula esférica reagindo em 
+meio fluido ........................................................................................... 39 
+FIGURA 3.13 – Relação entre a taxa de extração e a intensidade de agitação ilustrando a 
+eliminação da variável agitação em altas velocidades. ........................ 41 
+FIGURA 3.14 – Efeito da intensidade de agitação, Granulometria=-100# +150#, T=30°C 
+e CA0=4g.L-1. ........................................................................................ 45 
+FIGURA 3.15 – Efeito da temperatura nos ensaios de lixiviação, Granulometria = -60# 
++100#, CA0=4g.L-1 e Vrotação=840rpm .................................................. 46 
+FIGURA 3.16 – Ajuste dos dados ao Modelo do Núcleo em Diminuição. .................... 47 
+--- Page 14 ---
+xiii 
+ 
+   
+ 
+FIGURA 3.17 – Ajuste dos dados ao Modelo da Conversão Progressiva. .................... 47 
+FIGURA 3.18 – Curvas de linearização para o controle por: (a) Difusão na camada de 
+cinza e (b) Reação química. ................................................................. 48 
+FIGURA 3.19 – Curvas de Arrhenius para as etapas de difusão na camada de produtos e 
+reação química. .................................................................................... 49 
+FIGURA 3.20 – Curvas de linearização dos ensaios com diferentes granulometrias para 
+as etapas controladoras: (a) Difusão na camada de produto e (b) Reação 
+química. ................................................................................................ 50 
+FIGURA 3.21 – Linearização para a determinação do expoente do raio. ...................... 51 
+FIGURA 3.22 - Curvas de linearização para reação química como etapa controladora - 
+Efeito da Concentração. ....................................................................... 52 
+FIGURA 3.23 – Curva ln(τ) × ln([H+]) para a determinação da ordem de reação. ........ 53 
+FIGURA 3.24 – Exemplos de escoamentos não ideais em equipamentos de processo. 54 
+FIGURA 3.25 – Relação entre as funções E(t), F(t) e F*(t) ........................................... 56 
+FIGURA 3.26 – Representação do procedimento experimental para determinação da 
+DTR...................................................................................................... 58 
+FIGURA 3.27 – Curvas das funções E(t) e F(t) para o Modelo dos Tanques-em-Série. 61 
+FIGURA 3.28 – Representação das funções densidade e distribuiçã o para o tamanho de 
+partícula. .............................................................................................. 62 
+FIGURA 3.29 – Representação do modelo de balanço populacional macroscópico ..... 66 
+FIGURA 3.30 – A conversão em um tanque de lixiviação em função do Número de 
+Lixiviação. ........................................................................................... 83 
+FIGURA 4.1– Fluxograma da metodologia utilizada no presente trabalho. .................. 84 
+FIGURA 4.2 – Técnicas para caracterização de uma mostra mineral. ........................... 89 
+FIGURA 4.3 – Montagem experimental para ensaios de lixiviação descontínua em 
+bancada. ............................................................................................. 103 
+FIGURA 4.4 – Esquema da realização dos ensaios de lixiviação descontínua em batelada.
+............................................................................................................ 104 
+FIGURA 4.5 – Montagem experimental para determinação da DTR na Planta Piloto de 
+lixiviação. ........................................................................................... 108 
+FIGURA 4.6 – Planta piloto de lixiviação. ................................................................... 118 
+FIGURA 4.7 – Vista interna do reator da planta piloto de lixiviação. ......................... 119 
+--- Page 15 ---
+xiv 
+ 
+   
+ 
+FIGURA 4.8 – Dosador de sólidos da planta piloto de lixiviação. .............................. 119 
+FIGURA 4.9 – Painel de controle da planta piloto de lixiviação. ................................ 120 
+FIGURA 4.10 – Montagem experimental dos ensaios de lixiviação contínua na planta 
+piloto. ................................................................................................. 121 
+FIGURA 5.1 – Difratograma da amostra de concentrado ustulado de zinco. .............. 127 
+FIGURA 5.2 – Linearização dos modelos GGS, RRB e Sigmóide para a distribuição 
+granulométrica do concentrado ustulado de zinco. ............................ 131 
+FIGURA 5.3 – Ajuste dos modelos de distribuição granulométrica aos dados 
+experimentais. .................................................................................... 132 
+FIGURA 5.4 – Ajuste do modelo RRB a distribuição granulométrica do concentrado 
+ustulado de zinco................................................................................ 133 
+FIGURA 5.5 – Distribuição dos elementos (a) Zn, (b) Fe, Pb e Cu em diferentes frações 
+granulométricas. ................................................................................. 134 
+FIGURA 5.6 – (a) Derivada da taxa inicial da conversão de zinco e (b) conversão de zinco 
+obtidas nos ensaios com diferentes intensidades de agitação. ........... 136 
+FIGURA 5.7 – Curvas de extração de zinco em função do tempo de lixiviação para as 
+concentrações iniciais de ácido de (a) 0,1 e 0,5 mol.L-1 e (b) 1,0 e 
+1,5mol.L-1. .......................................................................................... 138 
+FIGURA 5.8 – Derivada primeira da conversão de zinco no instante inicial da reação 
+(taxa inicial de lixiviação) em função da razão molar para diferentes 
+concentrações iniciais de ácido. ......................................................... 139 
+FIGURA 5.9 – Concentração de ácido no licor em função do tempo para as diferentes 
+razões molares investigadas, utilizando -se as concentrações iniciais d e 
+ácido de (a) 0,1 e 0,5mol.L-1 e (b) 1,0 e 1,5mol.L-1. .......................... 141 
+FIGURA 5.10 - Efeito da razão molar (η) e da concentração inicial de ácido (CA0) no pH 
+final do licor. ...................................................................................... 142 
+FIGURA 5.11 – Diagrama de distribuição das espécies para o ácido sulfúrico, destacando 
+a condição final obtidas nos ensaios com razão molar de 0,5 (área 
+hachurada). ......................................................................................... 142 
+FIGURA 5.12 - Efeito da razão molar (η) sobre a ex tração de ferro para diferentes 
+concentrações iniciais de ácido (CA0). ............................................... 143 
+--- Page 16 ---
+xv 
+ 
+   
+ 
+FIGURA 5.13 – Efeito da razão molar (η) na extração de  zinco (X Zn) para diferentes 
+concentrações iniciais de ácido. ......................................................... 145 
+FIGURA 5.14 – Efeito da concentração inicial de ácido (C A0) sobre a extração de ferro 
+para diferentes razões molares (η). .................................................... 147 
+FIGURA 5.15 – Conversões de zinco calculadas pelo modelo e obtidas 
+experimentalmente. ............................................................................ 150 
+FIGURA 5.16 - Concentração final de ácido (CAf) obtida experimentalmente e calculada 
+para várias razões molares (η). .......................................................... 150 
+FIGURA 5.17 – Efeitos (a) do diâmetro médio das partículas e (b) da covariância sobre 
+a conversão de zinco. Parâmetros da simulação: η=2,0, CA0=0,5mol.L-1.
+............................................................................................................ 151 
+FIGURA 5.18 – Efeito da constante de velocidade sobre a conversão. Parâmetros da 
+simulação:  η=2,0, CA0=0,5mol.L -1, µ=50, σ/µ=1,0, tempo de 
+reação=5min. ...................................................................................... 152 
+FIGURA 5.19 – Efeito da razão molar (a) sobre a conversão de zinco e (b) sobre a 
+concentração de ácido. Parâmetros da simulaçã o: µ=50, σ/µ=1,0, 
+CA0=0,5mol.L-1. ................................................................................ 153 
+FIGURA 5.20 -  Efeito da concentração inicial de ácido sobre a conversão de zinco. 
+Parâmetros da simulação: µ=50, σ/µ=1,0, η=2. ................................. 154 
+FIGURA 5.21 - Comparação dos dados gerados pelo modelo proposto com os dados 
+obtidos experimentalmente para a concentração inicial de ácido de (a) 
+0,1mol.L-1 e (b) 0,5mol.L-1. ............................................................... 156 
+FIGURA 5.22 – Comparação dos dados gerados pelo modelo proposto com os dados 
+obtidos experimentalmente para a concentração inicial de ácido de (a) 
+1,0mol.L-1 e (b) 1,5mol.L-1. ............................................................... 157 
+FIGURA 5.23 – Comparação entre diferentes traçadores e métodos de medição. ...... 160 
+FIGURA 5.24 – Função acumulada nor malizada, F(θ), para um reator em várias 
+velocidades de agitação. Vazão volumétrica de alimentação=0,41L.min-
+1. ......................................................................................................... 162 
+FIGURA 5.25 – Função distribuição normalizada, E(θ), para um reator em várias 
+velocidades de agitação. Vazão volumétrica de alimentação=0,41L.min-
+1. ......................................................................................................... 162 
+--- Page 17 ---
+xvi 
+ 
+   
+ 
+FIGURA 5.26 – Função acumulada normalizada, F(θ), para um reator em várias 
+velocidades de agitação. Vazão volumétrica de alimentação=0,21L.min-
+1. ......................................................................................................... 163 
+FIGURA 5.27 – Função distribuição normalizada, E(θ), para um reator em várias 
+velocidades de agitação. Vazão volumétrica de alimentação=0,21L.min-
+1. ......................................................................................................... 163 
+FIGURA 5.28 – Coeficiente de variação das DTR obtidas em função da intensidade de 
+agitação para diferentes e vazões volumétricas. ................................ 166 
+FIGURA 5.29 – Coeficiente de variação das DTR obtidas em função da intensidade de 
+agitação para diferentes e vazões volumétricas. ................................ 166 
+FIGURA 5.30 – Curvas F(t) e E(t) obtidas nos ensaios de determinação da DTR para uma 
+cascata de dois reatores em série. ...................................................... 168 
+FIGURA 5.31 – Curvas F(t) e E(t) obtidas nos ensaios de determinação da DTR para uma 
+cascata de três reatores em série. ....................................................... 169 
+FIGURA 5.32 – Curvas normalizadas E(θ) e F(θ) obtidas nos ensaios de determinação da 
+DTR (a) e calculadas pelo modelo (b) para cascata de dois e três reatores 
+em série. ............................................................................................. 170 
+FIGURA 5.33 – Correspondência entre o modelo do fluxo segregado e os dados obtidos 
+na planta piloto para a conversão de zinco em função da vazão 
+volumétrica de alimentação ao primeiro reator da cascata de três reatores 
+em série. ............................................................................................. 174 
+FIGURA 5.34 – Correspondência entre o modelo do fluxo segregado e os dados obtidos 
+na planta piloto para a concentração de agente lixiviante em função da 
+vazão volumétrica de alimentação ao primeiro reator da cascata de três 
+reatores em série. ............................................................................... 174 
+FIGURA 5.35 – Correspondência entre o modelo da mistura perfeita e os dados obtidos 
+na planta piloto para a conversão de zinco em função da vazão 
+volumétrica de alimentação ao primeiro reator da cascata de três reatores 
+em série. ............................................................................................. 176 
+FIGURA 5.36 – Correspondência entre o modelo da mistura perfeita e os dados obtidos 
+na planta piloto para a concentração de agente lixiviante em função da 
+--- Page 18 ---
+xvii 
+ 
+   
+ 
+vazão volumétrica de alimentação ao primeiro reator da cascata de três 
+reatores em série. ............................................................................... 176 
+FIGURA 5.37 – Comparação entre as abordagens do fluxo segregado e da mistura 
+perfeita para (a) o primeiro, (b) o segundo e (c) o terceiro reator da planta 
+piloto. ................................................................................................. 179 
+FIGURA A3.1 – Ilustração da amostragem (a) por cones e (b) quarteador Jones. ...... 207 
+FIGURA A3.2 – Esquema da operação de um granulômetro por difração de laser de 1ª 
+geração. .............................................................................................. 210 
+FIGURA A3.3 – Franjas de difração teóricas para vários tipos de partículas. ............. 210 
+FIGURA A3.4 – Esquema de um cicloclassificador – Cyclosizer. .............................. 212 
+FIGURA A3.5 – Esquema de funcionamento de um espectr ofotômetro de absorção 
+atómica ............................................................................................... 213 
+FIGURA A3.6 – Esquema de funcionamento de um FRX-WDS. ............................... 216 
+FIGURA A3.7– Radiação contínua e as radiações características. .............................. 218 
+FIGURA A3.8 – Esquema de funcionamento de um FRX-WDS. ............................... 218 
+FIGURA A3.9 – Esquema de funcionamento de um MEV. ........................................ 220 
+FIGURA A3.10 – Interação do feixe de elétrons com a amostra.  ............................... 221 
+FIGURA A3.11 – Detectores EDS e WDS e espectro obtido por EDS. ...................... 223 
+FIGURA A5.1 – Representação do modelo do núcleo em diminuição de uma partícula 
+sólida reagindo com um fluido .......................................................... 228 
+FIGURA A5.2 – Representação do Modelo do Núcleo em Diminuição. ..................... 229 
+FIGURA A5.3 – Etapas da reação não catalít ica entre reagentes fluido (A) e sólido, 
+gerando um produto fluido (P) ........................................................... 229 
+FIGURA A5.4 – Representação de uma partícula reagindo quando a transferência de 
+massa na camada de fluido for a resistência controladora do processo.
+............................................................................................................ 231 
+FIGURA A5.5 – Representação de uma partícula reagindo quando a difusão através do 
+filme gasoso é a etapa controladora. .................................................. 233 
+FIGURA A5.6 – Representação de uma partícula reagindo quando a reação química é a 
+etapa controladora (Núcleo em Diminuição) ..................................... 234 
+FIGURA A5.7 – Representação do modelo da partícula em diminuição (Conversão 
+Progressiva)........................................................................................ 236 
+--- Page 19 ---
+xviii 
+ 
+   
+ 
+FIGURA A5.8 – Representação de uma partícula reagindo quando a reação química é a 
+etapa controladora (Conversão Progressiva). .................................... 238 
+ 
+  
+--- Page 20 ---
+xix 
+ 
+   
+ 
+LISTA DE TABELAS 
+ 
+TABELA 3.1 – Principais minerais de zinco ................................................................. 10 
+TABELA 3.2 – Principais aplicações do zinco .............................................................. 12 
+TABELA 3.3 – Composição química do concentrado ustulado de zinco utilizado por 
+Balarini et al. (2008). ........................................................................... 16 
+TABELA 3.4 – Análise granuloquímica por espectrofotometria de absorção atômica do 
+concentrado ustulado utilizado por Balarini et al. (2008). ................... 16 
+TABELA 3.5 – Distribuição granulométrica do concentrado ustulado de zinco estudado 
+por Balarini et al. (2008). ..................................................................... 18 
+TABELA 3.6 – Principais processos para remoção do ferro do licor da lixiviação. ...... 32 
+TABELA 3.7 – Linearização dos principais modelos teóricos da cinética heterogênea 
+não-catalítica. ....................................................................................... 42 
+TABELA 3.8 – Evidências mais consistentes com cada um dos três mecanismos mais 
+comuns de lixiviação............................................................................ 43 
+TABELA 3.9 –Variáveis envolvidas nos ensaios de lixiviação e seus níveis. ............... 44 
+TABELA 3.10 – Parâmetros de Arrhenius calculados por Balarini (2009) ................... 49 
+TABELA 3.11 – Modelos utilizados na determinação da distribuição granulométrica. 64 
+TABELA 3.12 – Parâmetros K e β em função da etapa controladora do processo ........ 73 
+TABELA 4.1 – Condições operacionais utilizadas nos ensaios de lixiviação descontínuos 
+em bancada......................................................................................... 102 
+TABELA 4.2 – Variáveis e níveis investigados na determinação da DTR na Planta Piloto 
+de Lixiviação. ..................................................................................... 109 
+TABELA 5.1 – Densidade do concentrado ustulado de zinco ..................................... 125 
+TABELA 5.2 – Elementos químicos detectados na análise por Espectroscopia de 
+Fluorescência de Raios X da amostra do concentrado ustulado de zinco.
+............................................................................................................ 125 
+TABELA 5.3 – Composição química do concentrado ustulado de zinco determinada por 
+diferentes fontes. ................................................................................ 126 
+TABELA 5.4 – Fração mássica acumulada de partículas do concentrado ustulado de zinco 
+com diâmetro menor do que d#. ......................................................... 129 
+TABELA 5.5 – Linearização dos principais modelos de distribuição granulométrica. 130 
+--- Page 21 ---
+xx 
+ 
+   
+ 
+TABELA 5.6 - Parâmetros obtidos pelos ajustes lineares dos modelos GGS, RRB e 
+Sigmóide para a distribuição granulométrica do concentrado ustulado de 
+zinco. .................................................................................................. 130 
+TABELA 5.7 – Ajuste dos modelos de distribuição granulométrica aos dados 
+experimentais. .................................................................................... 131 
+TABELA 5.8 – Resultados dos ensaios de lixiviação em batelada com diferentes 
+velocidades de agitação...................................................................... 136 
+TABELA 5.9 – Parâmetros utilizados no equacionamento do balanço populacional para 
+a lixiviação do ustulado de zinco. ...................................................... 155 
+TABELA 5.10 – Verificação estatística do modelo proposto. Dados agrupados pela 
+concentração inicial de ácido utilizada em cada série de testes. ........ 158 
+TABELA 5.11 – Comparação entre diferentes traçadores e métodos de medição. ...... 161 
+TABELA 5.12 – Resultados obtidos nos ensaios de determinação da DTR para um reator 
+da planta piloto de lixiviação. ............................................................ 164 
+TABELA 5.13 – Resultados obtidos nos ensaios de determinação da DTR para as três 
+configurações dos reatores da planta piloto de lixiviação. ................ 171 
+TABELA 5.14 – Resultados dos ensaios de lixiviação descontínuos no reator da planta 
+piloto sob diferentes velocidades de agitação .................................... 172 
+TABELA 5.15 – Conversão de zinco ( XZn) em cada reator obtidas na planta piloto e 
+calculadas pelos modelos. .................................................................. 177 
+TABELA 5.16 - Concentração final de agente lixiviante (CAf ) em cada reator obtidas na 
+planta piloto e calculadas pelos modelos. .......................................... 177 
+TABELA A3.1 – Métodos empregados na análise granulométrica. ............................ 208 
+TABELA A3.2 – Série de peneiras Tyler com as respectivas aberturas em milímetros
+............................................................................................................ 209 
+ 
+  
+--- Page 22 ---
+xxi 
+ 
+   
+ 
+LISTA DE NOTAÇÕES 
+ 
+[i] Concentração da espécie i 
+a Coeficiente estequiométrico do reagente fluido A 
+A Reagente fluido 
+b Coeficiente estequiométrico do reagente sólido B 
+B Reagente sólido 
+𝐁̅ Taxa média de surgimento de partículas 
+C Concentração 
+CA0 Concentração inicial do agente lixiviante (ácido sulfúrico) 
+CAf Concentração do agente lixiviante (ácido sulfúrico) no licor 
+CFe,f Concentração de ferro no licor 
+CZN,,f Concentração de zinco no licor 
+CV Coeficiente de variação 
+D Diâmetro das partículas 
+D63,2 Tamanho da abertura das peneiras no qual 63,2% do material possui um 
+diâmetro menor do que o valor de D63,2.  
+𝐃̅ Taxa média de desaparecimento de partículas 
+Df Coeficiente de difusão da espécie aquosa lixiviada na camada de fluido 
+DRX Difração de raios X 
+DTR Distribuição de tempos de residência 
+E(t) Função distribuição do tempo de residência  
+Ea Energia de ativação 
+EDS Espectroscopia por dispersão de energia 
+EEA Espectrofotometria de absorção atômica  
+F(t) Função cumulativa da distribuição do tempo de residência  
+F*(t) Função cumulativa complementar da distribuição do tempo de residência  
+FRX Fluorescência de raios X 
+ks Constante de velocidade da reação 
+M Massa das partículas 
+mBO Massa inicial de concentrado ustulado de zinco adicionado ao reator 
+𝐦̇ 𝐁𝟎 Taxa mássica de alimentação de concentrado ustulado de zinco  
+--- Page 23 ---
+xxii 
+ 
+   
+ 
+MEV Microscopia eletrônica de varredura 
+mi Massa da espécie i 
+MMi Massa molar da espécie i 
+N Número de reatores do modelo dos tanques-em-série 
+nA0 Número de mols inicial do agente lixiviante (ácido sulfúrico) 
+𝐧̇ 𝐀𝟎 Vazão molar de alimentação de agente lixiviante 
+nB0 Número de mols inicial da espécie metálica a ser extraída 
+𝐧̇ 𝐁𝟎 Vazão molar de alimentação do reagente sólido 
+NL Número de lixiviação 
+pH0 Valor inicial do pH 
+pHf Valor final do pH 
+Q Vazão volumétrica 
+QE Vazão volumétrica de alimentação (fluxo de entrada) 
+QS Vazão volumétrica de descarga da polpa (fluxo de saída) 
+R Raio da partícula sólida 
+Rc Raio do núcleo não reagido 
+ri Taxa de geração da espécie i por unidade de volume do reator 
+S/L Sólido/líquido 
+t Tempo 
+Ti Fração da espécie i 
+V Volume do reator 
+υ(D) Taxa de variação do tamanho da partícula em função do tempo (υ(D)= dD/dt) 
+Xi Conversão (fracional) ou extração de determinada espécie 
+Xbatelada Conversão obtida pelo balanço populacional para processo em batelada 
+ 
+Letras gregas: 
+ 
+α Parâmetro ajustável 
+µ Média 
+δ Função delta de Dirac 
+η Razão molar entre o número de mols inicial do agente lixiviante e o número de mols 
+inicial da espécie a ser extraída 
+--- Page 24 ---
+xxiii 
+ 
+   
+ 
+ηexp Razão molar experimental 
+Θ Tempo adimensional 
+ρs  Densidade molar do sólido 
+σ Desvio padrão 
+τ Tempo de residência (tempo espacial) ou tempo para conversão total de uma partícula 
+υj Taxa de mudança da propriedade ζj das partículas ou velocidade da propriedade ζj 
+ψ Função densidade populacional ou função densidade de população 
+ 
+Subscritos: 
+E Entrada 
+S Saída 
+ 
+  
+--- Page 25 ---
+xxiv 
+ 
+   
+ 
+RESUMO 
+ 
+No presente trabalho, foi desenvolvido um modelo matemático utilizando o 
+equacionamento do Balanço Populacional (BP) para a  lixiviação, em batelada e contínua, 
+de um concentrado ustulado de zinco em soluções de ácido sulfúrico, dado que nenhum 
+trabalho anterior havia validado com dados experimentais um modelo de Balanço 
+Populacional para esse sistema. Inicialmente, a composição química e mineralógica do 
+concentrado ustulado foi determinada e indicou a predominância de zinco (65%m/m), 
+majoritariamente na forma de zincita (ZnO). Outros minerais, como a ferrita de zinco 
+(ZnFe2O4), esfalerita (ZnS) e willemita (Zn2SiO4), também estão presentes nesse material. 
+Em seguida, foram realizados experimentos de lixiviação em bancada para validar e refinar 
+o modelo proposto. A partir dos resultados obtidos, foi observado que a concentração 
+inicial de ácido afetou mais a taxa ini cial de lixiviação,  do que a conversão máxima de 
+zinco obtida. Essa foi determinada pela razão mol ar entre o ácido sulfúrico e a zincita  
+presente no concentrado ustulado, carregados no reator. Comparando-se os resultados do 
+modelo, com os dados experimenta is de bancada, foi observada uma excelente 
+correspondência entre os mesmos, o que permitiu realizar a próxima etapa do trabalho, a 
+modelagem da lixiviação contínua. Para tanto, duas abordagens foram consideradas para o 
+modelamento dos padrões de escoamento nos reatores, a do fluxo segregado e a da mistura 
+perfeita. Para a primeira abordagem, determinou -se a Distribuição de Tempos de 
+Residência (DTR) dos reatores da planta piloto de lixiviação, utilizando -se experimentos 
+do tipo degrau positivo para diferent es velocidades de agitação, vazões de alimentação e 
+configurações (1 reator, 2 reatores em série e 3 reatores em série). Foi constatado que o 
+comportamento do sistema se aproxima do comportamento de reatores ideais (reator 
+perfeitamente agitado). Esse comp ortamento era favorecido por maiores velocidades de 
+agitação e menores vazões de alimentação. Em seguida, foram realizados ensaios de 
+lixiviação contínuos na planta piloto, sendo os resultados obtidos comparados com os 
+dados gerados pelo modelo. Constatou -se que a abordagem da mistura perfeita é a mais 
+indicada para representar o padrão de escoamento dos reatores, sendo os resultados do 
+modelo bastante próximos dos obtidos experimentalmente. Utilizando análises estatísticas, 
+foi possível comprovar a acuráci a do modelo proposto e validá -lo, uma vez que esse foi 
+capaz de reproduzir os principais fenômenos que ocorrem durante a lixiviação em questão. 

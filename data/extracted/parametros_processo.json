@@ -1,0 +1,98 @@
+{
+  "fonte_bibliografica": {
+    "tese_mestrado": {
+      "autor": "Fabrício Eduardo Bortot Coelho",
+      "titulo": "Desenvolvimento e Validação de um Modelo de Balanço Populacional para a Lixiviação de um Concentrado Ustulado de Zinco em Bancada e em Escala Piloto",
+      "ano": 2017,
+      "instituicao": "Universidade Federal de Minas Gerais (UFMG)"
+    },
+    "artigo_cinetica": {
+      "autores": "Julio Cezar Balarini, Estêvão Magno Rodrigues Araújo, Fabrício Eduardo Bortot Coelho, Ludmila de Oliveira Polli, Cibele Konzen, Tânia Lúcia Santos Miranda, Adriane Salum",
+      "titulo": "Leaching kinetics of roasted zinc concentrate in sulphuric acid solutions",
+      "revista": "Revista Observatorio de la Economía Latinoamericana",
+      "ano": 2025,
+      "doi": "10.55905/oelv23n11-188"
+    }
+  },
+  "propriedades_calcina": {
+    "origem": "Nexa Resources / Votorantim Metais - Unidade de Três Marias (MG)",
+    "composicao_quimica_elementar_massa_pct": {
+      "Zn": 65.0,
+      "Fe": 4.7,
+      "Pb": 2.3,
+      "Ca": 1.4,
+      "Cu": 0.4,
+      "Cd": 0.4,
+      "Mn": 0.2,
+      "S": 0.5,
+      "outros": 25.1
+    },
+    "composicao_mineralogica_massa_pct": {
+      "zincita_ZnO": 76.1,
+      "ferrita_zinco_ZnFe2O4": 10.2,
+      "esfalerita_ZnS": 1.5,
+      "pirita_FeS2": 0.8,
+      "anglesita_PbSO4": 2.0,
+      "silicatos_ganga": 9.4
+    },
+    "distribuicao_zinco_nas_fases": {
+      "fracao_zinco_zincita_soluvel_f_ZnO": 0.87,
+      "fracao_zinco_ferrita_refrataria": 0.13
+    },
+    "densidades": {
+      "densidade_molar_solido_rho_s_mol_L": 69.2,
+      "densidade_massica_calcina_kg_m3": 4400.0,
+      "densidade_zincita_ZnO_kg_m3": 5610.0,
+      "densidade_ferrita_ZnFe2O4_kg_m3": 5150.0
+    },
+    "massas_molares_g_mol": {
+      "Zn": 65.38,
+      "Fe": 55.845,
+      "O": 16.0,
+      "S": 32.065,
+      "H": 1.008,
+      "ZnO": 81.38,
+      "ZnFe2O4": 241.08,
+      "H2SO4": 98.08,
+      "ZnSO4": 161.47,
+      "Fe2_SO4_3": 399.88
+    },
+    "granulometria_rosin_rammler_bennett_RRB": {
+      "modelo_equacao": "f(D) = (m / D632) * (D / D632)^(m - 1) * exp(-(D / D632)^m)",
+      "expoente_m": 1.022,
+      "diametro_caracteristico_D632_um": 41.65,
+      "diametro_medio_dp_um": 41.28,
+      "coeficiente_variacao_CV": 0.97,
+      "pct_passante_abaixo_38_um": 60.0
+    }
+  },
+  "parametros_cineticos_reacao_quimica": {
+    "mecanismo_controlador": "Reação química superficial interfacial na zincita (ZnO)",
+    "constante_cinetica_ks": {
+      "valor_cm_s": 0.03,
+      "valor_um_min": 18000.0,
+      "valor_m_s": 0.0003
+    },
+    "energia_ativacao_aparente_Ea_kJ_mol": 13.45,
+    "entalpia_ativacao_delta_H_kJ_mol": 11.07,
+    "entropia_ativacao_delta_S_J_mol_K": -256.2,
+    "ordem_reacao_acido_n": 1.0,
+    "agitacao_minima_sem_resistencia_filme_rpm": 840.0
+  },
+  "condicoes_padrao_experimentos": {
+    "bancada": {
+      "volume_solucao_L": 0.4,
+      "temperatura_C": 40.0,
+      "temperatura_K": 313.15,
+      "velocidade_agitacao_rpm": 1000.0
+    },
+    "planta_piloto": {
+      "numero_reatores_CSTR": 3,
+      "volume_cada_reator_L": 18.0,
+      "temperatura_C": 40.0,
+      "velocidade_agitacao_rpm": 500.0,
+      "concentracao_inicial_acido_mol_L": 0.5,
+      "razao_molar_eta": 1.0
+    }
+  }
+}

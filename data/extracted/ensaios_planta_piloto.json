@@ -1,0 +1,382 @@
+{
+  "descricao": "Dados de lixiviação contínua em Planta Piloto com 3 CSTRs em série (Tabelas A1.6 e A1.7 de Fabrício Bortot Coelho, 2017)",
+  "configuracao": {
+    "numero_reatores_serie": 3,
+    "volume_individual_reator_L": 18.0,
+    "volume_total_sistema_L": 54.0,
+    "temperatura_C": 40.0,
+    "agitacao_rpm": 500.0,
+    "concentracao_inicial_acido_CA0_mol_L": 0.5,
+    "razao_molar_eta": 1.0
+  },
+  "ensaio_vazao_0_41_L_min": {
+    "vazao_alimentacao_L_min": 0.41,
+    "tempo_residencia_individual_tau_min": 43.9,
+    "tempo_residencia_total_min": 131.71,
+    "medicoes": [
+      {
+        "tempo_min": 45,
+        "X_zn": {
+          "reator_1": 0.611,
+          "reator_2": 0.636,
+          "reator_3": 0.716
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.204,
+          "reator_2": 0.191,
+          "reator_3": 0.149
+        },
+        "X_fe": {
+          "reator_1": 0.04,
+          "reator_2": 0.049,
+          "reator_3": 0.051
+        }
+      },
+      {
+        "tempo_min": 65,
+        "X_zn": {
+          "reator_1": 0.722,
+          "reator_2": 0.757,
+          "reator_3": 0.787
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.146,
+          "reator_2": 0.128,
+          "reator_3": 0.112
+        },
+        "X_fe": {
+          "reator_1": 0.043,
+          "reator_2": 0.052,
+          "reator_3": 0.054
+        }
+      },
+      {
+        "tempo_min": 85,
+        "X_zn": {
+          "reator_1": 0.776,
+          "reator_2": 0.813,
+          "reator_3": 0.822
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.118,
+          "reator_2": 0.098,
+          "reator_3": 0.093
+        },
+        "X_fe": {
+          "reator_1": 0.048,
+          "reator_2": 0.056,
+          "reator_3": 0.057
+        }
+      },
+      {
+        "tempo_min": 105,
+        "X_zn": {
+          "reator_1": 0.78,
+          "reator_2": 0.822,
+          "reator_3": 0.849
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.116,
+          "reator_2": 0.093,
+          "reator_3": 0.079
+        },
+        "X_fe": {
+          "reator_1": 0.05,
+          "reator_2": 0.056,
+          "reator_3": 0.059
+        }
+      },
+      {
+        "tempo_min": 120,
+        "X_zn": {
+          "reator_1": 0.776,
+          "reator_2": 0.838,
+          "reator_3": 0.86
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.118,
+          "reator_2": 0.085,
+          "reator_3": 0.074
+        },
+        "X_fe": {
+          "reator_1": 0.053,
+          "reator_2": 0.056,
+          "reator_3": 0.06
+        }
+      },
+      {
+        "tempo_min": 130,
+        "X_zn": {
+          "reator_1": 0.782,
+          "reator_2": 0.836,
+          "reator_3": 0.861
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.114,
+          "reator_2": 0.086,
+          "reator_3": 0.073
+        },
+        "X_fe": {
+          "reator_1": 0.052,
+          "reator_2": 0.059,
+          "reator_3": 0.06
+        }
+      },
+      {
+        "tempo_min": 140,
+        "X_zn": {
+          "reator_1": 0.779,
+          "reator_2": 0.835,
+          "reator_3": 0.86
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.116,
+          "reator_2": 0.087,
+          "reator_3": 0.074
+        },
+        "X_fe": {
+          "reator_1": 0.055,
+          "reator_2": 0.062,
+          "reator_3": 0.061
+        }
+      },
+      {
+        "tempo_min": 150,
+        "X_zn": {
+          "reator_1": 0.782,
+          "reator_2": 0.835,
+          "reator_3": 0.857
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.114,
+          "reator_2": 0.087,
+          "reator_3": 0.075
+        },
+        "X_fe": {
+          "reator_1": 0.057,
+          "reator_2": 0.062,
+          "reator_3": 0.062
+        }
+      }
+    ],
+    "estado_estacionario_final": {
+      "X_zn_reator_1": 0.782,
+      "X_zn_reator_2": 0.835,
+      "X_zn_reator_3": 0.857,
+      "CAf_final_reator_3_mol_L": 0.075,
+      "X_fe_final_reator_3": 0.062
+    }
+  },
+  "ensaio_vazao_0_21_L_min": {
+    "vazao_alimentacao_L_min": 0.21,
+    "tempo_residencia_individual_tau_min": 85.71,
+    "tempo_residencia_total_min": 257.14,
+    "medicoes": [
+      {
+        "tempo_min": 90,
+        "X_zn": {
+          "reator_1": 0.709,
+          "reator_2": 0.679,
+          "reator_3": 0.71
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.153,
+          "reator_2": 0.169,
+          "reator_3": 0.152
+        },
+        "X_fe": {
+          "reator_1": 0.053,
+          "reator_2": 0.051,
+          "reator_3": 0.053
+        }
+      },
+      {
+        "tempo_min": 110,
+        "X_zn": {
+          "reator_1": 0.729,
+          "reator_2": 0.703,
+          "reator_3": 0.725
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.143,
+          "reator_2": 0.156,
+          "reator_3": 0.144
+        },
+        "X_fe": {
+          "reator_1": 0.054,
+          "reator_2": 0.053,
+          "reator_3": 0.054
+        }
+      },
+      {
+        "tempo_min": 130,
+        "X_zn": {
+          "reator_1": 0.736,
+          "reator_2": 0.715,
+          "reator_3": 0.753
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.138,
+          "reator_2": 0.15,
+          "reator_3": 0.129
+        },
+        "X_fe": {
+          "reator_1": 0.055,
+          "reator_2": 0.054,
+          "reator_3": 0.057
+        }
+      },
+      {
+        "tempo_min": 160,
+        "X_zn": {
+          "reator_1": 0.746,
+          "reator_2": 0.738,
+          "reator_3": 0.772
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.133,
+          "reator_2": 0.137,
+          "reator_3": 0.12
+        },
+        "X_fe": {
+          "reator_1": 0.056,
+          "reator_2": 0.056,
+          "reator_3": 0.058
+        }
+      },
+      {
+        "tempo_min": 190,
+        "X_zn": {
+          "reator_1": 0.788,
+          "reator_2": 0.785,
+          "reator_3": 0.835
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.111,
+          "reator_2": 0.113,
+          "reator_3": 0.087
+        },
+        "X_fe": {
+          "reator_1": 0.059,
+          "reator_2": 0.059,
+          "reator_3": 0.063
+        }
+      },
+      {
+        "tempo_min": 210,
+        "X_zn": {
+          "reator_1": 0.803,
+          "reator_2": 0.816,
+          "reator_3": 0.857
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.103,
+          "reator_2": 0.096,
+          "reator_3": 0.075
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.061,
+          "reator_3": 0.064
+        }
+      },
+      {
+        "tempo_min": 230,
+        "X_zn": {
+          "reator_1": 0.807,
+          "reator_2": 0.838,
+          "reator_3": 0.856
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.102,
+          "reator_2": 0.085,
+          "reator_3": 0.076
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.063,
+          "reator_3": 0.064
+        }
+      },
+      {
+        "tempo_min": 250,
+        "X_zn": {
+          "reator_1": 0.805,
+          "reator_2": 0.842,
+          "reator_3": 0.856
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.102,
+          "reator_2": 0.083,
+          "reator_3": 0.075
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.063,
+          "reator_3": 0.064
+        }
+      },
+      {
+        "tempo_min": 280,
+        "X_zn": {
+          "reator_1": 0.806,
+          "reator_2": 0.844,
+          "reator_3": 0.856
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.102,
+          "reator_2": 0.082,
+          "reator_3": 0.075
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.063,
+          "reator_3": 0.064
+        }
+      },
+      {
+        "tempo_min": 290,
+        "X_zn": {
+          "reator_1": 0.809,
+          "reator_2": 0.848,
+          "reator_3": 0.859
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.1,
+          "reator_2": 0.08,
+          "reator_3": 0.074
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.064,
+          "reator_3": 0.065
+        }
+      },
+      {
+        "tempo_min": 300,
+        "X_zn": {
+          "reator_1": 0.808,
+          "reator_2": 0.849,
+          "reator_3": 0.862
+        },
+        "CAf_mol_L": {
+          "reator_1": 0.101,
+          "reator_2": 0.079,
+          "reator_3": 0.073
+        },
+        "X_fe": {
+          "reator_1": 0.06,
+          "reator_2": 0.064,
+          "reator_3": 0.065
+        }
+      }
+    ],
+    "estado_estacionario_final": {
+      "X_zn_reator_1": 0.808,
+      "X_zn_reator_2": 0.849,
+      "X_zn_reator_3": 0.862,
+      "CAf_final_reator_3_mol_L": 0.073,
+      "X_fe_final_reator_3": 0.065
+    }
+  }
+}
