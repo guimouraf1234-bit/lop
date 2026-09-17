@@ -6,7 +6,7 @@ O módulo `diagnostico_residuo.py` realiza a ponte quantitativa entre o **Modelo
 Ele executa a simulação do Balanço Populacional (`population_balance.py`) para todos os 16 ensaios de bancada da tese de Bortot Coelho (2017), compara com os 128 pontos experimentais reais e calcula o **Resíduo Físico ($\Delta X$)**:
 $$\Delta X = X_{\text{experimental}} - X_{\text{PBM}}$$
 
-Ao final, gera e salva o arquivo de dados consolidado `scripts/dados_com_residuo.csv`, que serve como conjunto de dados de entrada para o treinamento do modelo híbrido (*Grey-Box*).
+Ao final, gera e salva o arquivo de dados consolidado `data/processed/dados_com_residuo.csv`, que serve como conjunto de dados de entrada para o treinamento do modelo híbrido (*Grey-Box*).
 
 ---
 
@@ -46,7 +46,7 @@ A avaliação estatística dos 128 pontos de bancada confirma a alta precisão d
 3. Adiciona as colunas:
    * `X_pbm`: Conversão teórica mecanicista calculada.
    * `delta_X`: Resíduo ($X_{\text{exp}} - X_{\text{pbm}}$).
-4. Exporta para `scripts/dados_com_residuo.csv`.
+4. Exporta para `data/processed/dados_com_residuo.csv`.
 
 ---
 
@@ -74,6 +74,6 @@ Execute no terminal:
 ```
 *Saída:*
 ```text
-Resíduos calculados e salvos com sucesso!
+Resíduos calculados e salvos com sucesso em: ...\data\processed\dados_com_residuo.csv
 ```
-O arquivo `scripts/dados_com_residuo.csv` estará pronto para alimentar o **Modelo Híbrido Grey-Box**!
+O arquivo `data/processed/dados_com_residuo.csv` estará pronto para alimentar o **Modelo Híbrido Grey-Box**!

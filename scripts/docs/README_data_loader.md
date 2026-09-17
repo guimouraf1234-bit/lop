@@ -28,18 +28,25 @@ O módulo consome arquivos JSON padronizados localizados no diretório `data/ext
 3. **`ensaios_planta_piloto.json`:**
    * Dados contínuos da cascata de 3 reatores CSTR em série ($18\text{ L}$ cada) sob vazões de $0{,}41\text{ L/min}$ e $0{,}21\text{ L/min}$ (Tabelas A1.6 e A1.7).
 
+Além disso, gerencia o acesso aos dados pré-calculados/processados em `data/processed/`:
+4. **`dados_com_residuo.csv`:**
+   * Dataset de 128 pontos contendo as variáveis de processo, a conversão física do PBM ($X_{\text{PBM}}$), a concentração ácida remanescente ($C_{A,\text{PBM}}$) e o resíduo experimental ($\Delta X$).
+
 ---
 
 ## 3. Funções Disponíveis
 
 ### `obter_caminhos() -> dict`
-Descobre dinamicamente a localização absoluta dos arquivos JSON a partir da posição do script, evitando erros de caminho relativo em diferentes sistemas operacionais.
+Descobre dinamicamente a localização absoluta dos diretórios e arquivos em `data/extracted/` e `data/processed/` a partir da posição do script, evitando erros de caminho relativo em diferentes sistemas operacionais.
 
 ### `carregar_dados_bancada() -> pd.DataFrame`
 Carrega os 16 ensaios de bancada e retorna um `pd.DataFrame` contendo 128 linhas e 16 colunas com todos os atributos operacionais e respostas analíticas.
 
 ### `carregar_parametros() -> dict`
 Retorna um dicionário hierárquico com todas as propriedades termodinâmicas, granulométricas e cinéticas da calcina de zinco e da solução lixiviante.
+
+### `carregar_dados_com_residuo() -> Optional[pd.DataFrame]`
+Carrega o conjunto consolidado de dados processados com resíduos (`data/processed/dados_com_residuo.csv`) para uso direto no treinamento e validação do modelo híbrido (*Grey-Box*).
 
 ---
 

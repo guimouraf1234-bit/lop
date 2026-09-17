@@ -1,3 +1,11 @@
-teste/
+# Ambiente virtual e configuracoes de IDE
 .venv/
 .vscode/
+
+# Pasta de testes/prototipos locais
+teste/
+
+# Bytecode e cache do Python
+__pycache__/
+*.py[cod]
+*$py.class

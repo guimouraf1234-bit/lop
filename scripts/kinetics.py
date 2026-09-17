@@ -1,8 +1,3 @@
-"""
-Módulo de Cinética Química Heterogênea e Fenômenos de Transporte
-Equacionamento baseado em Balarini et al. (2025) e Bortot Coelho (2017)
-"""
-
 import numpy as np
 
 # Constante universal dos gases [J/(mol*K)]

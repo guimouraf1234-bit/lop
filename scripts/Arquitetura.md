@@ -6,9 +6,9 @@
 **Data:** Setembro de 2026  
 
 ---
-## 1. Status Atual: O Modelo White-Box Concluído
+## 1. Status Atual
 
-Desenvolvemos uma estrutura modular em Python que reproduz rigorosamente as equações de conservação e balanço populacional:
+Desenvolvemos uma estrutura modular em Python que reproduz as equações de conservação e balanço populacional:
 
 ```
 scripts/
@@ -24,9 +24,75 @@ scripts/
 * **$MAE$ (Erro Médio Absoluto):** **$0{,}0507$** ($5{,}07\%$).
 * **Consistência Física:** $100\%$ das restrições atendidas ($0 \le X \le 1$ e esgotamento estequiométrico quando $\eta < 1{,}0$).
 
+### 1.1 Tabela de Conversões Experimentais ($X_{\text{Zn}}^{\text{exp}}$)
+*(Dados reais das Tabelas A1.1 e A1.4 da dissertação de Fabrício Bortot Coelho, 2017)*
+
+| Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **1** | 0,5 | 0,1 | 0,00 | 0,42 | 0,46 | 0,46 | 0,49 | 0,51 | 0,49 | 0,50 |
+| **2** | 3,1 | 0,1 | 0,00 | 0,82 | 0,90 | 0,95 | 0,97 | 0,97 | 0,99 | 1,00 |
+| **3** | 0,5 | 0,5 | 0,00 | 0,45 | 0,48 | 0,49 | 0,52 | 0,50 | 0,49 | 0,50 |
+| **4** | 0,5 | 1,0 | 0,00 | 0,50 | 0,47 | 0,51 | 0,47 | 0,53 | 0,51 | 0,50 |
+| **5** | 0,5 | 1,5 | 0,00 | 0,49 | 0,49 | 0,47 | 0,49 | 0,49 | 0,47 | 0,49 |
+| **6** | 1,0 | 0,1 | 0,00 | 0,75 | 0,78 | 0,80 | 0,85 | 0,87 | 0,85 | 0,87 |
+| **7** | 3,1 | 0,5 | 0,00 | 0,88 | 0,93 | 0,98 | 0,99 | 1,00 | 0,99 | 1,01 |
+| **8** | 1,0 | 0,5 | 0,00 | 0,83 | 0,82 | 0,85 | 0,86 | 0,87 | 0,86 | 0,87 |
+| **9** | 1,0 | 1,0 | 0,00 | 0,83 | 0,84 | 0,85 | 0,85 | 0,83 | 0,84 | 0,85 |
+| **10** | 1,0 | 1,5 | 0,00 | 0,84 | 0,83 | 0,83 | 0,83 | 0,83 | 0,84 | 0,85 |
+| **11** | 1,5 | 0,1 | 0,00 | 0,86 | 0,85 | 0,88 | 0,97 | 0,94 | 0,96 | 0,98 |
+| **12** | 3,1 | 1,0 | 0,00 | 0,96 | 1,00 | 1,00 | 0,99 | 0,99 | 0,99 | 1,00 |
+| **13** | 1,5 | 0,5 | 0,00 | 0,92 | 0,92 | 0,95 | 0,95 | 0,95 | 0,95 | 0,97 |
+| **14** | 1,5 | 1,0 | 0,00 | 0,91 | 0,96 | 0,95 | 0,97 | 0,95 | 0,98 | 0,97 |
+| **15** | 1,5 | 1,5 | 0,00 | 0,91 | 0,94 | 0,95 | 0,94 | 0,96 | 0,96 | 0,97 |
+| **16** | 3,1 | 1,5 | 0,00 | 0,98 | 0,98 | 0,96 | 0,99 | 0,99 | 1,00 | 1,00 |
+
+### 1.2 Tabela de Conversões do Modelo White-Box Puro ($X_{\text{PBM}}$)
+*(Predições mecanicistas obtidas via Balanço Populacional analítico com $\alpha = 0$)*
+
+| Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **1** | 0,5 | 0,1 | 0,00 | 0,32 | 0,42 | 0,48 | 0,50 | 0,50 | 0,50 | 0,50 |
+| **2** | 3,1 | 0,1 | 0,00 | 0,45 | 0,68 | 0,88 | 0,95 | 0,98 | 0,99 | 1,00 |
+| **3** | 0,5 | 0,5 | 0,00 | 0,49 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 |
+| **4** | 0,5 | 1,0 | 0,00 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 |
+| **5** | 0,5 | 1,5 | 0,00 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 | 0,50 |
+| **6** | 1,0 | 0,1 | 0,00 | 0,39 | 0,57 | 0,72 | 0,80 | 0,84 | 0,87 | 0,95 |
+| **7** | 3,1 | 0,5 | 0,00 | 0,92 | 0,99 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+| **8** | 1,0 | 0,5 | 0,00 | 0,77 | 0,87 | 0,93 | 0,95 | 0,96 | 0,97 | 0,99 |
+| **9** | 1,0 | 1,0 | 0,00 | 0,87 | 0,93 | 0,96 | 0,98 | 0,98 | 0,99 | 1,00 |
+| **10** | 1,0 | 1,5 | 0,00 | 0,91 | 0,95 | 0,98 | 0,98 | 0,99 | 0,99 | 1,00 |
+| **11** | 1,5 | 0,1 | 0,00 | 0,42 | 0,62 | 0,81 | 0,89 | 0,93 | 0,96 | 1,00 |
+| **12** | 3,1 | 1,0 | 0,00 | 0,99 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+| **13** | 1,5 | 0,5 | 0,00 | 0,86 | 0,96 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+| **14** | 1,5 | 1,0 | 0,00 | 0,96 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+| **15** | 1,5 | 1,5 | 0,00 | 0,99 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+| **16** | 3,1 | 1,5 | 0,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
+
+### 1.3 Tabela de Resíduos Sistemáticos ($\Delta X = X_{\text{Zn}}^{\text{exp}} - X_{\text{PBM}}$)
+*(O sinal de correção físico-química que o Machine Learning aprende no Grey-Box)*
+
+| Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **1** | 0,5 | 0,1 | 0,00 | +0,10 | +0,04 | -0,02 | -0,01 | +0,01 | -0,01 | -0,00 |
+| **2** | 3,1 | 0,1 | 0,00 | +0,37 | +0,22 | +0,07 | +0,02 | -0,01 | -0,00 | +0,00 |
+| **3** | 0,5 | 0,5 | 0,00 | -0,04 | -0,02 | -0,01 | +0,02 | -0,00 | -0,01 | -0,00 |
+| **4** | 0,5 | 1,0 | 0,00 | +0,00 | -0,03 | +0,01 | -0,03 | +0,03 | +0,01 | -0,00 |
+| **5** | 0,5 | 1,5 | 0,00 | -0,01 | -0,01 | -0,03 | -0,01 | -0,01 | -0,03 | -0,01 |
+| **6** | 1,0 | 0,1 | 0,00 | +0,36 | +0,21 | +0,08 | +0,05 | +0,03 | -0,02 | -0,08 |
+| **7** | 3,1 | 0,5 | 0,00 | -0,04 | -0,06 | -0,02 | -0,01 | +0,00 | -0,01 | +0,01 |
+| **8** | 1,0 | 0,5 | 0,00 | +0,06 | -0,05 | -0,08 | -0,09 | -0,09 | -0,11 | -0,12 |
+| **9** | 1,0 | 1,0 | 0,00 | -0,04 | -0,09 | -0,11 | -0,13 | -0,15 | -0,15 | -0,15 |
+| **10** | 1,0 | 1,5 | 0,00 | -0,07 | -0,12 | -0,15 | -0,15 | -0,16 | -0,15 | -0,15 |
+| **11** | 1,5 | 0,1 | 0,00 | +0,44 | +0,23 | +0,07 | +0,08 | +0,01 | +0,00 | -0,02 |
+| **12** | 3,1 | 1,0 | 0,00 | -0,03 | +0,00 | +0,00 | -0,01 | -0,01 | -0,01 | +0,00 |
+| **13** | 1,5 | 0,5 | 0,00 | +0,06 | -0,04 | -0,05 | -0,05 | -0,05 | -0,05 | -0,03 |
+| **14** | 1,5 | 1,0 | 0,00 | -0,05 | -0,04 | -0,05 | -0,03 | -0,05 | -0,02 | -0,03 |
+| **15** | 1,5 | 1,5 | 0,00 | -0,08 | -0,06 | -0,05 | -0,06 | -0,04 | -0,04 | -0,03 |
+| **16** | 3,1 | 1,5 | 0,00 | -0,02 | -0,02 | -0,04 | -0,01 | -0,01 | +0,00 | +0,00 |
+
 ---
 
-## 2. A Motivação: Por que o Grey-Box?
+## 2. Justificativa
 
 Na sua dissertação de 2017, para representar a desaceleração da lixiviação, foi introduzido um termo empírico na velocidade de dissolução:
 $$v(t) = \frac{2}{\rho_s} \big[ k_s C_{Af}(t) - \alpha (C_{A0} - C_{Af}(t)) \big]$$
@@ -34,17 +100,17 @@ com o ajuste de $\alpha = 5500\ \mu\text{m/min}$.
 
 ### A Lacuna Identificada:
 Esse parâmetro $\alpha$ concentra de forma estática fenômenos complexos que variam dinamicamente ao longo da reação:
-1. **Efeito de Íon Comum:** O acúmulo de $\text{Zn}^{2+}$ e sulfatos reduz a atividade termodinâmica do ácido livre.
+1. **Efeito de Íon Comum:** O acúmulo de $\text{Zn}^{2+}$ e sulfatos reduz a ação do ácido livre.
 2. **Passivação Difusional por Sílica:** Formação de gel de sílica amorfa que recobre os poros das partículas.
-3. **Morfologia dos Finos:** Partículas ultrafinas com cantos vivos dissolvem-se muito mais rápido nos primeiros 60 segundos do que esferas lisas ideais.
+3. **Morfologia dos Finos:** Partículas ultrafinas com cantos vivos (geometria não-esférica) dissolvem-se mais rápido nos primeiros 60 segundos do que esferas lisas.
 
 ### A Proposta do Nosso TCC:
-Em vez de depender de um parâmetro de ajuste empírico fixo ($\alpha$), **vamos manter o modelo White-Box com $\alpha = 0$** e utilizar a técnica de **Modelagem Híbrida Grey-Box em Paralelo**, onde o Machine Learning aprende dinamicamente o comportamento físico-químico do resíduo:
+Em vez de depender de um parâmetro de ajuste empírico fixo ($\alpha$), **vamos manter o modelo White-Box com $\alpha = 0$** e utilizar a técnica de **Modelagem Híbrida Grey-Box em Paralelo**, onde o Machine Learning aprende dinamicamente o comportamento físico-químico do resíduo (desvios do modelo teórico) :
 $$\Delta X(t) = X_{\text{experimental}}(t) - X_{\text{PBM}}(t)$$
 
 ---
 
-## 3. Arquitetura da Solução Híbrida (Grey-Box)
+## 3. Arquitetura do Modelo Grey-Box
 
 Abaixo apresentamos o fluxo de informação da arquitetura proposta:
 
@@ -91,23 +157,8 @@ Em uma abordagem híbrida de ponta (*Physics-Informed Neural Networks*), o model
 | **5** | **Ácido Livre Teórico** | $C_{Af,\text{teo}}$ | $\text{mol/L}$ | **White-Box** | Força-motriz ácida residual instantânea ($C_{A0}(1 - X_{\text{PBM}}/\eta)$); governa passivação e íon comum. |
 | **6** | **Esgotamento do Ácido** | $\frac{X_{\text{PBM}}}{\eta}$ | adim. ($0$ a $1$) | **White-Box** | Alerta a IA quando a reação está próxima de travar por falta estequiométrica de reagente. |
 
-```python
-# Construção da matriz de entrada X no código Python (modelo_hibrido.py):
-X = df[[
-    "tempo_min",              # 1. Tempo
-    "razao_molar_eta",        # 2. Razão estequiométrica
-    "C_acid_0_mol_L",         # 3. Concentração inicial de ácido
-    "X_pbm",                  # 4. Conversão de base do White-Box
-    "C_acid_teorico",         # 5. Ácido restante teórico
-    "termo_estequiometrico"   # 6. Fração de esgotamento X_pbm / eta
-]]
-
-# Alvo (Target) que o Machine Learning aprende a prever:
-y = df["delta_X"]             # Resíduo: X_exp - X_pbm
-```
-
 ### 3.3. O Papel do Acoplador 
-O acoplador não é uma simples soma matemática; ele atua como o **filtro de consistência termodinâmica e operacional** da planta:
+O acoplador não é uma simples soma matemática; ele atua como o **filtro de consistência termodinâmica e operacional** da planta, impedindo que incosistencias físicas ocorram:
 1. **Fusão estrutural:** Soma a base que carrega a física fundamental à correção fina aprendida pelo Machine Learning:
    $$X_{\text{raw}}(t) = X_{\text{PBM}}(t) + \widehat{\Delta X}_{\text{ML}}(\mathbf{z})$$
 2. **Garantia de não-alucinação e conservação de massa:** Algoritmos de ML podem extrapolar para valores irreais ($X < 0$ ou $X > 1$). O acoplador impede isso:
@@ -123,44 +174,28 @@ O acoplador não é uma simples soma matemática; ele atua como o **filtro de co
 
 O plano de execução está dividido em quatro etapas claras:
 
-### Etapa 1: Engenharia de atributos guiada pela física (Feature Engineering)
-Em vez de alimentar o modelo de ML com variáveis brutas e cegas, forneceremos variáveis que carregam a termodinâmica do sistema:
-* $X_{\text{PBM}}$ (a conversão teórica de base).
-* $C_{Af,\text{teórico}} = C_{A0}(1 - X_{\text{PBM}}/\eta)$ (força-motriz residual de ácido).
-* $X_{\text{PBM}}/\eta$ (fração de esgotamento estequiométrico).
-* $\Delta D_{\text{PBM}}(t)$ (retração linear acumulada do grão).
+### Etapa 1: Parâmetros utilizados
+Em vez de alimentar o modelo de ML com variáveis puramente estatísticas ou cegas, forneceremos os **6 atributos** definidos na Seção 3.2, combinando condições operacionais e variáveis de estado termodinâmicas calculadas pela física:
+1. **$t$ (Tempo de Lixiviação):** Localiza o estágio temporal da reação (fase inicial acelerada vs. patamar tardio).
+2. **$\eta$ (Razão Estequiométrica):** Indica o regime de operação (falta quando $\eta < 1$, equivalência quando $\eta = 1$, ou excesso quando $\eta > 1$).
+3. **$C_{A0}$ (Concentração Inicial de Ácido):** Define a acidez inicial e a força iônica da polpa.
+4. **$X_{\text{PBM}}(t)$ (Conversão White-Box):** Linha de base calculada pelo balanço populacional analítico.
+5. **$C_{Af,\text{teórico}}$ (Ácido Livre Residual):** Força-motriz ácida instantânea ($C_{A0}[1 - X_{\text{PBM}}/\eta]$) que governa passivação e íon comum.
+6. **$X_{\text{PBM}}/\eta$ (Fração de Esgotamento):** Alerta estequiométrico que indica quando a reação cessa por exaustão de reagente.
 
 ### Etapa 2: Treinamento e Seleção de Modelos
 Testaremos e compararemos três algoritmos clássicos de regressão para aprender $\Delta X$:
 1. **Random Forest Regressor:** Excelente para capturar não-linearidades e interações sem risco de divergência.
-2. **Multi-Layer Perceptron (MLP / Rede Neural Rasa):** Base para modelos híbridos contínuos e PINNs.
-3. **Support Vector Regression (SVR com kernel RBF):** Robusto para pequenos conjuntos de dados amostrais.
+2. **Multi-Layer Perceptron:** Base para modelos híbridos contínuos e PINNs.
+3. **Support Vector Regression:** Robusto para pequenos conjuntos de dados amostrais.
 
-### Etapa 3: Validação Cruzada Rigorosa (*Leave-One-Group-Out* -- LOGO-CV)
-Para garantir à banca que o modelo **generaliza para condições operacionais não vistas** e não decorou os dados:
-* O conjunto de 16 ensaios é dividido em 16 folds.
-* Em cada fold, o modelo treina em **15 ensaios** e é testado no **16º ensaio deixado de fora**.
-* Repete-se o processo 16 vezes, garantindo métricas de teste reais e sem vazamento de dados (*data leakage*).
+### Etapa 3: Validação Cruzada (Leave One Group Out)
+Para garantir que o modelo **generaliza para condições operacionais não vistas** e não decorou os dados:
+* O conjunto de 16 ensaios é dividido em 16 grupos.
+* Em cada grupo, o modelo treina nos **outros 15 grupos** e é testado no **1 grupo deixado de fora**.
+* Repete-se o processo 16 vezes, garantindo métricas de teste reais e sem vazamento de dados.
 
-### Etapa 4: Escalonamento e Validação na Planta Piloto Contínua (3 CSTRs)
-O modelo híbrido treinado na bancada será acoplado à **Distribuição de Tempos de Residência (DTR)** da Planta Piloto de 3 CSTRs em série ($18\text{ L}$ cada), comparando as predições com os dados reais de regime permanente das Tabelas A1.6 e A1.7 ($Q = 0{,}41\text{ L/min}$ e $0{,}21\text{ L/min}$).
-
----
-
-## 5. Resultados Preliminares do Benchmark (Bancada - 128 Pontos)
-
-Já realizamos o primeiro teste preliminar do modelo híbrido (*Random Forest*) e os resultados comprovam a superioridade da abordagem:
-
-| Métrica Estatística | PBM Puro ($\alpha = 0$) | Tese 2017 ($\alpha = 5500$) | **Híbrido (Ajuste)** | **Híbrido (LOGO-CV Teste)** |
-| :--- | :---: | :---: | :---: | :---: |
-| **Coeficiente de Determinação ($R^2$)** | **0,9253** | **0,8976** | **0,9979** | **0,9885** |
-| **Erro Médio Quadrático ($RMSE$)** | **0,0886** | **0,1037** | **0,0147** | **0,0347** |
-| **Erro Médio Absoluto ($MAE$)** | **0,0507** | **0,0708** | **0,0099** | **0,0236** |
-| **Violação de Restrições Físicas ($X < 0$ ou $X > 1$)** | **0,0%** | **0,0%** | **0,0%** | **0,0%** |
-
-* O erro médio cai de **$5{,}1\%$** na física pura para **$2{,}4\%$** na validação cruzada do modelo híbrido.
-* O modelo elimina o erro sistemático no início e no final das curvas de lixiviação.
+### Etapa 4: Escalonamento e Validação na Planta Piloto Contínua
+O modelo híbrido treinado na bancada será acoplado à **Distribuição de Tempos de Residência (DTR)** da Planta Piloto de 3 CSTRs em série ($18\text{ L}$ cada), comparando as predições com os dados reais de regime permanente ($Q = 0{,}41\text{ L/min}$ e $0{,}21\text{ L/min}$).
 
 ---
-
-
