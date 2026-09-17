@@ -37,3 +37,9 @@ def carregar_dados_com_residuo():
     if os.path.exists(caminho_legado):
         return pd.read_csv(caminho_legado)
     return None
+
+def carregar_dados_piloto():
+    caminhos = obter_caminhos()
+    with open(caminhos["piloto"], "r", encoding="utf-8") as arquivo:
+        dados_piloto = json.load(arquivo)
+    return dados_piloto

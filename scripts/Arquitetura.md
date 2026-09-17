@@ -1,6 +1,6 @@
 # Proposta de Arquitetura da Solução: Do Modelo White-Box ao Modelo Híbrido Grey-Box
 
-**Projeto de Conclusão de Curso (TCC) -- Engenharia Química -- UFMG**  
+**Laboratório de Operações e Processos -- Engenharia Química -- UFMG**  
 **Alunos:** Daniel Couto Vieira, Guilherme Moura de Sousa Franco, Matheus Henrique Borba Póvoas, Rodrigo Amaral da Mata  
 **Orientador:** Prof. Dr. Fabrício Eduardo Bortot Coelho  
 **Data:** Setembro de 2026  
@@ -8,7 +8,7 @@
 ---
 ## 1. Status Atual
 
-Desenvolvemos uma estrutura modular em Python que reproduz as equações de conservação e balanço populacional:
+Desenvolvemos uma estrutura em Python que reproduz as equações de conservação e balanço populacional:
 
 ```
 scripts/
@@ -22,10 +22,10 @@ scripts/
 * **$R^2$ Global (128 pontos):** **$0{,}9253$** (explica $92{,}5\%$ da variância experimental).
 * **$RMSE$ (Erro Médio Quadrático):** **$0{,}0886$** ($8{,}86\%$).
 * **$MAE$ (Erro Médio Absoluto):** **$0{,}0507$** ($5{,}07\%$).
-* **Consistência Física:** $100\%$ das restrições atendidas ($0 \le X \le 1$ e esgotamento estequiométrico quando $\eta < 1{,}0$).
+* **Consistência Física:** $100\%$ das restrições atendidas ($0 \le X \le 1$ e parada da lixiviação (estado estacionário) quando $\eta < 1{,}0$).
 
 ### 1.1 Tabela de Conversões Experimentais ($X_{\text{Zn}}^{\text{exp}}$)
-*(Dados reais das Tabelas A1.1 e A1.4 da dissertação de Fabrício Bortot Coelho, 2017)*
+*(Dados das Tabelas A1.1 e A1.4 da dissertação de Fabrício Bortot Coelho, 2017)*
 
 | Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -47,7 +47,7 @@ scripts/
 | **16** | 3,1 | 1,5 | 0,00 | 0,98 | 0,98 | 0,96 | 0,99 | 0,99 | 1,00 | 1,00 |
 
 ### 1.2 Tabela de Conversões do Modelo White-Box Puro ($X_{\text{PBM}}$)
-*(Predições mecanicistas obtidas via Balanço Populacional analítico com $\alpha = 0$)*
+*(Valores obtidos via Balanço Populacional com $\alpha = 0$)*
 
 | Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -69,7 +69,7 @@ scripts/
 | **16** | 3,1 | 1,5 | 0,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 | 1,00 |
 
 ### 1.3 Tabela de Resíduos Sistemáticos ($\Delta X = X_{\text{Zn}}^{\text{exp}} - X_{\text{PBM}}$)
-*(O sinal de correção físico-química que o Machine Learning aprende no Grey-Box)*
+*(O gabarito de correção que o Machine Learning aprende no Grey-Box)*
 
 | Ensaio | η | CA0 (mol/L) | 0 min | 0,5 min | 1 min | 2 min | 3 min | 4 min | 5 min | 15 min |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -94,18 +94,18 @@ scripts/
 
 ## 2. Justificativa
 
-Na sua dissertação de 2017, para representar a desaceleração da lixiviação, foi introduzido um termo empírico na velocidade de dissolução:
+Na dissertação de 2017, para representar a desaceleração da lixiviação, foi introduzido um termo experimental na velocidade de dissolução:
 $$v(t) = \frac{2}{\rho_s} \big[ k_s C_{Af}(t) - \alpha (C_{A0} - C_{Af}(t)) \big]$$
 com o ajuste de $\alpha = 5500\ \mu\text{m/min}$.
 
-### A Lacuna Identificada:
-Esse parâmetro $\alpha$ concentra de forma estática fenômenos complexos que variam dinamicamente ao longo da reação:
+### A Oportunidade Identificada:
+Esse parâmetro $\alpha$ concentra de **forma única** fenômenos que variam de forma imprevisível ao longo da reação:
 1. **Efeito de Íon Comum:** O acúmulo de $\text{Zn}^{2+}$ e sulfatos reduz a ação do ácido livre.
 2. **Passivação Difusional por Sílica:** Formação de gel de sílica amorfa que recobre os poros das partículas.
 3. **Morfologia dos Finos:** Partículas ultrafinas com cantos vivos (geometria não-esférica) dissolvem-se mais rápido nos primeiros 60 segundos do que esferas lisas.
 
-### A Proposta do Nosso TCC:
-Em vez de depender de um parâmetro de ajuste empírico fixo ($\alpha$), **vamos manter o modelo White-Box com $\alpha = 0$** e utilizar a técnica de **Modelagem Híbrida Grey-Box em Paralelo**, onde o Machine Learning aprende dinamicamente o comportamento físico-químico do resíduo (desvios do modelo teórico) :
+### A Proposta do Nosso LOP:
+Em vez de depender de um parâmetro de ajuste fixo ($\alpha$), **vamos manter o modelo White-Box com $\alpha = 0$** e utilizar a técnica de **Modelagem Híbrida**, onde o Machine Learning aprende o comportamento do resíduo (desvios do modelo teórico) :
 $$\Delta X(t) = X_{\text{experimental}}(t) - X_{\text{PBM}}(t)$$
 
 ---
@@ -120,13 +120,13 @@ Abaixo apresentamos o fluxo de informação da arquitetura proposta:
 graph LR
     A["Condições Operacionais<br/>(t, η, CA0, T, RRB)"]
     
-    B["1. Ramo White-Box (PBM)<br/>Balanço Populacional"]
+    B["White-Box<br/>Balanço Populacional"]
     
-    C["2. Atributos Físicos<br/>Força-Motriz CAf, X/η"]
-    D["3. Ramo Black-Box (ML)<br/>Regressor de Resíduo"]
+    C["Atributos Físicos<br/>Força-Motriz CAf, X/η"]
+    D["Black-Box<br/>Regressor de Resíduo"]
     
-    E["4. Acoplador Híbrido<br/>clip(X_PBM + ΔX_ML, 0, 1)"]
-    F["Predição Final:<br/>X_Híbrido(t)<br/>(R² = 0,9979)"]
+    E["Acoplador Híbrido<br/>clip(X_PBM + ΔX_ML, 0, 1)"]
+    F["Predição Final:<br/>X_Híbrido(t)<br/>"]
 
     A --> B
     A --> C
@@ -140,62 +140,91 @@ graph LR
 </div>
 
 
-### 3.1. Robustez do Modelo: E se a Granulometria do Minério Mudar?
-Uma das maiores vantagens da arquitetura híbrida sobre redes neurais puras é a **sensibilidade granulométrica herdada da física**:
-* Se um novo lote de calcina tiver uma moagem mais fina ($D_{63{,}2} = 25\ \mu\text{m}$) ou mais grossa ($D_{63{,}2} = 60\ \mu\text{m}$), **o ramo White-Box (PBM) recalcula analiticamente o 3º momento volumétrico e a dissolução de cada classe de tamanho**, sem necessidade de retreinar o algoritmo.
-* O Machine Learning atua sobre o resíduo dimensional e cinético condicionado à nova previsão mecanicista, mantendo a estabilidade e prevenindo extrapolações absurdas.
+### 3.1. Adaptabilidade do modelo
+Uma das maiores vantagens da arquitetura híbrida sobre redes neurais puras é a **sensibilidade granulométrica herdada**:
+* Se um novo lote de calcina tiver uma granulometria mais fina ($D_{63{,}2} = 25\ \mu\text{m}$) ou mais grossa ($D_{63{,}2} = 60\ \mu\text{m}$), **o White-Box recalcula analiticamente o 3º momento volumétrico e a dissolução de cada classe de tamanho**, sem necessidade de retreinar o algoritmo.
+* O Machine Learning atua sobre o resíduo condicionado à nova previsão gerada, mantendo a estabilidade.
 
 ### 3.2. Atributos de Entrada do Black-Box
-Em uma abordagem híbrida de ponta (*Physics-Informed Neural Networks*), o modelo de Machine Learning **não recebe variáveis cegas**. Ele é alimentado por uma combinação de condições operacionais e variáveis de estado calculadas pela física:
+Em uma abordagem híbrida, o modelo de Machine Learning **não recebe variáveis cegas**. Ele é alimentado por uma combinação de condições operacionais e variáveis de estado calculadas pela física:
 
 | # | Atributo (Feature) | Símbolo | Unidade | Origem | Papel Físico para o Machine Learning |
 | :-: | :--- | :---: | :---: | :---: | :--- |
-| **1** | **Tempo de Lixiviação** | $t$ | $\text{min}$ | Operacional | Localiza o estágio temporal da reação (início rápido vs. patamar tardio). |
+| **1** | **Tempo de Lixiviação** | $t$ | $\text{min}$ | Operacional | Localiza o estágio temporal da reação. |
 | **2** | **Razão Estequiométrica** | $\eta$ | adim. | Operacional | Informa se há falta ($\eta < 1$), equivalência ($\eta = 1$) ou excesso ($\eta > 1$) de ácido. |
 | **3** | **Ácido Inicial** | $C_{A0}$ | $\text{mol/L}$ | Operacional | Define a acidez inicial e a força iônica máxima da solução aquosa. |
-| **4** | **Conversão da Física** | $X_{\text{PBM}}(t)$ | adim. ($0$ a $1$) | **White-Box** | Fornece a linha de base física; a IA sabe onde a teoria mecanicista está operando. |
-| **5** | **Ácido Livre Teórico** | $C_{Af,\text{teo}}$ | $\text{mol/L}$ | **White-Box** | Força-motriz ácida residual instantânea ($C_{A0}(1 - X_{\text{PBM}}/\eta)$); governa passivação e íon comum. |
-| **6** | **Esgotamento do Ácido** | $\frac{X_{\text{PBM}}}{\eta}$ | adim. ($0$ a $1$) | **White-Box** | Alerta a IA quando a reação está próxima de travar por falta estequiométrica de reagente. |
+| **4** | **Conversão da Física** | $X_{\text{PBM}}(t)$ | adim. ($0$ a $1$) | **White-Box** | Fornece a base física; a IA sabe onde a teoria está operando. |
+| **5** | **Concentração de Ácido** | $C_{Af,\text{teo}}$ | $\text{mol/L}$ | **White-Box** | Força-motriz ácida residual instantânea ($C_{A0}(1 - X_{\text{PBM}}/\eta)$); governa passivação e íon comum. |
+| **6** | **Esgotamento do Ácido** | $\frac{X_{\text{PBM}}}{\eta}$ | adim. ($0$ a $1$) | **White-Box** | Alerta a IA quando a reação está próxima de travar por falta de reagente. |
 
 ### 3.3. O Papel do Acoplador 
 O acoplador não é uma simples soma matemática; ele atua como o **filtro de consistência termodinâmica e operacional** da planta, impedindo que incosistencias físicas ocorram:
-1. **Fusão estrutural:** Soma a base que carrega a física fundamental à correção fina aprendida pelo Machine Learning:
+1. **Fusão estrutural:** Soma a base de conversão do White Box à correção fina aprendida pelo Machine Learning:
    $$X_{\text{raw}}(t) = X_{\text{PBM}}(t) + \widehat{\Delta X}_{\text{ML}}(\mathbf{z})$$
-2. **Garantia de não-alucinação e conservação de massa:** Algoritmos de ML podem extrapolar para valores irreais ($X < 0$ ou $X > 1$). O acoplador impede isso:
+2. **Garantia de conservação de massa:** Algoritmos de ML podem extrapolar para valores irreais ($X < 0$ ou $X > 1$). O acoplador impede isso:
    $$X_{\text{Híbrido}}(t) = \text{clip}\big( X_{\text{raw}}(t),\ 0{,}0,\ 1{,}0 \big)$$
 3. **Respeito à estequiometria:** Quando há falta de ácido ($\eta < 1{,}0$), não existem moléculas suficientes de $\text{H}_2\text{SO}_4$ para dissolver mais do que a fração $\eta$. O acoplador impede que o modelo preveja conversões fisicamente impossíveis:
    $$X_{\text{Híbrido}}(t) \le \eta \quad (\text{para } \eta < 1{,}0)$$
-4. **Garantia de único sentido temporal:** A dissolução de calcina na batelada é irreversível (o zinco solubilizado não precipita espontaneamente de volta como rocha; $\frac{dX}{dt} \ge 0$). O acoplador elimina oscilações e quedas não-físicas entre instantes sucessivos:
+4. **Garantia de único sentido temporal:** A dissolução de calcina na batelada é irreversível (o zinco solubilizado não precipita espontaneamente de volta como rocha; $\frac{dX}{dt} \ge 0$). O acoplador elimina oscilações e cenários impossíveis entre instantes sucessivos:
    $$X_{\text{Híbrido}}(t_k) \ge X_{\text{Híbrido}}(t_{k-1})$$
 
 ---
 
-## 4. Metodologia: Como Faremos a Construção do Grey-Box
+## 4. Metodologia
 
-O plano de execução está dividido em quatro etapas claras:
+O plano de execução está dividido em quatro etapas:
 
-### Etapa 1: Parâmetros utilizados
+### Etapa 1: Preparação dos dados
 Em vez de alimentar o modelo de ML com variáveis puramente estatísticas ou cegas, forneceremos os **6 atributos** definidos na Seção 3.2, combinando condições operacionais e variáveis de estado termodinâmicas calculadas pela física:
-1. **$t$ (Tempo de Lixiviação):** Localiza o estágio temporal da reação (fase inicial acelerada vs. patamar tardio).
+1. **$t$ (Tempo de Lixiviação):** Localiza o estágio temporal da reação (início vs final).
 2. **$\eta$ (Razão Estequiométrica):** Indica o regime de operação (falta quando $\eta < 1$, equivalência quando $\eta = 1$, ou excesso quando $\eta > 1$).
 3. **$C_{A0}$ (Concentração Inicial de Ácido):** Define a acidez inicial e a força iônica da polpa.
-4. **$X_{\text{PBM}}(t)$ (Conversão White-Box):** Linha de base calculada pelo balanço populacional analítico.
+4. **$X_{\text{PBM}}(t)$ (Conversão White-Box):** Linha de base calculada pelo balanço populacional.
 5. **$C_{Af,\text{teórico}}$ (Ácido Livre Residual):** Força-motriz ácida instantânea ($C_{A0}[1 - X_{\text{PBM}}/\eta]$) que governa passivação e íon comum.
 6. **$X_{\text{PBM}}/\eta$ (Fração de Esgotamento):** Alerta estequiométrico que indica quando a reação cessa por exaustão de reagente.
 
-### Etapa 2: Treinamento e Seleção de Modelos
-Testaremos e compararemos três algoritmos clássicos de regressão para aprender $\Delta X$:
-1. **Random Forest Regressor:** Excelente para capturar não-linearidades e interações sem risco de divergência.
-2. **Multi-Layer Perceptron:** Base para modelos híbridos contínuos e PINNs.
-3. **Support Vector Regression:** Robusto para pequenos conjuntos de dados amostrais.
+### Etapa 2: Treinamento e Catálogo de Modelos de Regressão
+Para aprender o resíduo $\Delta X$, implementamos e avaliamos um catálogo com 8 regressores representativos das principais famílias de Machine Learning:
+1. **Modelos Baseados em Árvores:**
+   * **Gradient Boosting (GBDT):** Ajuste sequencial com regularização e penalização de gradiente.
+   * **Extra Trees Regressor:** Árvores extremamente aleatorizadas, reduzindo variância.
+   * **Random Forest Regressor:** Floresta aleatória com agregação bootstrap.
+2. **Métodos de Kernel e Aprendizado Estatístico:**
+   * **Support Vector Regression - SVR (Baseline):** Kernel RBF com margem $\epsilon$-insensível.
+   * **SVR (Otimizado):** Parametrização fina de $C$, $\gamma$ e $\epsilon$ para respostas contínuas suaves.
+   * **Gaussian Process Regressor (Kriging):** Inferência bayesiana não-paramétrica com estimativa intrínseca de incerteza (Kernel RBF + WhiteKernel).
+3. **Redes Neurais Artificiais (Multi-Layer Perceptrons):**
+   * **MLP com Ativação Tanh + Otimizador L-BFGS:** Rede neural com superfície suave de 2ª ordem, ideal para cinética contínua e pequenos conjuntos de dados.
+   * **MLP com Ativação ReLU + Otimizador Adam:** Arquitetura padrão de aprendizado profundo por gradiente estocástico.
 
-### Etapa 3: Validação Cruzada (Leave One Group Out)
+### Etapa 3: Validação Cruzada (Leave-One-Group-Out - LOGO-CV)
 Para garantir que o modelo **generaliza para condições operacionais não vistas** e não decorou os dados:
-* O conjunto de 16 ensaios é dividido em 16 grupos.
-* Em cada grupo, o modelo treina nos **outros 15 grupos** e é testado no **1 grupo deixado de fora**.
-* Repete-se o processo 16 vezes, garantindo métricas de teste reais e sem vazamento de dados.
-
-### Etapa 4: Escalonamento e Validação na Planta Piloto Contínua
-O modelo híbrido treinado na bancada será acoplado à **Distribuição de Tempos de Residência (DTR)** da Planta Piloto de 3 CSTRs em série ($18\text{ L}$ cada), comparando as predições com os dados reais de regime permanente ($Q = 0{,}41\text{ L/min}$ e $0{,}21\text{ L/min}$).
+* O conjunto de 16 ensaios de bancada ($N=128$) é particionado em 16 grupos (1 grupo por ensaio).
+* Em cada teste, o modelo é treinado em **15 ensaios** e avaliado no **ensaio restante deixado de fora**.
+* Repete-se o processo 16 vezes, garantindo métricas de teste isentas de vazamento de dados.
 
 ---
+
+## 5. Resultados Experimentais e Benchmark Comparativo Multi-Modelo
+
+Abaixo apresentam-se os resultados quantitativos obtidos em todas as etapas de teste e validação.
+
+### 5.1 Benchmark de Bancada (Validação Cruzada Estrita LOGO-CV nos 128 Pontos)
+
+| Posição | Modelo / Algoritmo | Família | $R^2$ Ajuste | $R^2$ LOGO-CV | $RMSE_{\text{CV}}$ | $MAE_{\text{CV}}$ | Violação Física (%) |
+| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **1º** | **Gradient Boosting (GBDT)** | Árvores / Boosting | **0,9987** | **0,9934** | **0,0264** | **0,0186** | 0,0% |
+| **2º** | **Extra Trees** | Árvores / Bagging | 0,9989 | 0,9932 | 0,0266 | 0,0188 | 0,0% |
+| **3º** | **Random Forest** | Árvores / Bagging | 0,9981 | 0,9907 | 0,0312 | 0,0208 | 0,0% |
+| **4º** | **Gaussian Process (Kriging)** | Processo Gaussiano | 0,9992 | 0,9878 | 0,0359 | 0,0211 | 0,0% |
+| **5º** | **SVR (Otimizado)** | Support Vector | 0,9979 | 0,9870 | 0,0370 | 0,0234 | 0,0% |
+| **6º** | **SVR (Baseline)** | Support Vector | 0,9938 | 0,9833 | 0,0419 | 0,0230 | 0,0% |
+| **7º** | **MLP (Tanh + L-BFGS)** | Rede Neural | 0,9855 | 0,9688 | 0,0573 | 0,0284 | 0,0% |
+| **8º** | **MLP (ReLU + Adam)** | Rede Neural | 0,9790 | 0,9299 | 0,0858 | 0,0587 | 0,0% |
+| --- | *White-Box Puro* | *Balanço Populacional* | *0,9253* | *0,9253* | *0,0886* | *0,0507* | *0,0%* |
+
+![alt text](image-1.png)
+
+---
+
+
