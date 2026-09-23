@@ -1,0 +1,1028 @@
+=== PAGE 1 ===
+Chemical Engineering Science 300 (2024) 120568
+Available online 30 July 2024
+0009-2509/© 2024 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+Contentslistsavailableat ScienceDirect
+Chemical Engineering Science
+journal homepage: www.elsevier.com/locate/ces
+Hybrid modeling for improved extrapolation and transfer learning in the 
+chemical processing industry
+JoelSansana a, RicardoRendall b, IvanCastillo b, LeoChiang b, MarcoS.Reis a,∗
+a University of Coimbra, CERES, Department of Chemical Engineering, 3030-790 Coimbra, Portugal
+b The Dow Chemical Company, United States of America
+A R T I C L E I N F O A B S T R A C T
+Keywords:
+Hybrid modeling
+Transfer learning
+Machine learning
+Extrapolation
+Multimode processes
+In the Chemical Processing Industry, shifts in market demand often require the implementation of new operational 
+modes that balance economic advantages with the need to meet quality and sustainability targets. Hybrid 
+modeling can support these process changes by combining physics-based and data-driven modeling principles 
+to improve prediction accuracy and interpretation. In this work, the use of hybrid modeling for improved 
+extrapolation and transfer learning activities is examined in the context of simulated biodiesel production. We 
+study and compare diﬀerent conﬁgurations of hybrid modeling, including the parallel and serial structures. We 
+also compare hybrid modeling approaches with physics-based and data-driven models, and ﬁnd that hybrid 
+modeling consistently outperforms these benchmarks in both extrapolation and transfer learning tasks. Hybrid 
+modeling also requires fewer samples than other benchmarks for the transfer learning task. These results suggest 
+that hybrid modeling is an eﬀective approach for supporting decision-making and optimizing process changes in 
+the CPI.
+1. Introduction
+Chemical Processing Industry (CPI) face a number of challenges in 
+adapting to changing market conditions and demands, when the need 
+to ﬂexibly and rapidly respond to new scenarios is imperative (Kim et 
+al., 2023; Reis and Gins, 2017). Such changing external conditions often 
+result in the implementation of new operational modes that are econom-
+ically viable while still meeting quality and sustainability targets (Liew 
+et al., 2014). Examples include the need to produce a new product grade 
+or to signiﬁcantly shift the operation window due to changes in energy, 
+raw material and utility costs (Molinaro and Orzes, 2022; Tomba et al., 
+2012). In this context, data analytical technologies, such as hybrid mod-
+eling, can provide solutions to support and speed up process changes in 
+the CPI. Hybrid modeling has gained signiﬁcant attention in recent years 
+due to the increasing availability of data and the development of new an-
+alytics methodologies. By combining multiple modeling principles and 
+techniques, and taking the most out of all available sources of knowledge 
+in chemical systems (ﬁrst-principles knowledge, heuristic knowledge, 
+and knowledge derived from process data, (Oliveira, 1998; Schubert 
+et al., 1994)), hybrid modeling frameworks can enable a more com-
+* Corresponding author.
+E-mail address:marco@eq.uc.pt(M.S.Reis).
+URL:https://www.eq.uc.pt/~marco/(M.S.Reis).
+prehensive understanding of the process and how it is likely to change 
+over time, enabling better decision-making and proactive management 
+of process operations (de Calle-Etxabe et al., 2020; von Stosch et al., 
+2014).
+Hybrid modeling oﬀers certain advantages over pure physics-based 
+or data-driven approaches. Physics-based models are typically more dif-
+ﬁcult to develop and require a signiﬁcant amount of prior knowledge, 
+but are interpretable, often more accurate and have better extrapola-
+tion capabilities. Data-driven models, on the other hand, are faster to 
+develop and more ﬂexible, but constrained to the speciﬁc data domain 
+in which they are trained and less interpretable (Sansana et al., 2021). 
+The concept of integrating mechanistic and data-driven modeling prin-
+ciples was initially introduced in 1992, whereby equations expressing 
+mass and energy balances were combined with neural networks or ra-
+dial basis functions (Johansen and Foss, 1992; Kramer et al., 1992; 
+Psichogios and Ungar, 1992; Su et al., 1992). First-principles models 
+and data-driven models can be combined under various hybrid struc-
+tures, including serial and parallel structures, which will be discussed 
+in greater detail later. The main objective of these architectures is to as-
+semble all available knowledge about a system and create synergies that 
+https://doi.org/10.1016/j.ces.2024.120568
+Received 26 March 2024; Received in revised form 23 July 2024; Accepted 24 July 2024
+=== PAGE 2 ===
+Chemical Engineering Science 300 (2024) 120568
+2
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 1. Implementationofnewoperatingconditions.
+lead to improved prediction accuracy and/or stability in the ﬁnal model 
+(Oliveira, 2004; Zhuang et al., 2022).
+Managing process changes in the CPI often involves moving the pro-
+cess from its current operating region (region A) to a new region (region 
+B), as shown in Fig. 1 (Farahani et al., 2021; Quiñones-Grueiro et al., 
+2019). This process can be conceptually divided into three stages. In the 
+ﬁrst stage, models developed in region A are directly extrapolated to re-
+gion B. The accuracy of this extrapolation is important in order to obtain 
+reliable estimates of the quality metric(s) of interest in region B. In the 
+second stage, as the process continues to operate in region B and more 
+data is collected, model retraining can be performed to account for any 
+mismatches between the model and the actual process behavior in re-
+gion B. Finally, in the third stage, a large volume of data on region B 
+has been collected, allowing for more robust modeling and analysis.
+The second stage, where data available in region B are still scarce, 
+is particularly challenging, and methodologies that can eﬃciently uti-
+lize prior knowledge and the limited amount of data are preferred. One 
+approach that has proven useful in these situations is transfer learning 
+(Pan and Yang, 2010), which allows for the leveraging of information 
+obtained in region A to improve the performance of models in region B. 
+Transfer learning can be particularly useful when the underlying process 
+dynamics are similar in both regions A and B, allowing for the transfer 
+of knowledge and experience gained in one region to the other (Facco 
+et al., 2012).
+In this work, we investigate the use of hybrid modeling for sup-
+porting extrapolation and transfer learning in the context of managing 
+process changes in CPI. We study diﬀerent conﬁgurations of hybrid mod-
+eling, including parallel and series conﬁgurations, and compare them 
+to benchmarks that include pure physics-based models and data-driven 
+models. The physics-based model used in this study is based on sim-
+pliﬁed reaction kinetics, while the data-driven methods include partial 
+least squares (PLS) (Wold et al., 2001), least absolute shrinkage and 
+selection operator (LASSO) (Hastie et al., 2016), random forest (RF) 
+(Dietterich, 2000), and neural networks (NN) (Bishop, 2006), to pro-
+vide reasonable coverage of the data analytics spectrum.
+The primary objective of this paper is to demonstrate how hybrid 
+modeling can serve as a valuable tool for industry practitioners to in-
+tegrate knowledge and data to address evolving process conditions and 
+changing market demands. We argue that the utilization of this tech-
+nology is still limited due to the scarcity of well-deﬁned guidelines and 
+a perceived steep learning curve for training hybrid models. Through-
+out the paper, we aim to clarify the advantages of combining “classic” 
+ﬁrst-principles models with machine learning methods. Furthermore, we 
+elaborate on the application of hybrid modeling in the frame of transfer 
+learning, illustrating the process of updating an existing hybrid model 
+with new data.
+The remainder of the paper is organized as follows: Section 2 in-
+troduces several machine learning methods, and revises ﬁrst-principles 
+modeling and hybrid modeling architectures. In Section3, a simulated 
+case study from a biodiesel production process is described, as well as 
+the data generation approach followed. This case study was designed to 
+provide a realistic and challenging scenario for testing the proposed hy-
+brid methodologies under new operating conditions. Section4presents 
+the results and a discussion of the extrapolation and transfer learning 
+capabilities of the methodologies under analysis. Finally, Section5sum-
+marizes the conclusions of this work and oﬀers some perspectives for 
+future work.
+2. Methods
+This section presents the analytical methodologies utilized in this 
+study. Firstly, we discuss the data-driven modeling approaches em-
+ployed, such as LASSO, PLS, RF, and NN. Next, we present the ﬁrst-
+principles model used in this study. Finally, we discuss hybrid model 
+architectures, that combine data-driven and ﬁrst-principles models.
+2.1. Data-driven modeling methodologies
+The increasing availability of data in the 21st century, attributed 
+to the continuous development of faster and more informative sen-
+sors, larger and distributed storage resources, and greater computational 
+power, has prompted engineers to further consider data as a valuable 
+source of information (Kourti and MacGregor, 1995; Kresta et al., 1991; 
+MacGregor and Kourti, 1995; MacGregor et al., 1994; Reis and Saraiva, 
+2019). Data science has emerged as a ﬁeld of knowledge that encom-
+passes statistics, mathematics, and computer science to address the chal-
+lenges associated with the data-intensive environment usually known as 
+big data. Research on this topic within the context of Process Systems 
+Engineering (PSE) has spurred the development of techniques to address 
+various data-related issues, including high-dimensionality, collinearity, 
+sparsity, nonlinearity, non-stationarity, the presence of noise, outliers, 
+and missing data, among others (Rendall and Reis, 2018). In the follow-
+ing, we describe some of the most commonly used data-driven models 
+within the context of hybrid modeling approaches.
+In brief terms, LASSO is a regularization technique that has em-
+bedded a variable selection capability by shrinking the less important 
+parameters to zero. PLS is a multivariate regression technique that can 
+handle data with high colinearity by projecting the input dimensions to a 
+low-dimensional predictive subspace of latent variables. Random forest 
+=== PAGE 3 ===
+Chemical Engineering Science 300 (2024) 120568
+3
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 2. The“data-drivenmodelingdiamond”consideredinthiswork.
+regression is a nonlinear method based on the use of multiple decision 
+trees built up from slightly perturbed subsets of training data, to gener-
+ate an ensemble predictor of the target response by averaging over all 
+individual predictions. NNs are a type of machine learning model that is 
+inspired by the structure and function of the human brain and is capable 
+of learning complex non-linear patterns from data. These four machine 
+learning methods form what we call the Data-driven Diamond, as shown 
+in Fig.2, serving as a representation of four types of regression modeling 
+methods: latent variable, ensemble, regularized, and neural networks.
+2.1.1. Least absolute shrinkage and selection operator
+The LASSO is a regularized modeling technique that is used to es-
+timate sparse coeﬃcients (Hastie et al., 2016). This methodology is 
+particularly useful for datasets with high collinearity and some degree 
+of sparsity regarding variables’ importance for prediction, both of which 
+are frequently encountered in the ﬁeld of CPI. Due to its ability to gen-
+erate solutions with fewer non-zero coeﬃcients, the LASSO is also used 
+as a feature selection methodology (Rendall et al., 2019). In general, 
+LASSO provides an estimate for the parameter vector, 𝜷, of a multiple 
+regression model represented by the equation:
+𝐘= 𝐗 ⋅ 𝜷 + 𝐄 (1)
+where 𝐗 is the input variables extended matrix (extended, because it 
+contains a column of ones to account for the intercept term) or fea-
+ture matrix, and 𝐄 is the residuals matrix. Regularization techniques 
+are widely used in machine learning to stabilize the estimation tasks. By 
+imposing constraints on the magnitudes of the model coeﬃcients, they 
+stabilize the predictions, reducing their variance at the expense of in-
+troducing some bias. LASSO is a well-known regularization method that 
+incorporates an L1-norm penalty into the least squares regression prob-
+lem in order to decrease the magnitudes of the regression coeﬃcients 
+(Tibshirani, 1996). The LASSO solution can be obtained by minimizing 
+the objective function:
+̂𝛽𝐋𝐀𝐒𝐒𝐎 = min
+̂𝛽=[ ̂𝛽0,..., ̂𝛽𝑝]𝑇
+𝑁∑
+𝑖=1
+(𝑦𝑖 − ̂𝑦𝑖)+ 𝜆
+𝑝∑
+𝑗=1
+| ̂𝛽𝑗 | (2)
+where 𝑦𝑖 denotes the 𝑖𝑡ℎ observed response, ̂𝑦𝑖 represents the corre-
+sponding model prediction, and 𝜆 is the hyperparameter that controls 
+the degree of regularization.
+2.1.2. Partial least squares
+Latent variable methods form a class of modeling approaches that are 
+employed to circumvent challenges associated with high-dimensional, 
+correlated predictors. These techniques operate on the premise that 
+there exists a set of unmeasured variables that drive the variability of 
+the observed ones (Rendall and Reis, 2018). PLS regression establishes 
+a correlation between two sets of data, denoted as 𝐗and 𝐘, by identify-
+ing linear combinations of predictors that exhibit maximum covariance 
+with the linear combinations of the responses. The relationship between 
+the two sets can be described by the following equations (Wold et al., 
+2001):
+𝐗= 𝐓 ⋅ 𝐏T + 𝐄 (3)
+𝐘= 𝐓 ⋅ 𝐐T + 𝐅 (4)
+where 𝐓 represents the matrix of latent variables, 𝐏 represents the X-
+loadings matrix, 𝐐represents the Y-loadings matrix, and 𝐄and 𝐅rep-
+resent the residual matrices for 𝐗 and 𝐘 blocks, respectively (Geladi, 
+1988).
+Once the parameters are estimated, the model formed by eqs. (3)
+and (4) can be recast into a linear regression format, of the type of 
+eq. (1). Although there are various algorithms for estimating a PLS 
+model (Andersson, 2009; de Jong, 1993; Wold, 1975), in this study, 
+we have used the NIPALS algorithm, implemented in scikit-learn (Pe-
+dregosa et al., 2011).
+2.1.3. Random forest
+Regression trees model the relationship between predictors and a 
+response variable by means of a piece-wise constant function. Such a 
+model can predict the value of a target variable by learning simple de-
+cision rules from the data features. However, trees tend to have high 
+variance, as small changes in the training set often lead to new trees 
+with diﬀerent split points and splitting variables. To address these is-
+sues, an ensemble of trees is commonly employed to improve prediction 
+performance and decrease prediction variance (Hastie et al., 2016).
+RF regression is an algorithm that employs the bootstrap method to 
+generate new datasets, which are used to build multiple regression trees. 
+Prediction for a given sample is obtained by averaging the predictions 
+of all trees in the ensemble (Dietterich, 2000):
+̂𝑦𝑖 = 1
+𝑁𝑡
+𝑁𝑡∑
+𝑛=1
+𝑓𝑛(𝑥𝑖) (5)
+where 𝑁𝑡 is the number of trees in the ensemble and 𝑓𝑛(𝑥𝑖)is the pre-
+diction from the 𝑛th regression tree for the 𝑖𝑡ℎ observation. Additionally, 
+each tree in RF only considers a randomly selected subset of predictors. 
+The advantage of this method is that the trees in the ensemble are less 
+correlated, leading to increased prediction performance (Rendall et al., 
+2019).
+2.1.4. Neural networks
+Neural Networks (NN) are commonly used due to their ability to ﬂex-
+ibly model nonlinearities and their independence from prior knowledge 
+about the system being modeled (Oliveira, 2004; Psichogios and Un-
+gar, 1992; Thompson and Kramer, 1994). NNs are composed of a set of 
+interconnected processing units, referred to as neurons, that exchange 
+information between them. There are diﬀerent types of neural net-
+works, but the most popular for hybrid modeling is the fully-connected 
+feed-forward multilayer perceptron (MLP). Each neuron computes the 
+weighted sum of all incoming signals (𝑆𝑗) from the previous layer, plus 
+a bias term. The 𝑆𝑗 values are called activations and are linear combina-
+tions of the input variables (Bishop, 2006). An output is then generated 
+through an activation function, 𝑓(.), as follows,
+̂𝑦(𝑚)
+𝑘 = 𝑓
+( 𝑛∑
+𝑖=1
+𝜔𝑖,𝑗𝑋𝑖 + 𝜃𝑗
+)
+(6)
+where 𝜔𝑖,𝑗 are the weights for neuron 𝑖in layer 𝑗, 𝑋𝑖 are the inputs to 
+neuron 𝑖and 𝜃𝑗 is the bias term. There are several activation functions 
+commonly used in neural networks. In this work, we used the rectiﬁed 
+linear unit (ReLU) activation function (Maas et al., 2013). For parameter 
+estimation, the Adam optimizer was employed with the goal of minimiz-
+ing the root mean squared error (MSE) between the training data and 
+model predictions (Kingma and Ba, 2017). The scikit-learn implementa-
+tion of MLP was adopted (Pedregosa et al., 2011). Although most NNs 
+used in hybrid modeling consist of three layers, it is also possible to em-
+ploy more layers using deep learning techniques and stochastic gradient 
+descent for the learning process (Schmidhuber, 2015).
+=== PAGE 4 ===
+Chemical Engineering Science 300 (2024) 120568
+4
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 3. The“ﬁrst-principlesmodelingdiamond”consideredinthiswork.
+2.2. First-principles modeling methodologies
+The construction of a ﬁrst-principles model for hybrid modeling 
+frameworks depends on the available prior knowledge. This approach 
+involves solving the underlying equations governing the system’s be-
+havior, which may enable a more accurate prediction of the system 
+response. Usually, this knowledge is in the form of balances for ex-
+tensive system properties, such as mass and energy (Azarpour et al., 
+2017; Oliveira, 2004; Psichogios and Ungar, 1992) or physical con-
+straints (Gurden et al., 2001; Su et al., 1992; Thompson and Kramer, 
+1994). These mathematical statements can be expressed more simply 
+as algebraic equations or, with increasing complexity, as ordinary dif-
+ferential equations (ODEs) (for lumped parameter system modeling), 
+diﬀerential algebraic equations (DAEs) or PDEs (for distributed param-
+eter system modeling) (von Rueden et al., 2023), as presented in Fig.3. 
+By increasing the complexity of the mechanistic model, one reduces the 
+structural mismatch between the model and the chemical process, but 
+the larger number of parameters can lead to more uncertain estimates 
+if there is no accurate information for the parameters (this is the bias-
+variance trade-oﬀ for mechanistic models). The ﬁrst-principles models 
+adopted in this study involve mass and energy balances, and establish a 
+connection between input and output variables. To assess the eﬀective-
+ness of the hybrid modeling approach, a lumped parameter model was 
+employed as a benchmark or sub-model.
+2.3. Hybrid modeling architectures
+In the mainstream hybrid modeling literature, the prevalent way to 
+combine the two modeling approaches (ﬁrst-principles and data-driven) 
+is based on the analysis of the structure of the ﬁrst-principles model and 
+its assumptions. A parallel cooperative architecture is adopted when 
+there is a need to compensate for a clear mechanistic structural mis-
+match. On the other hand, if the mechanistic structure is accurate 
+enough, then a serial architecture is usually the preferred choice (von 
+Stosch et al., 2014).
+This study aims to compare the performance of the various hybrid 
+model architectures shown in Fig.4, including the parallel cooperative 
+and serial architectures. Additionally, we include a new fusion-inspired 
+parallel competitive architecture and a reverse serial architecture, which 
+we refer to as knowledge augmented hybrid modeldue to the use of a data 
+augmentation technique. The purpose of this comparison is to determine 
+which architecture is most suitable for a given, a priori deﬁned task, and 
+to identify potential areas for further improvement.
+In the CPI, variables are generally continuous, thereby making re-
+gression the predominant modeling approach. In the context of hybrid 
+modeling, this assumption remains valid. Our objective is therefore to 
+learn a function 𝑓𝐻 ∶ ℝ𝐷 → ℝ that maps an input with 𝐷 features, 
+𝑥 ∈ ℝ𝐷, to a target observation 𝑦 ∈ ℝ. To accomplish this, a set of pa-
+rameters 𝜽, upon which 𝑓𝐻 depends, must be learned (the function 𝑓𝐻
+can be represented as 𝑓𝐻(𝑥; 𝜃), to make the parameter set explicit).
+Fig. 4. The“hybridmodelsdiamond”consideredinthiswork.
+Fig. 5.Schematic representation of the parallel cooperative structure for hybrid 
+modeling.
+2.3.1. Parallel cooperative
+The parallel cooperative architecture assumes that the function 
+𝑓𝐻(𝑥; 𝜽)can be expressed as a summation of a ﬁrst-principles function 
+𝑓𝑝 ∶ ℝ𝐷 → ℝ and a data-driven model 𝑓𝑑 ∶ ℝ𝐷 → ℝ, 𝑓𝑝 ≠ 𝑓𝑑, as fol-
+lows:
+𝑓𝐻(𝑥; 𝜽)= 𝑓𝑝(𝑥; 𝝁)+ 𝑓𝑑(𝑥; 𝝍) (7)
+where 𝝁represents the parameter set of the ﬁrst-principles model (𝑓𝑝) 
+and 𝝍 represents the parameter set of the data-driven model (𝑓𝑑); 𝜽
+is the reunion of these two sets, 𝜽={ 𝝁, 𝝍}. The hybrid model can be 
+trained separately by ﬁrst identifying 𝝁with respect to the output vari-
+able. Subsequently, once 𝑓𝑝 is known, the residuals can be computed by 
+using the predictions of the ﬁrst-principles model, expressed as follows:
+𝑟𝑖 = 𝑦𝑖 − 𝑓𝑝(𝑥; 𝝁) (8)
+Finally, the parameters of the data-driven approach 𝝍 can be ﬁtted 
+to the residual dataset (𝑥𝑖, 𝑟𝑖)𝑁
+𝑖=1. In summary, the hybrid model operates 
+by improving the ﬁrst-principles model through the use of a data-driven 
+model that explains part of the structure still present in the residuals, as 
+depicted in Fig.5. The model predictions are obtained by the following 
+expression:
+̂𝑦𝐻,𝑖 = ̂𝑦𝑝,𝑖 + 𝑟𝑖 (9)
+where ̂𝑦𝐻,𝑖 represents the output of the hybrid model, ̂𝑦𝑝,𝑖 represents 
+the output of the ﬁrst-principles model, and 𝑟𝑖 represents the residuals 
+computed by the data-driven model.
+2.3.2. Parallel competitive
+In the parallel competitive architecture, the function 𝑓𝐻(𝑥; 𝜽) can 
+be expressed as a weighted average of a function derived from ﬁrst-
+principles 𝑓𝑝 ∶ ℝ𝐷 → ℝ, and another obtained by induction from data 
+𝑓𝑑 ∶ ℝ𝐷 → ℝ, 𝑓𝑝 ≠ 𝑓𝑑. The equation describing this architecture can be 
+presented as follows:
+𝑓𝐻(𝑥; 𝜽)= 𝛼𝑓𝑝(𝑥; 𝝁)+(1− 𝛼)𝑓𝑑(𝑥; 𝝍) (10)
+=== PAGE 5 ===
+Chemical Engineering Science 300 (2024) 120568
+5
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 6.Schematic representation of the parallel competitive structure for hybrid 
+modeling.
+Fig. 7. Schematicrepresentationoftheserialstructureforhybridmodeling.
+The weighting factor, 𝛼, which determines the relative importance of 
+each model, is an element of the parameter set 𝜽, i.e., 𝜽={ 𝛼, 𝝁, 𝝍}. In 
+this architecture, both models are trained independently with respect to 
+the target variable 𝑦. Subsequently, the weighting factor 𝛼 is tuned by 
+least-squares minimization. The ﬁnal model prediction, shown in Fig.6, 
+has the following form:
+̂𝑦𝐻,𝑖 = 𝛼̂𝑦𝑝,𝑖 +(1− 𝛼) ̂𝑦𝑑,𝑖 (11)
+where ̂𝑦𝐻,𝑖 represents the output of the hybrid model, ̂𝑦𝑝,𝑖 represents 
+the output of the ﬁrst-principles model, and ̂𝑦𝑑,𝑖 represents the output 
+of the data-driven model.
+2.3.3. Serial hybrid
+The serial hybrid architecture assumes that the function 𝑓𝐻(𝑥; 𝜽)is 
+deﬁned by a ﬁrst-principles model, denoted by 𝑓𝑝 ∶ ℝ𝐷 → ℝ, where 
+some or all of its parameters are speciﬁed by a data-driven model, rep-
+resented by 𝑓𝑑 ∶ ℝ𝐷 → ℝ𝑃, where 𝑃 is the number of parameters to be 
+estimated by 𝑓𝑑 and inserted in 𝑓𝑝. The equation governing this archi-
+tecture can be expressed as follows:
+𝑓𝐻(𝑥; 𝜽)= 𝑓𝑝(𝑥;𝑓𝑑(𝑥; 𝝍), 𝝁), (12)
+where 𝑓𝑑(𝑥; 𝝍)denotes the parameters of the ﬁrst-principles model (𝑓𝑝) 
+that are learned by 𝑓𝑑, while 𝝁 represents the remaining parameters 
+of the ﬁrst-principles model. The hybrid model can be trained concur-
+rently, with the objective of identifying both 𝝁and 𝝍with respect to the 
+output variable, denoted by 𝑦. This training approach may pose some 
+numerical challenges if the ﬁrst-principles model 𝑓𝑝 is complex.
+Alternatively, we will adopt a sequential identiﬁcation route, which 
+we refer to as the explicit serial hybrid approach. In this training 
+methodology, the ﬁrst-principles model 𝑓𝑝 is solved for 𝑓𝑑(𝑥; 𝝍)at each 
+available measurements’ time, {𝑥𝑖}𝑖=1 𝑁, leading to {𝑓∗
+𝑑(𝑥𝑖; 𝝍)}𝑁
+𝑖=1. 
+Subsequently, the parameters of the data-driven model, 𝝍, are ﬁtted to 
+this extended dataset represented by {𝑥𝑖, 𝑓∗
+𝑑(𝑥𝑖; 𝝍)}𝑁
+𝑖=1. Once the data-
+driven model 𝑓𝑑 is determined, it will provide the parameter estimates 
+for the ﬁrst-principles model, which, in turn, produces the ﬁnal model 
+prediction, as shown in Fig.7. The sequential identiﬁcation route com-
+pels the practitioner to inspect the predictions of physics-based parame-
+ters from the data-driven model, thereby rendering a more interpretable 
+and transparent approach.
+2.3.4. Knowledge augmented hybrid
+We propose a new architecture, called knowledge augmented hy-
+brid architecture, which involves augmenting a process dataset with 
+physics-based knowledge. This data augmentation operation is achieved 
+Fig. 8. Schematic representation of the knowledge augmented structure for hy-
+brid modeling.
+by concatenating the state predictions obtained from a ﬁrst-principles 
+model to the existing data matrix. The approach assumes that the func-
+tion 𝑓𝐻(𝑥; 𝜽)can be deﬁned by a data-driven model, 𝑓𝑑 ∶ ℝ(𝐷+𝑆) → ℝ, 
+where its 𝑆inputs are generated by a ﬁrst-principles model represented 
+by 𝑓𝑝 ∶ ℝ𝐷 → ℝ𝑆. The architecture’s governing equations can be ex-
+pressed as follows:
+𝑓𝐻(𝑥; 𝜽)= 𝑓𝑑(̃𝑥; 𝝍), (13)
+̃𝑥=[ 𝑥,𝑓𝑝(𝑥; 𝝁)], (14)
+where, ̃𝑥 denotes the dataset of process measurements that are aug-
+mented with ﬁrst-principles state predictions. In this architecture, both 
+models are trained independently with respect to the target variable, 𝑦.
+2.4. Hybrid modeling for transfer learning
+In CPI, transfer learning can be eﬀectively employed to adapt or 
+reﬁne models for expanding their use to new product grades or alter-
+native regions of operation. Moreover, transfer learning can facilitate 
+the application of models developed from data collected in pilot units 
+to industrial-scale equipment, or alternatively transfer a model from one 
+equipment, say A, to another similar equipment, B.
+The current research investigates the use of hybrid modeling through 
+transfer learning, a methodology we believe has not been extensively 
+documented in existing chemical engineering literature. It is based on 
+the assumption that although the underlying thermodynamics and phys-
+ical laws governing a chemical process remain unchanged when oper-
+ating conditions are altered, a model may not be able to fully capture 
+them, being always a simpliﬁed version of reality. As George Box fa-
+mously stated, “All models are wrong...”, and therefore, a model that 
+performs well on a particular set of conditions, say A, may not con-
+tinue to perform well on a diﬀerent scenario, say B. The discrepancy 
+between the model and the actual process can usually be attributed to 
+one of the following three reasons: 1) parametric mismatch, 2) struc-
+tural mismatch, or 3) both parametric and structural mismatch (Chen 
+and Ierapetritou, 2020).
+The selection of a hybrid structure represents a critical decision when 
+transferring a model, and this choice is strongly inﬂuenced by the ac-
+curacy of the available model. If the model, regardless of whether it is 
+ﬁrst-principles, data-driven, or hybrid, exhibits a high degree of struc-
+tural dissimilarity with the real process, the parallel cooperative archi-
+tecture (see Fig.5) is often preferred because the data-driven submodel 
+learns the residuals to correct mismatch. However, the knowledge aug-
+mented hybrid architecture (see Fig. 8) is also a viable approach for 
+bridging the discrepancy. In contrast, the serial approach is ill-suited 
+for model transfer in this conditions, as it requires the identiﬁcation of 
+the subsystem where the knowledge gap exists or of the parameters that 
+require updating (Sansana et al., 2021).
+3. Case study
+This section presents the case study, beginning with a description 
+of the process simulator used and how data is generated to achieve the 
+objectives of this study. We then present the ﬁrst-principles model that 
+will play the role of benchmark method, and that will be also used in 
+the construction of the hybrid models.
+=== PAGE 6 ===
+Chemical Engineering Science 300 (2024) 120568
+6
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 9.Process ﬂow diagram of the biodiesel production process simulated in BDsim (adapted from Fernandes et al. (2019)). In the case study, we have only considered 
+the reactor section.
+3.1. Data generation
+The software BDsim, an open-source simulator of an industrial con-
+tinuous process for biodiesel production (Brásio et al., 2016; Fernandes 
+et al., 2019), provides the testing scenarios in this study. In particular, 
+we focus on the reaction section of the biodiesel production process, as 
+illustrated in Fig.9. Data is generated using a 2-level full factorial design 
+with two factors and two center points. The two factors that can be con-
+trolled in BDsim’s reactor are the reactor temperature (𝑇𝑅) and the oil 
+feed ﬂow (𝐹𝑜𝑖𝑙), which results in 4-month long experimental period for 
+the training set plus a 2-month long experimental period for the center 
+points, totaling 6 months of collected data. The center points represent 
+the simulator’s original normal operating conditions, while the upper 
+and lower bounds are obtained by perturbing the center points condi-
+tions with ±5% deviations on both input variables, thereby enriching 
+the information content of the dataset.
+To evaluate the performance of the models, two test sets were gener-
+ated: an in-domain test set (ID test) and an out-of-domain test set (OOD 
+test), as depicted in Fig.10. The former comprises an additional month 
+simulated with input variables at an intermediate level of +2.5% devi-
+ation. The latter, generated from a 2-level full factorial design with two 
+factors, includes only one middle point at the beginning and increased 
+deviations of ±10%. We use the OOD test set to assess the extrapolation 
+performance (stage I) and transfer learning capabilities (stage II).
+The data points were sampled at an hourly rate, with seven vari-
+ables being monitored: temperature of the reactor (𝑇𝑅), mass ﬂow-rate 
+of oil feed (𝐹𝑜𝑖𝑙), pressure drop across the oil ﬁlter (Δ𝑃), mass ﬂow-
+rate of methanol feed (𝐹𝑚), temperature of oil (𝑇𝑜𝑖𝑙), temperature of the 
+methanol stream (𝑇𝑚), and the biodiesel molar fraction in the reactor 
+output stream (𝑥𝑏𝑖𝑜, which is also the KPI).
+3.2. First-principles model (benchmark)
+The behavior of a continuous stirred tank reactor (CSTR) can be 
+modeled using a system of mass balance equations that describe the 
+concentrations of the components of interest in the liquid phase. Under 
+the assumption that the liquid phase is uniformly mixed, the mass bal-
+ance equations can be formulated in the state space representation as 
+follows:
+𝑑𝐱
+𝑑𝑡 =( 𝑁𝑚(𝐱𝐦 − 𝐱)+ 𝑁𝑜(𝐱𝐨 − 𝐱)+ 𝐫𝑉𝑅)∕𝑛𝑅 , (15)
+Fig. 10. Represention of the operating conditions simulated for generating 
+datasets.
+where 𝐱, 𝐱𝐦, and 𝐱𝐨 denote the vectors of molar fractions of component 𝑖
+in the reactor, methanol input stream, and oil input stream, respectively. 
+The input methanol molar ﬂow and oil molar ﬂow are represented by 
+𝑁𝑚 and 𝑁𝑜, respectively. The reaction rate of component 𝑖 is denoted 
+by the vector 𝐫, 𝑉𝑅 represents the reactor’s volume, and 𝑛𝑅 is the total 
+number of moles in the reactor.
+The mass balance equations for the system under consideration, 
+where the reaction
+O+3M ←←←←←←←←←←←←←←←←→G+3B (16)
+takes place, are composed of four equations. The dynamics of the sys-
+tem can be described by the following equation for temperature (energy 
+balance):
+𝑑𝑇𝑅
+𝑑𝑡 =
+𝑁𝑚𝐶𝑃𝑚𝑜𝑙,𝑚(𝑇𝑚 − 𝑇𝑅)+ 𝑁𝑜𝐶𝑃𝑚𝑜𝑙,𝑜(𝑇𝑜 − 𝑇𝑅)+ 𝑟𝑖𝑉𝑅
+𝑛𝑅𝐶𝑃𝑚𝑜𝑙,𝑅
+, (17)
+where 𝑇𝑅, 𝑇𝑚, and 𝑇𝑜 denote the temperatures of the reactor, methanol 
+stream, and oil stream, respectively. 𝐶𝑃𝑚𝑜𝑙,𝑚, 𝐶𝑃𝑚𝑜𝑙,𝑜, and 𝐶𝑃𝑚𝑜𝑙,𝑅 rep-
+resent the molar heat capacities of the methanol stream, the oil stream, 
+=== PAGE 7 ===
+Chemical Engineering Science 300 (2024) 120568
+7
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 11. a)RMSEofallthemodelsinextrapolation;b)BiodieselfractionandbestmodelspredictionsinOODtest(extrapolation).
+and the reactor, respectively. The reaction rate vector, denoted by 𝐫, is 
+deﬁned as
+𝐫 =[− 𝑟,−3𝑟,𝑟, 3𝑟], (18)
+where 𝑟is the reaction rate, a pseudo-parameter to be estimated from 
+data.
+4. Results
+This section presents the results obtained from the models trained 
+on diﬀerent application scenarios. The results will be presented in two 
+stages, one regarding an extrapolation scenario (Stage I) and the other 
+a transfer learning scenario (Stage II). More speciﬁcally, in Stage I we 
+demonstrate the process of training and validating the models and eval-
+uate their ability to extrapolate to new operating conditions. In Stage 
+II, we utilize one week of process measurements data to perform trans-
+fer learning using a hybrid modeling approach based on the best model 
+from Stage I. We then compare this approach with a data-driven model 
+trained using the new week’s data.
+4.1. Stage I: extrapolation
+During Stage I of the modeling process, it is postulated that the avail-
+ability of data concerning a speciﬁc set of operating conditions or prod-
+uct grades enables the development of data-driven models. Additionally, 
+it is assumed that the underlying process is reasonably understood at 
+an engineering level and thus can be expressed in mathematical terms. 
+Conservation laws governing mass and energy balances are typically 
+utilized to generate these models in the CPI domain, provided that suf-
+ﬁcient knowledge is available.
+The choice of the hybrid architecture is a critical decision to make 
+when developing a hybrid modeling approach. If the ﬁrst-principles 
+model has a high structural mismatch with the real process, the par-
+allel cooperative and knowledge augmented hybrid architectures are 
+often a good choice. This kind of structure allows engineers to use lin-
+ear and static mass and energy balances even in nonlinear and dynamic 
+systems, because the data-driven model will, in principle, account for 
+those eﬀects and accommodate them in the hybrid model. The main 
+disadvantage of the parallel cooperative architecture is the lack of ex-
+trapolation properties when compared to the serial structure. Therefore, 
+when the goal is to extrapolate to a new set of process conditions, the 
+serial hybrid architecture, as well as the knowledge augmented hybrid 
+architecture are expected to be more accurate and robust.
+A concise summary of the extrapolation performance of the models 
+is displayed in Fig.11a. The most eﬀective model for extrapolation is the 
+knowledge augmented hybrid model utilizing the MLP, which demon-
+strated only 8.6% of the RMSE presented by the ﬁrst-principles model 
+and 33% of the RMSE of the best data-driven model. In Fig.11, we illus-
+trated the measured KPI, the ﬁrst-principles model, the best data-driven 
+model, and the most eﬀective hybrid model. The hybrid model tracks 
+the measured KPI almost perfectly, with the exception of the ﬁnal peak 
+value where it overestimates the measured KPI. Next, we present more 
+details for the more relevant models.
+4.1.1. First-principles model
+Equations (15)-(18)provide  a sound characterization of the process 
+described in Section 3.1 and illustrated in Fig. 9. The measured KPI is 
+the biodiesel fraction in the output stream of the reactor. Assuming an 
+ideal mixing scenario in the CSTR, the diesel fraction is equivalent to 
+𝑥𝐵 in the ﬁrst-principles model introduced in Section3.2. Nonetheless, 
+to fully deﬁne the model, the reaction rate 𝑟must be identiﬁed.
+Given the abundance of data available and the single degree of free-
+dom for model ﬁtting, parameter identiﬁcation is a relatively straight-
+forward task. The reaction rate is estimated by minimizing the squared 
+error between the measured biodiesel fraction and the corresponding 
+predicted value using the GEKKO optimization suite (Beal et al., 2018). 
+The identiﬁed value of 𝑟is 0.0479mol ⋅m−1. The resulting model and the 
+training region are depicted in Fig. S.1a, where the model exhibits a root 
+mean squared error (RMSE) of 0.015 and a coeﬃcient of determination 
+(R2) of 0.44. When it comes to the performance of the ﬁrst-principles 
+model over unseen conditions, the test RMSE and R2 are 0.011 and 
+−1.476, respectively. On extrapolation, the goal of Stage I, RMSE = 
+0.035 and R2= 0.388. The results are shown in Figs. S.1b and S.1c. The 
+high RMSE observed in the ﬁrst-principles model suggests a fundamen-
+tal discrepancy. This mismatch primarily stems from the simpler kinetic 
+description adopted in the model, as delineated in Section3.2. In light 
+of these observations, practitioners are usually presented with two op-
+tions: one avenue is the reﬁnement of the existing ﬁrst-principles model 
+to improve the level of fundamental mechanistic understanding of the 
+system and its kinetics; alternatively, as explored in our study, one may 
+opt to leverage existing data through hybrid modeling.
+4.1.2. Data-driven models
+The training of the data-driven models involves the use of six predic-
+tor variables: reactor temperature (𝑇𝑅), oil feed mass ﬂow rate (𝐹𝑜𝑖𝑙), 
+oil ﬁlter pressure drop (Δ𝑃), methanol feed mass ﬂow rate (𝐹𝑚), oil 
+temperature (𝑇𝑜𝑖𝑙), and methanol stream temperature (𝑇𝑚). The mod-
+els were developed to predict the biodiesel molar fraction (𝑥𝑏𝑖𝑜 or KPI), 
+which served as the designated target variable. The models’ hyperpa-
+rameters were identiﬁed using 10-fold cross-validation by minimizing 
+the cross-validated RMSE between the predicted and measured KPI. The 
+scikit-learn Python software library (Pedregosa et al., 2011) was em-
+ployed for this task.
+After the training stage, the models’ performance was evaluated on 
+three distinct datasets: the training dataset, the in-domain (ID) test 
+=== PAGE 8 ===
+Chemical Engineering Science 300 (2024) 120568
+8
+J. Sansana, R. Rendall, I. Castillo et al.
+Table 1
+Model performance of every data-driven model in the three datasets.
+R2 RMSE
+LASSO PLS RFR MLP LASSO PLS RFR MLP
+Train 0.980 0.986 0.998 0.986 0.003 0.002 0.001 0.002
+ID Test 0.922 0.902 0.220 0.907 0.002 0.002 0.006 0.002
+OOD Test 0.893 0.960 -0.369 0.937 0.015 0.009 0.053 0.011
+Table 2
+Model performance of every serial hybrid model in the three datasets.
+R2 RMSE
+LASSO PLS RFR MLP LASSO PLS RFR MLP
+Train 0.829 0.997 0.996 0.950 0.008 0.001 0.001 0.005
+ID Test 0.050 0.830 0.077 -1.456 0.007 0.003 0.006 0.012
+OOD Test 0.822 0.964 0.846 0.959 0.019 0.009 0.018 0.009
+dataset, and the out-of-domain (OOD) test dataset (see Fig. S.2). The 
+evaluation of the models’ performance on the training dataset assesses 
+their ability to replicate previously observed data (i.e., the ﬁtting abil-
+ity). In the ID test, we varied process conditions, while ensuring that the 
+KPI remained within the limits of the training dataset. The OOD test, on 
+the other hand, is representative of an extrapolation situation, which is 
+the main focus of this study. The performance results are presented in 
+Table1. The PLS model was found to be the most eﬀective data-driven 
+model for extrapolation, although LASSO and MLP also exhibited fa-
+vorable predictive capabilities. PLS’ superiority over the other models 
+implies that the association between predictors and target is mostly lin-
+ear, in addition to the fact that the predictor’s variables might exhibit 
+some degree of collinearity. It should be noted that while the random 
+forest regression (RFR) model was the most accurate for the training 
+dataset, it performed poorly under extrapolation.
+4.1.3. Explicit serial hybrid models
+In the serial hybrid architecture applied to an extrapolation sce-
+nario, the data-driven models PLS and MLP have demonstrated superior 
+accuracy. The LASSO method also exhibited acceptable performance. 
+Furthermore, it is noteworthy that the utilization of RFR as the data-
+driven submodel has yielded favorable performance metrics. This can be 
+attributed to the fact that the predictive capability arises primarily from 
+the ﬁrst-principles model, and the data-driven component is speciﬁcally 
+concerned with predicting the reaction rate as an input to the former 
+model. Thus, the serial hybrid model is very well suited for cases where 
+there is a high level of conﬁdence in the ﬁrst-principles model, except 
+on a well-deﬁned subsystem that can be supplied through a properly 
+chosen machine learning model. The results are summarized in Fig. S.5, 
+while the performance metrics are provided in Table2.
+It is important to note that identifying a serial hybrid model ex-
+plicitly confers a signiﬁcant advantage when compared to the implicit 
+(simultaneous) alternative. By initially computing the reaction rates, the 
+practitioner is encouraged to visualize these reaction rates. This, in turn, 
+enhances the conﬁdence in the serial hybrid model, as it indicates that 
+the data-driven model is not merely predicting a parameter that yields 
+good prediction performance, but rather, a parameter that is consistent 
+with engineering knowledge. Moreover, it is possible to plot the reac-
+tion rates alongside the relevant process variables, thereby potentially 
+revealing previously unknown insights into the operation of the pro-
+cess and its eﬀect on critical parameters. In the present case study, the 
+reaction rates were plotted as functions of the methanol feed ﬂow, oil 
+feed ﬂow, reactor temperature, and the interaction between the reactor 
+temperature and oil feed ﬂow (refer to Fig. 12). In Fig. 12a, it can be 
+observed that the methanol feed ﬂow has a positive correlation with the 
+reaction rate for each of the depicted operation levels. Additionally, ex-
+amining Fig.12b reveals that these levels are obtained from the oil feed 
+ﬂow, which exhibits a strong positive eﬀect on the reaction rates. As ex-
+pected from engineering knowledge, the reactor temperature, which is 
+related to the reaction rate (by the Arrhenius equation), is positively cor-
+related to the reaction rate for the same level of oil ﬂow (see Fig.12c). 
+Furthermore, the interaction of the two process variables with the reac-
+tion rate is also positive, as illustrated in Fig.12d.
+4.1.4. Knowledge augmented hybrid models
+As detailed in Section 2.3, knowledge augmented hybrid models 
+comprise the training of a data-driven model on a dataset of process 
+measurements that has been augmented with the states predicted by 
+a ﬁrst-principles model. This model has been previously trained and 
+applied, enabling access to its predictions that may extend beyond 
+the original operation window. In our speciﬁc case study, the ﬁrst-
+principles model generates 5 state variables, all located within the re-
+actor: biodiesel molar fraction, methanol molar fraction, glycerin mo-
+lar fraction, oil molar fraction, and reactor temperature. These 5 state 
+variables are concatenated with the process measurements, and the re-
+sulting augmented dataset is used to train the data-driven models. The 
+training process of these models involves the minimization of the cross-
+validated RMSE between the predicted and computed KPIs (10-fold 
+cross-validation). The outcomes are presented in Fig. S.6, while the met-
+rics that reﬂect the performance of the model can be found in Table3.
+The knowledge augmented hybrid model featuring MLP as the data-
+driven model was found to be the best performing model for extrapo-
+lation, but LASSO and PLS also presented very good predictive capa-
+bilities. In this architecture, RFR showed a bad performance, possibly 
+because it overﬁtted the training data.
+4.2. Stage II: transfer learning
+In Stage II, the process is assumed to have moved its operation win-
+dow from the initial mode, A, to a new set of conditions, B, for a period 
+of time. This period of time is still short and insuﬃcient for generat-
+ing enough data to establish a new reliable model. For the purposes of 
+this study, a week’s worth of data on the new conditions was consid-
+ered to be available. As explained in Section3, the OOD test comprises 
+four sets of diﬀerent conditions, thereby allowing Stage II to be tested 
+on diverse datasets. It should be noted that this type of analysis can 
+only be performed using a process simulator, as in reality, a chemical 
+process would only encounter a single set of new conditions at a time. 
+Fig. 13 displays the new conditions, alongside with the predictions of 
+the ﬁrst-principles model, the best purely data-driven model (PLS), and 
+the best hybrid model (knowledge augmented hybrid architecture with 
+MLP as the data-driven submodel). Notably, all the models were trained 
+exclusively on condition A, which constitutes the training dataset. As ob-
+served, model predictions frequently exhibit bias, which may result from 
+parametric or structural mismatch. This mismatch is more pronounced 
+=== PAGE 9 ===
+Chemical Engineering Science 300 (2024) 120568
+9
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 12. Instantaneous reaction rates as a function of a) the methanol feed ﬂow; b) the oil feed ﬂow; c) the reactor temperature; d) and the interaction of the reactor 
+temperature with the oil feed ﬂow.
+Table 3
+Model performance of every knowledge augmented hybrid model in the three datasets.
+R2 RMSE
+LASSO PLS RFR MLP LASSO PLS RFR MLP
+Train 0.992 0.997 0.999 0.996 0.002 0.001 0.001 0.001
+ID Test 0.829 0.815 0.301 0.868 0.003 0.003 0.006 0.002
+OOD Test 0.990 0.950 -0.227 0.995 0.005 0.010 0.050 0.003
+in the ﬁrst-principles model, whereas the hybrid model displays less oﬀ-
+set.
+In order to mitigate model mismatch, we have employed a hybridiza-
+tion approach, where we utilize the previously trained hybrid model 
+(referred to as the source model) to generate a target model. As de-
+scribed in Section 2.4, the most suitable architectures for this purpose 
+are the knowledge augmented hybrid (TL-KAH) and the parallel co-
+operative (TL-PH). In the former architecture, the prediction from the 
+source model is incorporated as a variable into the process measure-
+ments available. This augmented dataset is then used to correct the 
+source prediction, thereby aligning it with the target conditions. To 
+make the prediction, we employ the PLS model, as it was found to be the 
+best data-driven model in several occasions in the previous subsection 
+(Stage I). For the TL-PH architecture, we build a PLS model to predict 
+the error between the source model and the target measurement, thus 
+correcting the initial predictions. As benchmarks for these models, we 
+compare them against the source model without any changes and a PLS 
+model trained using the newly available week of data. The resulting RM-
+SEs are presented in Fig.14a and the proﬁles are depicted in Fig.14b.
+The results obtained through the application of hybrid modeling for 
+model transfer were found to be encouraging. The transfer learning 
+models outperformed the source model (KAH_MLP) in Test scenarios 
+1, 3, and 4. However, in Test scenario 2, the source model was found 
+to be slightly better. The reason for this can be attributed to the fact 
+that the source model already had a low RMSE and the addition of 
+model complexity via model transfer only led to an increase in variance, 
+thereby degrading its performance. When comparing the performance 
+of the hybrid models with that of PLS, it was observed that in the worst-
+case scenario (Test 4), TL-PH matched the performance of PLS. In the 
+other scenarios, model transfer yielded signiﬁcantly better results, thus 
+demonstrating that incorporating available information from previous 
+process conditions added value to the model. Additionally, in three out 
+of four scenarios, the knowledge augmented hybrid architecture out-
+performed the parallel cooperative architecture. In summary, the use of 
+hybrid modeling techniques for transfer learning was found to be eﬀec-
+tive, provided that the source model actually needs to be transferred. If 
+the source model extrapolates well, it may be advisable to leave it as it 
+is and monitor its performance.
+5. Conclusions
+We demonstrated the eﬀectiveness of hybrid modeling as a tool for 
+industry practitioners to address evolving process conditions and mar-
+ket demands by integrating knowledge and data. While the utilization 
+of this technology is still limited due to the scarcity of well-deﬁned in-
+structions and the perceived steep learning curve for training hybrid 
+=== PAGE 10 ===
+Chemical Engineering Science 300 (2024) 120568
+10
+J. Sansana, R. Rendall, I. Castillo et al.
+Fig. 13. Implementationofnewoperatingconditions.
+Fig. 14. a)RMSEoftransferredmodelsandbenchmarks;b)Biodieselfractionandmodelspredictions.
+models, we believe the advantages of combining ﬁrst-principles models 
+with machine learning methods are solid and go beyond the increased 
+interpretability when compared to data-driven models, as demonstrated 
+in this article.
+The hybrid modeling methodology was applied to a simulated case 
+study of biodiesel production operated under diﬀerent conditions that 
+induce changes in biodiesel concentration (Fernandes et al., 2019). The 
+performance of diﬀerent modeling approaches, including hybrid mod-
+eling, pure physics-based models, and pure data-driven models, was 
+assessed in terms of their ability to accurately predict process behav-
+ior and support extrapolation and transfer learning. The results showed 
+that hybrid modeling consistently outperformed the other approaches, 
+with serial hybrid approaches being preferred for the extrapolation task. 
+Hybrid modeling also required fewer samples than the other bench-
+marks for the transfer learning task. These ﬁndings suggest that hybrid 
+modeling is a useful approach for supporting extrapolation and trans-
+fer learning in the context of managing process changes in the Chemical 
+Processing Industries.
+The choice of the hybrid architecture is a critical decision in de-
+veloping a hybrid modeling approach. When the ﬁrst-principles model 
+has a high structural mismatch with the real process, parallel coop-
+erative and knowledge augmented hybrid architectures are often the 
+best choices. This structure enables engineers to use linear and static 
+mass and energy balances even in nonlinear and dynamic systems, with 
+the data-driven model accounting for those eﬀects and accommodating 
+them in the hybrid model. The disadvantage of the parallel cooperative 
+architecture is its lack of extrapolation properties compared to the serial 
+structure. Thus, the serial hybrid architecture, as well as the knowledge 
+augmented hybrid architecture, are preferred when extrapolation to a 
+new set of process conditions is the goal. In the case study explored in 
+this article, the most eﬀective model for extrapolation is the knowledge 
+augmented hybrid model utilizing the MLP, which demonstrated only 
+8.6% of the RMSE presented by the ﬁrst-principles model and 33% of the 
+RMSE of the best data-driven model. The hybrid model accurately tracks 
+the measured KPI, with the exception of the ﬁnal peak value where it 
+overestimates.
+Moreover, the research details the application of transfer learning 
+in conjunction with hybrid modeling, showcasing the adaptation of an 
+existing model to novel process conditions through the training of an ad-
+ditional hybrid layer with a minimal dataset. The use of hybrid modeling 
+techniques for transfer learning was found to be eﬀective, provided that 
+the source model actually needs to be transferred. Transfer learning is 
+recommended when model performance in the new region experiences 
+a signiﬁcant decline in accuracy.
+In the future, we envision developing a systematic framework for 
+developing hybrid models under the principles of Information Quality 
+(InfoQ) (Reis and Kenett, 2018). The aim is to link the quality of the 
+available data, goal deﬁnition, and engineering knowledge about a pro-
+cess, to produce the hybrid architecture that generates the highest level 
+of information quality.
+=== PAGE 11 ===
+Chemical Engineering Science 300 (2024) 120568
+11
+J. Sansana, R. Rendall, I. Castillo et al.
+CRediT authorship contribution statement
+Joel Sansana:Writing – original draft, Software, Methodology, In-
+vestigation, Formal analysis, Data curation, Conceptualization. Ricardo 
+Rendall: Writing – review & editing, Validation, Conceptualization.
+Ivan Castillo: Writing – review & editing, Validation, Resources. Leo 
+Chiang: Writing – review & editing, Resources. Marco S.  Reis: Writ-
+ing – review & editing, Supervision, Resources, Project administration, 
+Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing ﬁnancial 
+interests or personal relationships that could have appeared to inﬂuence 
+the work reported in this paper.
+Data availability
+Data will be made available on request.
+Acknowledgements
+The authors acknowledge support from the Fundação para a Ciên-
+cia e Tecnologia, I.P., through the projects https://doi .org /10 .54499 /
+UIDB /00102 /2020and https://doi .org /10 .54499 /UIDP /00102 /2020.
+Appendix A. Supplementary material
+Supplementary material related to this article can be found online at 
+https://doi .org /10 .1016 /j .ces .2024 .120568.
+References
+Andersson, M., 2009. A comparison of nine PLS1 algorithms. J. Chemom. 23 (10), 
+518–529. https://doi .org /10 .1002 /cem .1248.
+Azarpour, A., Borhani, T.N.G., Wan Alwi, S.R., Manan, Z.A., Abdul Mutalib, M.I., 2017. 
+A generic hybrid model development for process analysis of industrial ﬁxed-bed cat-
+alytic reactors. Chem. Eng. Res. Des.117,  149–167. https://doi .org /10 .1016 /j .cherd .
+2016 .10 .024.
+Beal, L.D.R., Hill, D.C., Martin, R.A., Hedengren, J.D., 2018. GEKKO optimization suite. 
+Processes6  (8), 106. https://doi .org /10 .3390 /pr6080106.
+Bishop, C., 2006. Pattern Recognition and Machine Learning. Information Science and 
+Statistics. Springer-Verlag, New York.
+Brásio, A.S.R., Romanenko, A., Fernandes, N.C.P., Santos, L.O., 2016. First principle mod-
+eling and predictive control of a continuous biodiesel plant. J. Process Control 47, 
+11–21. https://doi .org /10 .1016 /j .jprocont .2016 .09 .003.
+Chen, Y., Ierapetritou, M., 2020. A framework of hybrid model development with iden-
+tiﬁcation of plant-model mismatch. AIChE J., e16996. https://doi .org /10 .1002 /aic .
+16996.
+de Calle-Etxabe, K.L., Ruiz-Carcel, C., Starr, A., Ferreiro, S., Arnaiz, A., Gomez-Omella, M., 
+Sierra, B., 2020. Hybrid modelling for linear actuator diagnosis in absence of faulty 
+data records. Comput. Ind.123,  103339.
+de Jong, S., 1993. SIMPLS: an alternative approach to partial least squares regression. 
+Chemom. Intell. Lab. Syst.18  (3), 251–263. https://doi .org /10 .1016 /0169 -7439(93 )
+85002 -x.
+Dietterich, T.G., 2000. Ensemble methods in machine learning. In: Multiple Classiﬁer Sys-
+tems. In: Lecture Notes in Computer Science. Springer, Berlin, Heidelberg, pp.1–15.
+Facco, P., Tomba, E., Bezzo, F., García-Muñoz, S., Barolo, M., 2012. Transfer of process 
+monitoring models between diﬀerent plants using latent variable techniques. Ind. Eng. 
+Chem. Res.51  (21), 7327–7339. https://doi .org /10 .1021 /ie202974u.
+Farahani, H.S., Fatehi, A., Nadali, A., Shoorehdeli, M.A., 2021. Domain adversarial neu-
+ral network regression to design transferable soft sensor in a power plant. Comput. 
+Ind.132,  103489.
+Fernandes, N., Romanenko, A., Reis, M.S., 2019. Mechanistic modeling and simulation 
+for process data generation. Ind. Eng. Chem. Res. https://doi .org /10 .1021 /acs .iecr .
+9b01752.
+Geladi, P., 1988. Notes on the history and nature of partial least squares (PLS) modelling. 
+J. Chemom.2  (4), 231–246. https://doi .org /10 .1002 /cem .1180020403.
+Gurden, S.P., Westerhuis, J.A., Bijlsma, S., Smilde, A.K., 2001. Modelling of spectro-
+scopic batch process data using grey models to incorporate external information. J. 
+Chemom.15  (2), 101–121. https://doi .org /10 .1002 /1099 -128x(200102 )15 :2<101 ::
+aid -cem602 >3 .0 .co ;2 -v.
+Hastie, T., Tibshirani, R., Friedman, J., 2016. The Elements of Statistical Learning: Data 
+Mining, Inference, and Prediction, 2nd edition. Springer, New York, NY.
+Johansen, T.A., Foss, B.A., 1992. Representing and learning unmodeled dynamics with 
+neural network memories. In: 1992 American Control Conference, pp.3037–3043.
+Kim, M., Lim, C., Hsuan, J., 2023. From technology enablers to circular economy: data-
+driven understanding of the overview of servitization and product–service systems in 
+industry 4.0. Comput. Ind.148,  103908.
+Kingma, D.P., Ba, J., 2017. Adam: a method for stochastic optimization. arXiv :1412 .6980. 
+https://doi .org /10 .48550 /arXiv .1412 .6980, Jan. 2017.
+Kourti, T., MacGregor, J., 1995. Process analysis, monitoring and diagnosis, using multi-
+variate projection methods. Chemom. Intell. Lab. Syst.28,  3–21. https://doi .org /10 .
+1016 /0169 -7439(95 )80036 -9.
+Kramer, M.A., Thompson, M.L., Bhagat, P.M., 1992. Embedding theoretical models in 
+neural networks. In: 1992 American Control Conference, pp.475–479.
+Kresta, J.V., Macgregor, J.F., Marlin, T.E., 1991. Multivariate statistical monitoring of 
+process operating performance. Can. J. Chem. Eng. 69, 35–47. https://doi .org /10 .
+1258 /phleb .2011 .010101.
+Liew, W.T., Adhitya, A., Srinivasan, R., 2014. Sustainability trends in the process indus-
+tries: a text mining-based analysis. Comput. Ind.65  (3), 393–400. https://doi .org /10 .
+1016 /j .compind .2014 .01 .004.
+Maas, A.L., Hannun, A.Y., Ng, A.Y., 2013. Rectiﬁer nonlinearities improve neural network 
+acoustic models. In: ICML, vol.30,  p.3.
+MacGregor, J.F., Kourti, T., 1995. Statistical process control of multivariate processes. 
+Control Eng. Pract.3  (3), 403–414. https://doi .org /10 .1016 /0967 -0661(95 )00014 -l.
+MacGregor, J.F., Jaeckle, C., Kiparissides, C., Koutoudi, M., 1994. Process monitoring and 
+diagnosis by multiblock PLS methods. AIChE J.40  (5), 826–838. https://doi .org /10 .
+1002 /aic .690400509.
+Molinaro, M., Orzes, G., 2022. From forest to ﬁnished products: the contribution of indus-
+try 4.0 technologies to the wood sector. Comput. Ind.138,  103637.
+Oliveira, R., 1998. Supervision, control and optimization of biotechnological processes 
+based on hybrid models. Ph.D. thesis, Ph.D. Dissertation. Martin-Luther Universität, 
+Halle-Wittenberg, Germany.
+Oliveira, R., 2004. Combining ﬁrst principles modelling and artiﬁcial neural networks: a 
+general framework. Comput. Chem. Eng.28  (5), 755–766. https://doi .org /10 .1016 /
+j .compchemeng .2004 .02 .014.
+Pan, S.J., Yang, Q., 2010. A survey on transfer learning. IEEE Trans. Knowl. Data Eng.22  
+(10), 1345–1359. https://doi .org /10 .1109 /tkde .2009 .191.
+Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, 
+M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, 
+D., Brucher, M., Perrot, M., Duchesnay, E., 2011. Scikit-learn: machine learning in 
+Python. J. Mach. Learn. Res.12,  2825–2830.
+Psichogios, D.C., Ungar, L.H., 1992. A hybrid neural network-ﬁrst principles approach 
+to process modeling. AIChE J. 38 (10), 1499–1511. https://doi .org /10 .1002 /aic .
+690381003.
+Quiñones-Grueiro, M., Prieto-Moreno, A., Verde, C., Llanes-Santiago, O., 2019. Data-
+driven monitoring of multimode continuous processes: a review. Chemom. Intell. Lab. 
+Syst.189,  56–71. https://doi .org /10 .1016 /j .chemolab .2019 .03 .012.
+Reis, M.S., Gins, G., 2017. Industrial process monitoring in the big data/industry 4.0 Era: 
+from detection, to diagnosis, to prognosis. Processes 5 (3), 35. https://doi .org /10 .
+3390 /pr5030035.
+Reis, M.S., Kenett, R., 2018. Assessing the value of information of data-centric activities 
+in the chemical processing Industry 4.0. AIChE J. 64 (11), 3868–3881. https://doi .
+org /10 .1002 /aic .16203.
+Reis, M.S., Saraiva, P.M., 2019. Data-centric process systems engineering for the chemical 
+Industry 4.0. In: Systems Engineering in the Fourth Industrial Revolution. John Wiley 
+& Sons, Ltd., pp.137–159.  Ch. 6.
+Rendall, R., Reis, M.S., 2018. Which regression method to use? Making informed deci-
+sions in “data-rich/knowledge poor” scenarios – the predictive analytics comparison 
+framework (PAC). Chemom. Intell. Lab. Syst.181,  52–63. https://doi .org /10 .1016 /j .
+chemolab .2018 .08 .004.
+Rendall, R., Castillo, I., Schmidt, A., Chin, S.-T., Chiang, L.H., Reis, M., 2019. Wide spec-
+trum feature selection (WiSe) for regression model building. Comput. Chem. Eng.121,  
+99–110. https://doi .org /10 .1016 /j .compchemeng .2018 .10 .005.
+Sansana, J., Joswiak, M.N., Castillo, I., Wang, Z., Rendall, R., Chiang, L.H., Reis, M.S., 
+2021. Recent trends on hybrid modeling for Industry 4.0. Comput. Chem. Eng.151,  
+107365. https://doi .org /10 .1016 /j .compchemeng .2021 .107365.
+Schmidhuber, J., 2015. Deep learning in neural networks: an overview. Neural Netw.61,  
+85–117. https://doi .org /10 .1016 /j .neunet .2014 .09 .003.
+Schubert, J., Simutis, R., Dors, M., Havlík, I., Lübbert, A., 1994. Hybrid modelling of 
+yeast production processes – combination of a priori knowledge on diﬀerent levels 
+of sophistication. Chem. Eng. Technol.17  (1), 10–20. https://doi .org /10 .1002 /ceat .
+270170103.
+Su, H.-T., Bhat, N., Minderman, P., McAvoy, T., 1992. Integrating neural networks with 
+ﬁrst principles models for dynamic modeling. In: Dynamics and Control of Chemical 
+Reactors, Distillation Columns and Batch Processes. Elsevier, pp.327–332.
+Thompson, M.L., Kramer, M.A., 1994. Modeling chemical processes using prior knowl-
+edge and neural networks. AIChE J.40  (8), 1328–1340. https://doi .org /10 .1002 /aic .
+690400806.
+Tibshirani, R., 1996. Regression shrinkage and selection via the Lasso. J. R. Stat. Soc. B58  
+(1), 267–288. https://doi .org /10 .1111 /j .2517 -6161 .1996 .tb02080 .x.
+Tomba, E., Barolo, M., García-Muñoz, S., 2012. General framework for latent variable 
+model inversion for the design and manufacturing of new products. Ind. Eng. Chem. 
+Res.51  (39), 12886–12900. https://doi .org /10 .1021 /ie301214c.
+=== PAGE 12 ===
+Chemical Engineering Science 300 (2024) 120568
+12
+J. Sansana, R. Rendall, I. Castillo et al.
+von Rueden, L., Mayer, S., Beckh, K., Georgiev, B., Giesselbach, S., Heese, R., Kirsch, 
+B., Pfrommer, J., Pick, A., Ramamurthy, R., Walczak, M., Garcke, J., Bauckhage, C., 
+Schuecker, J., 2023. Informed machine learning – a taxonomy and survey of inte-
+grating prior knowledge into learning systems. IEEE Trans. Knowl. Data Eng.35  (1), 
+614–633. https://doi .org /10 .1109 /TKDE .2021 .3079836.
+von Stosch, M., Oliveira, R., Peres, J., de Azevedo, S. Feyo, 2014. Hybrid semi-parametric 
+modeling in process systems engineering: past, present and future. Comput. Chem. 
+Eng.60,  86–101. https://doi .org /10 .1016 /j .compchemeng .2013 .08 .008.
+Wold, H., 1975. Soft modelling by latent variables: the non-linear iterative partial least 
+squares (NIPALS) approach. J. Appl. Probab. 12 (S1), 117–142. https://doi .org /10 .
+1017 /s0021900200047604.
+Wold, S., Sjöström, M., Eriksson, L., 2001. PLS-regression: a basic tool of chemometrics. 
+Chemom. Intell. Lab. Syst.58  (2), 109–130. https://doi .org /10 .1016 /s0169 -7439(01 )
+00155 -1.
+Zhuang, Y., Liu, Y., Ahmed, A., Zhong, Z., del Rio Chanona, E.A., Hale, C.P., Mercangöz, 
+M., 2022. A hybrid data-driven and mechanistic model soft sensor for estimating co2 
+concentrations for a carbon capture pilot plant. Comput. Ind.143,  103747.
