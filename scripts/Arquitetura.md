@@ -1,4 +1,4 @@
-# Proposta de Arquitetura da Solução: Do Modelo White-Box ao Modelo Híbrido Grey-Box
+# Proposta de Arquitetura: Do Modelo White-Box ao Grey-Box
 
 **Laboratório de Operações e Processos -- Engenharia Química -- UFMG**  
 **Alunos:** Daniel Couto Vieira, Guilherme Moura de Sousa Franco, Matheus Henrique Borba Póvoas, Rodrigo Amaral da Mata  
@@ -209,7 +209,7 @@ Para garantir que o modelo **generaliza para condições operacionais não vista
 
 Abaixo apresentam-se os resultados quantitativos obtidos em todas as etapas de teste e validação.
 
-### 5.1 Benchmark de Bancada (Validação Cruzada Estrita LOGO-CV nos 128 Pontos)
+### 5.1 Benchmark
 
 | Posição | Modelo / Algoritmo | Família | $R^2$ Ajuste | $R^2$ LOGO-CV | $RMSE_{\text{CV}}$ | $MAE_{\text{CV}}$ | Violação Física (%) |
 | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
