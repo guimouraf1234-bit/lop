@@ -227,4 +227,174 @@ Abaixo apresentam-se os resultados quantitativos obtidos em todas as etapas de t
 
 ---
 
+## 6. Arquitetura do Modelo Híbrido Serial (Grey-Box Cinético)
 
+Em resposta às limitações conceituais de desacoplamento do modelo residual e à rigidez empírica da tese de mestrado de **Bortot Coelho (2017)**, desenvolvemos a **Arquitetura Híbrida Serial (Grey-Box Cinético com Estimação de Parâmetro)**, implementada e validada no módulo [`serial_hybrid_model.py`](serial_hybrid_model.py).
+
+### 6.1. Superação da Hipótese de $\alpha$ Constante da Tese de 2017
+Na formulação original de Bortot Coelho (2017), a velocidade linear de avanço da reação de dissolução da zincita sob o Modelo do Núcleo Não Reagido (*Shrinking Core Model* -- SCM) com amortecimento difusional e acúmulo de sulfato foi proposta como:
+$$v(t) = \frac{d(\Delta D)}{dt} = \frac{2}{\rho_s} \max\Big( k_s \, C_{Af}(t) - \alpha \, [C_{A0} - C_{Af}(t)],\ 0 \Big)$$
+onde:
+* $\rho_s = 69{,}2\ \text{mol/L}$ é a densidade molar da calcina sólida;
+* $k_s = 18000\ \mu\text{m/min}$ a $40^\circ\text{C}$ (Arrhenius, Balarini et al., 2025);
+* $C_{Af}(t) = \max\big(C_{A0}(1 - X(t)/\eta),\ 0\big)$ é a acidez livre residual instantânea;
+* $[C_{A0} - C_{Af}(t)] = \frac{C_{A0}}{\eta} X(t)$ é a concentração de reagente consumido, proporcional ao acúmulo de $\text{Zn}^{2+}$ e íons sulfato na camada de difusão;
+* $\alpha$ é o parâmetro empírico de amortecimento cinético em $[\mu\text{m/min}]$.
+
+Na dissertação de 2017, pela ausência de métodos modernos de aprendizado estatístico, ajustou-se um **único valor estático** para cobrir todo o envelope experimental:
+$$\alpha_{\text{tese}} = 5500\ \mu\text{m/min} \quad (\text{constante universal})$$
+
+Entretanto, uma análise mecanicista e estequiométrica rigorosa comprova que o parâmetro de desaceleração $\alpha$ não pode ser tratado como uma constante termodinâmica fixa:
+1. **Em falta estequiométrica de ácido ($\eta = 0{,}5$):** A reação se encerra precocemente por falta de moléculas de $\text{H}_2\text{SO}_4$ ($X \to 0{,}5$). O valor fixo $\alpha = 5500$ subestima severamente a velocidade de dissolução inicial, elevando o erro quadrático ($SSE$ salta de $0{,}002$ para $0{,}088$). O valor físico real é $\alpha \approx 0\text{ a }500\ \mu\text{m/min}$.
+2. **Em ácido diluído ($C_{A0} = 0{,}1\ \text{mol/L}$):** A força iônica é desprezível e a camada difusional não sofre impedimento por sulfatos precipitados. As partículas ultrafinas dissolvem-se velozmente, exigindo $\alpha \approx 0$ (regime mecanicista puro).
+3. **Em excesso de ácido ($\eta = 3{,}1$) e alta acidez ($C_{A0} \ge 1{,}0\ \text{mol/L}$):** Ocorre geração massiva de sulfato de zinco em solução e forte precipitação de gel de sílica amorfa que oclui os microporos da calcina. O valor $\alpha = 5500$ é insuficiente para conter a taxa, exigindo $\alpha \approx 18000\text{ a }24000\ \mu\text{m/min}$.
+
+---
+
+### 6.2. Diagrama Conceitual e Estrutural da Arquitetura Serial
+
+Na arquitetura serial, a inteligência artificial não atua sobre a conversão final $X(t)$ de forma post-hoc; ela atua **antes e dentro** da equação de conservação diferencial:
+
+<div align="center">
+
+```mermaid
+graph TD
+    subgraph ENTRADAS["1. Variáveis de Entrada Operacionais"]
+        E1["Razão Estequiométrica<br/>η = H2SO4 / ZnO"]
+        E2["Acidez Inicial<br/>CA0 (mol/L)"]
+        E3["Razão Sólido-Líquido<br/>S/L (g/L)"]
+    end
+
+    subgraph BLACKBOX["2. Módulo Black-Box de Inteligência Artificial"]
+        ML1["Regressor de Machine Learning<br/>(GBDT / PolyRidge / SVR / MLP)"]
+        ML2["Restrição Termodinâmica:<br/>α̂ = max(0, f_ML(η, CA0))"]
+        ML1 --> ML2
+    end
+
+    subgraph WHITEBOX["3. Módulo White-Box Fundamental (PBM + SCM)"]
+        WB1["Taxa Linear de Retração Efetiva:<br/>v(t) = (2/ρs) max(ks CAf - α̂ ΔCA, 0)"]
+        WB2["EDO de Retração Radial:<br/>d(ΔD)/dt = v(t),  ΔD(0) = 0"]
+        WB3["Integração Granulométrica RRB (3º Momento):<br/>X(t) = 1 - ∫ (D - ΔD)³ f(D) dD / I0"]
+        
+        WB1 --> WB2
+        WB2 --> WB3
+    end
+
+    subgraph SAIDA["4. Saída do Modelo"]
+        S1["Conversão Temporal X(t)<br/>Monotonia Estrita: dX/dt ≥ 0"]
+    end
+
+    E1 --> ML1
+    E2 --> ML1
+    E3 -.-> ML1
+
+    ML2 -->|"Fator α̂ Calibrado"| WB1
+    WB3 --> S1
+```
+
+</div>
+
+---
+
+### 6.3. Diferenças Estruturais: Arquitetura Paralela vs Arquitetura Serial
+
+| Aspecto Estrutural | Arquitetura Híbrida Paralela (Residual) | Nova Arquitetura Híbrida Serial (Cinética) |
+| :--- | :--- | :--- |
+| **Ponto de Acoplamento da IA** | Saída da física: $X(t) = X_{\text{PBM}}(t) + \widehat{\Delta X}_{\text{ML}}$ | Entrada da física: $v(t) = f(C_{Af},\ \hat{\alpha}_{\text{ML}})$ |
+| **Papel do Machine Learning** | Aprende o desvio residual global $\Delta X$ | Aprende o parâmetro cinético de passivação $\hat{\alpha}$ |
+| **Garantia de Monotonicidade ($dX/dt \ge 0$)** | Artificial (requer filtro `np.maximum.accumulate`) | **Nativa e Intrínseca** (como $v(t) \ge 0$, $\Delta D$ e $X$ nunca decrescem) |
+| **Respeito Estequiométrico ($X \le \eta$ quando $\eta < 1$)** | Artificial (requer truncamento `clip(X, 0, eta)`) | **Nativa e Intrínseca** (o ácido $C_{Af}$ zera no PBM e a taxa anula-se) |
+| **Consistência do Consumo de Ácido** | Desacoplada ($C_{Af}$ é calculado com o $X$ sem correção) | **Totalmente Acoplada** ($C_{Af}$ e $X$ evoluem em sincronia na EDO) |
+| **Escalonamento para Reatores Contínuos (CSTR)** | Exige artifícios empíricos de DTR | **Direto e Imediato** (entra na equação de balanço molar de cada estágio) |
+
+---
+
+## 7. Metodologia de Implementação e Validação
+
+O desenvolvimento da arquitetura serial foi conduzido segundo uma metodologia rigorosa em sete etapas, assegurando reprodutibilidade científica e ausência total de vazamento de dados (*data leakage*):
+
+### Etapa 1: Ingestão Padronizada e Matriz Experimental
+* Utilizou-se a base completa com os 16 ensaios de bancada da dissertação de Bortot Coelho (2017), totalizando **$N = 128$ pontos experimentais** cobrindo os tempos $t \in [0; 0{,}5; 1; 2; 3; 4; 5; 15]$ min.
+* Matriz operacional: 4 níveis de razão molar $\eta \in \{0{,}5;\ 1{,}0;\ 1{,}5;\ 3{,}1\}$ cruzados com 4 níveis de acidez inicial $C_{A0} \in \{0{,}1;\ 0{,}5;\ 1{,}0;\ 1{,}5\}\ \text{mol/L}$.
+
+### Etapa 2: Formulação do Problema Inverso para Calibração de $\alpha^*$
+Para cada ensaio $k \in \{1, \dots, 16\}$, determinou-se o valor de amortecimento ótimo $\alpha_k^*$ que minimiza a soma dos erros quadráticos ($SSE$) entre a solução analítico-numérica do PBM e os dados experimentais:
+$$\alpha_k^* = \arg\min_{\alpha \in [0,\ 35000]} \sum_{j=1}^8 \left( X_{\text{exp}}(t_j) - X_{\text{PBM}}(t_j;\ \alpha) \right)^2$$
+A otimização foi executada via método de Brent com limites estritos (`scipy.optimize.minimize_scalar`), assegurando $\alpha^* \ge 0$.
+
+### Etapa 3: Catálogo Multi-Modelo e Treinamento do Black-Box
+Implementou-se um catálogo com 6 regressores representativos de diferentes famílias de Machine Learning:
+1. **Gradient Boosting (GBDT):** Floresta sequencial de árvores com regularização e subamostragem ($n=45$, profundidade=3, taxa de aprendizado=0,08).
+2. **Polynomial Ridge:** Regressão quadrática completa de 2º ordem com regularização de Tikhonov ($L_2$, $\lambda=1{,}5$).
+3. **Random Forest:** Floresta de árvores de decisão aleatórias com agregação bootstrap ($n=60$, profundidade=4).
+4. **Extra Trees:** Árvores extremamente aleatorizadas para minimização de variância ($n=60$, profundidade=4).
+5. **Support Vector Regression (SVR RBF):** Máquina de vetores de suporte com kernel de base radial Gaussiana ($C=10000$, $\epsilon=400$).
+6. **Rede Neural (MLP com Escalonamento de Alvo):** Perceptron multicamadas com camadas ocultas $(8, 4)$, ativação hiperbólica `tanh`, otimizador Quasi-Newton L-BFGS de 2ª ordem e `TransformedTargetRegressor` para garantir convergência assintótica sem instabilidade numérica.
+
+### Etapa 4: Integração Temporal e Resolução Numérica do Balanço Populacional
+A cada passo de predição:
+1. O regressor prevê $\hat{\alpha} = \max\big(0,\ f_{\text{ML}}(\eta, C_{A0})\big)$.
+2. O integrador `solve_ivp` (Runge-Kutta de 4ª/5ª ordem adaptativo - RK45) resolve a taxa $v(t) = \frac{d(\Delta D)}{dt}$.
+3. O encolhimento acumulado $\Delta D(t)$ é convertido em conversão mássica $X(t)$ pela integração numérica do 3º momento da distribuição de Rosin-Rammler-Bennett (RRB, $m = 1{,}022$, $D_{63{,}2} = 41{,}65\ \mu\text{m}$):
+   $$1 - X(t) = \frac{1}{I_0} \int_{\Delta D(t)}^\infty (D - \Delta D(t))^3 \, \frac{m}{D_{63{,}2}} \left(\frac{D}{D_{63{,}2}}\right)^{m-1} \exp\left[-\left(\frac{D}{D_{63{,}2}}\right)^m\right] dD$$
+
+### Etapa 5: Validação Cruzada Estrita (Leave-One-Group-Out -- LOGO-CV)
+Para atestar a capacidade preditiva em **condições operacionais cegas**, executou-se validação cruzada por grupos (16 folds independentes):
+* Em cada fold $k$, o modelo Black-Box é treinado exclusivamente nos 15 ensaios restantes.
+* O valor de $\hat{\alpha}$ do ensaio $k$ é predito às cegas a partir de $(\eta_k, C_{A0,k})$.
+* O PBM simula a curva inteira do ensaio $k$ sem que qualquer dado desse ensaio tenha sido visto pelo regressor.
+
+### Etapa 6: Métricas Estatísticas e Penalização dos Graus de Liberdade
+As métricas quantitativas foram calculadas segundo as formulações padronizadas:
+1. **Coeficiente de Determinação ($R^2$):**
+   $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}$$
+2. **Coeficiente de Determinação Ajustado ($R^2_{\text{ajustado}}$):**
+   $$R^2_{\text{ajustado}} = 1 - \left[ \frac{(1 - R^2)(n - 1)}{n - p - 1} \right]$$
+   onde $n = 128$ e $p$ é o número de parâmetros explicativos do modelo:
+   * White-Box Fundamental Puro: $p = 0$ ($R^2_{\text{adj}} = R^2$);
+   * Tese Bortot Coelho (2017): $p = 1$ (parâmetro $\alpha = 5500$ fixo);
+   * Híbrido Paralelo Residual: $p = 6$ (6 atributos termodinâmicos);
+   * Novo Híbrido Serial: $p = 2$ (atributos operacionais $\eta$ e $C_{A0}$).
+3. **Métricas de Erro:**
+   $$RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}, \qquad MAE = \frac{1}{n} \sum_{i=1}^n |y_i - \hat{y}_i|$$
+4. **Consistência Física:**
+   * Violação de Limites: $\%$ de pontos com $X < 0$, $X > 1$ ou $X > \eta + 10^{-4}$ (para $\eta < 1$).
+   * Violação de Monotonicidade: $\%$ de intervalos temporais com $\frac{dX}{dt} < -10^{-4}$.
+
+### Etapa 7: Mecanismo de Equilíbrio Analítico e Superação da Tese
+Em condições estequiométricas ($\eta = 1{,}0$), no limite assintótico $t \to \infty$, a velocidade de retração anula-se ($v(t) = 0$). Isso impõe que a conversão final atinja exatamente o valor analítico:
+$$k_s \, C_{Af} = \alpha \, [C_{A0} - C_{Af}] \implies k_s (1 - X) = \alpha X \implies X_{\text{final}} = \frac{k_s}{k_s + \alpha}$$
+* Na tese de 2017, com $\alpha = 5500$: $X_{\text{final}} = \frac{18000}{18000 + 5500} = 76{,}6\%$. Como os ensaios 6, 8, 9 e 10 atingem experimentalmente entre $85\%$ e $87\%$, o modelo antigo travava prematuramente em $76{,}6\%$.
+* No modelo Híbrido Serial, a IA prevê $\hat{\alpha} \approx 2500\text{ a }3400\ \mu\text{m/min}$, levando a $X_{\text{final}} = 84\%\text{ a }87{,}8\%$, reproduzindo fielmente o patamar real observado.
+
+---
+
+## 8. Benchmark Comparativo Geral entre Todas as Arquiteturas
+
+Abaixo consolida-se o confronto quantitativo entre todas as formulações avaliadas nos 128 pontos experimentais de bancada.
+
+### 8.1. Tabela Geral de Desempenho
+
+| Arquitetura / Modelo | Família | Parâmetros ($p$) | $R^2$ Ajuste | $R^2_{\text{ajustado}}$ Ajuste | $R^2$ LOGO-CV | $R^2_{\text{ajustado}}$ LOGO-CV | $RMSE_{\text{CV}}$ | $MAE_{\text{CV}}$ | Monotonicidade Intrínseca |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Híbrido Paralelo Residual (GBDT)** | Grey-Box Paralelo | 6 | **0,9987** | **0,9987** | **0,9934** | **0,9930** | **0,0264** | **0,0186** | Não (requer filtro) |
+| **Novo Híbrido Serial (alpha-PolyRidge)** | Grey-Box Serial | 2 | 0,9438 | 0,9429 | **0,9387** | **0,9378** | **0,0802** | 0,0404 | **Sim (100% nativa)** |
+| **Novo Híbrido Serial (alpha-MLP)** | Grey-Box Serial | 2 | 0,9463 | 0,9454 | 0,9371 | 0,9361 | 0,0813 | **0,0397** | **Sim (100% nativa)** |
+| **Novo Híbrido Serial (alpha-GBDT)** | Grey-Box Serial | 2 | **0,9474** | **0,9465** | 0,9357 | 0,9347 | 0,0822 | 0,0398 | **Sim (100% nativa)** |
+| **White-Box Fundamental Puro ($\alpha=0$)** | Balanço Populacional | 0 | 0,9253 | 0,9253 | 0,9253 | 0,9253 | 0,0886 | 0,0507 | **Sim (100% nativa)** |
+| **Tese Bortot Coelho (2017) ($\alpha=5500$)** | Cinética Empírica | 1 | 0,8976 | 0,8968 | 0,8976 | 0,8968 | 0,1037 | 0,0708 | **Sim (100% nativa)** |
+
+---
+
+### 8.2. Evidências Visuais e Gráficos Científicos (300 DPI)
+
+#### Gráfico de Paridade Quádruplo:
+![Paridade Comparativa](docs/paridade_comparativa_todas_arquiteturas.png)
+
+#### Curvas Cinéticas Comparativas nos 4 Regimes Estequiométricos:
+![Curvas Cinéticas](docs/curvas_dissolucao_ensaios_criticos.png)
+
+#### Superfície do Fator $\alpha(\eta, C_{A0})$ Aprendida pela Inteligência Artificial:
+![Superfície Alpha](docs/superficie_alpha_interpretacao_fisica.png)
+
+---
