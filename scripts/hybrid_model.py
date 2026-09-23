@@ -34,7 +34,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import Matern, WhiteKernel
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import LeaveOneGroupOut
+from sklearn.model_selection import LeaveOneGroupOut, GroupShuffleSplit, GroupKFold
 from sklearn.base import clone
 
 # Importações dos módulos locais do projeto
@@ -279,6 +279,72 @@ class ModeloHibridoCinza:
             y_cv_pred[val_idx] = self.acoplador.acoplar_e_restringir(df_val, delta_val_pred)
 
         return y_cv_pred
+
+    def validacao_holdout_85_15(self, df: pd.DataFrame, test_size: float = 0.15, random_state: int = 42) -> Dict[str, Any]:
+        """
+        Executa uma divisão de Holdout Agrupado: ~85% de ensaios para treino (13 ensaios)
+        vs ~15% de ensaios para teste cego (3 ensaios).
+        """
+        df_base = self.preparar_dados_base(df)
+        X, y, grupos = preparar_features_e_alvo(df_base)
+        gss = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
+        tr_idx, te_idx = next(gss.split(X, y, groups=grupos))
+        
+        reg = clone(self.regressor)
+        reg.fit(X[tr_idx], y[tr_idx])
+        
+        df_tr = df_base.iloc[tr_idx].copy()
+        df_te = df_base.iloc[te_idx].copy()
+        
+        pred_tr = reg.predict(X[tr_idx])
+        pred_te = reg.predict(X[te_idx])
+        
+        y_tr_pred = self.acoplador.acoplar_e_restringir(df_tr, pred_tr)
+        y_te_pred = self.acoplador.acoplar_e_restringir(df_te, pred_te)
+        
+        m_tr = calcular_metricas(df_tr['X_zn_exp'].values, y_tr_pred)
+        m_te = calcular_metricas(df_te['X_zn_exp'].values, y_te_pred)
+        
+        ens_tr = sorted(df_tr['ensaio_id'].unique().tolist())
+        ens_te = sorted(df_te['ensaio_id'].unique().tolist())
+        
+        return {
+            'ensaios_treino': ens_tr,
+            'ensaios_teste': ens_te,
+            'pct_treino': len(ens_tr) / len(df['ensaio_id'].unique()) * 100.0,
+            'pct_teste': len(ens_te) / len(df['ensaio_id'].unique()) * 100.0,
+            'metricas_treino': m_tr,
+            'metricas_teste': m_te,
+            'df_treino': df_tr,
+            'df_teste': df_te,
+            'y_treino_real': df_tr['X_zn_exp'].values,
+            'y_treino_pred': y_tr_pred,
+            'y_teste_real': df_te['X_zn_exp'].values,
+            'y_teste_pred': y_te_pred
+        }
+
+    def validacao_group_kfold_85_15(self, df: pd.DataFrame, n_splits: int = 6) -> Dict[str, Any]:
+        """
+        Executa validação cruzada por grupos (GroupKFold k=6) correspondendo a ~85% treino e ~15% teste
+        por fold em todos os 128 pontos experimentais.
+        """
+        df_base = self.preparar_dados_base(df)
+        X, y, grupos = preparar_features_e_alvo(df_base)
+        gkf = GroupKFold(n_splits=n_splits)
+        
+        y_cv_pred = np.zeros(len(df_base))
+        for tr_idx, te_idx in gkf.split(X, y, groups=grupos):
+            reg = clone(self.regressor)
+            reg.fit(X[tr_idx], y[tr_idx])
+            df_fold_te = df_base.iloc[te_idx].copy()
+            pred_te = reg.predict(X[te_idx])
+            y_cv_pred[te_idx] = self.acoplador.acoplar_e_restringir(df_fold_te, pred_te)
+            
+        m_cv = calcular_metricas(df_base['X_zn_exp'].values, y_cv_pred)
+        return {
+            'metricas': m_cv,
+            'y_pred_cv': y_cv_pred
+        }
 
 
 # =============================================================================

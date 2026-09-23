@@ -53,7 +53,7 @@ from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import LeaveOneGroupOut
+from sklearn.model_selection import LeaveOneGroupOut, GroupShuffleSplit, GroupKFold
 from sklearn.base import clone
 
 # Importações dos módulos físicos locais
@@ -415,6 +415,123 @@ class ModeloHibridoAlphaSerial:
             y_cv_total.extend(y_cv_dict[int(ens_id)])
             
         return np.array(y_cv_total, dtype=float), alfas_cv
+
+    def validacao_holdout_85_15(self, df_dados: pd.DataFrame, test_size: float = 0.15, random_state: int = 42) -> Dict[str, Any]:
+        """
+        Executa uma divisão de Holdout Agrupado: ~85% dos ensaios para treino (~13 ensaios)
+        vs ~15% dos ensaios para teste cego (~3 ensaios).
+        """
+        if isinstance(df_dados, tuple):
+            df_dados = df_dados[0]
+        if not self.alfas_otimos_calibrados:
+            self.calibrar_alfas_otimos_ensaios(df_dados, verbose=False)
+            
+        X_op, y_alpha, df_ens = self.extrair_atributos_operacionais(df_dados)
+        grupos = df_ens['ensaio_id'].values
+        
+        gss = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
+        tr_ens_idx, te_ens_idx = next(gss.split(X_op, y_alpha, groups=grupos))
+        
+        ensaios_treino = sorted(df_ens.iloc[tr_ens_idx]['ensaio_id'].tolist())
+        ensaios_teste = sorted(df_ens.iloc[te_ens_idx]['ensaio_id'].tolist())
+        
+        # Treina o regressor Black-Box de alpha apenas nos ensaios de treino
+        reg = clone(self.regressor)
+        reg.fit(X_op[tr_ens_idx], y_alpha[tr_ens_idx])
+        
+        # Predições de alpha para cada ensaio
+        alfas_pred = {}
+        for ens_id in df_dados['ensaio_id'].unique():
+            grp = df_dados[df_dados['ensaio_id'] == ens_id]
+            ca0 = float(grp['C_acid_0_mol_L'].iloc[0])
+            eta = float(grp['razao_molar_eta'].iloc[0])
+            X_in = np.array([[eta, ca0]])
+            a_hat = float(max(0.0, reg.predict(X_in)[0]))
+            alfas_pred[int(ens_id)] = a_hat
+            
+        # Simular trajetórias no PBM para treino e teste
+        df_tr = df_dados[df_dados['ensaio_id'].isin(ensaios_treino)].copy()
+        df_te = df_dados[df_dados['ensaio_id'].isin(ensaios_teste)].copy()
+        
+        def simular_subconjunto(sub_df):
+            y_out = []
+            for ens_id, grp in sub_df.groupby('ensaio_id', sort=False):
+                ca0 = float(grp['C_acid_0_mol_L'].iloc[0])
+                eta = float(grp['razao_molar_eta'].iloc[0])
+                tempos = grp['tempo_min'].tolist()
+                a_hat = alfas_pred[int(ens_id)]
+                res = self.pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta, alpha=a_hat)
+                y_out.extend(res['X_pbm'])
+            return np.array(y_out, dtype=float)
+            
+        y_tr_pred = simular_subconjunto(df_tr)
+        y_te_pred = simular_subconjunto(df_te)
+        
+        m_tr = calcular_metricas_estatisticas(df_tr['X_zn_exp'].values, y_tr_pred, p_parametros=2, eta=df_tr['razao_molar_eta'].values)
+        m_te = calcular_metricas_estatisticas(df_te['X_zn_exp'].values, y_te_pred, p_parametros=2, eta=df_te['razao_molar_eta'].values)
+        
+        return {
+            'ensaios_treino': ensaios_treino,
+            'ensaios_teste': ensaios_teste,
+            'pct_treino': len(ensaios_treino) / len(df_ens) * 100.0,
+            'pct_teste': len(ensaios_teste) / len(df_ens) * 100.0,
+            'alfas_preditos': alfas_pred,
+            'metricas_treino': m_tr,
+            'metricas_teste': m_te,
+            'df_treino': df_tr,
+            'df_teste': df_te,
+            'y_treino_real': df_tr['X_zn_exp'].values,
+            'y_treino_pred': y_tr_pred,
+            'y_teste_real': df_te['X_zn_exp'].values,
+            'y_teste_pred': y_te_pred
+        }
+
+    def validacao_group_kfold_85_15(self, df_dados: pd.DataFrame, n_splits: int = 6) -> Dict[str, Any]:
+        """
+        Executa validação cruzada por grupos (GroupKFold k=6) correspondendo a ~85% treino e ~15% teste
+        por fold em todos os 128 pontos experimentais.
+        """
+        if isinstance(df_dados, tuple):
+            df_dados = df_dados[0]
+        if not self.alfas_otimos_calibrados:
+            self.calibrar_alfas_otimos_ensaios(df_dados, verbose=False)
+            
+        X_op, y_alpha, df_ens = self.extrair_atributos_operacionais(df_dados)
+        grupos = df_ens['ensaio_id'].values
+        gkf = GroupKFold(n_splits=n_splits)
+        
+        y_cv_dict = {}
+        alfas_cv = {}
+        
+        for tr_idx, te_idx in gkf.split(X_op, y_alpha, groups=grupos):
+            ens_teste = df_ens.iloc[te_idx]['ensaio_id'].tolist()
+            mod_fold = clone(self.regressor)
+            mod_fold.fit(X_op[tr_idx], y_alpha[tr_idx])
+            
+            for ens_id in ens_teste:
+                grp = df_dados[df_dados['ensaio_id'] == ens_id]
+                ca0 = float(grp['C_acid_0_mol_L'].iloc[0])
+                eta = float(grp['razao_molar_eta'].iloc[0])
+                tempos = grp['tempo_min'].tolist()
+                X_in = np.array([[eta, ca0]])
+                a_hat = float(max(0.0, mod_fold.predict(X_in)[0]))
+                alfas_cv[int(ens_id)] = a_hat
+                
+                res = self.pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta, alpha=a_hat)
+                y_cv_dict[int(ens_id)] = res['X_pbm']
+                
+        y_cv_total = []
+        for ens_id, grp in df_dados.groupby('ensaio_id', sort=False):
+            y_cv_total.extend(y_cv_dict[int(ens_id)])
+            
+        y_cv_arr = np.array(y_cv_total, dtype=float)
+        m_cv = calcular_metricas_estatisticas(df_dados['X_zn_exp'].values, y_cv_arr, p_parametros=2, eta=df_dados['razao_molar_eta'].values)
+        
+        return {
+            'metricas': m_cv,
+            'y_pred_cv': y_cv_arr,
+            'alfas_pred_cv': alfas_cv
+        }
 
 
 # =============================================================================
