@@ -13,3 +13,6 @@ __pycache__/
 # Resultados gerados pelo pipeline da revisao (figuras sao regeneraveis)
 resultados/figuras/
 .pytest_cache/
+resultados/_log*.txt
+arquivo/figuras_antigas/
+arquivo/**/*.png
