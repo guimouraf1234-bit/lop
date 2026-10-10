@@ -1,79 +1,49 @@
-# README -- Módulo de Carregamento de Dados (`data_loader.py`)
+# README -- Carregamento de dados (`data_loader.py`)
 
-## 1. Visão Geral e Objetivo
-O módulo `data_loader.py` é responsável pela ingestão, estruturação e disponibilização em memória de todos os dados experimentais e propriedades físico-químicas utilizados no projeto de modelagem da lixiviação de concentrado ustulado de zinco.
+## 1. Papel
+Camada de dados do projeto: lê os JSON de `data/extracted/` e devolve DataFrames/dicionários padronizados para o PBM, o
+híbrido e o pipeline de validação.
 
-Ele atua como a **camada de dados (Data Layer)** do projeto, garantindo que os scripts mecanicistas e de aprendizado de máquina acessem as informações experimentais de forma padronizada via DataFrames do Pandas e dicionários tipados.
+## 2. Dados
 
----
+| Arquivo | Conteúdo | Origem |
+| :--- | :--- | :--- |
+| `ensaios_bancada.json` | 16 ensaios × 8 tempos = **128 pontos** $(t, X_{Zn})$ e a resposta final de cada ensaio | Tabelas A1.1 e A1.4 de Bortot Coelho (2017); médias de triplicatas |
+| `parametros_processo.json` | constantes cinéticas, propriedades da calcina, RRB | tese e Balarini et al. (2025) |
+| `ensaios_planta_piloto.json` | cascata de 3 CSTR (fora do escopo desta revisão) | Tabelas A1.6 e A1.7 |
 
-## 2. Estrutura dos Dados Carregados
+Delineamento: $\eta \in \{0{,}5;\ 1{,}0;\ 1{,}5;\ 3{,}1\}$ × $C_{A0} \in \{0{,}1;\ 0{,}5;\ 1{,}0;\ 1{,}5\}$ mol/L, T = 40 °C, 1000 rpm, 400 mL, tempos
+0; 0,5; 1; 2; 3; 4; 5; 15 min.
 
-O módulo consome arquivos JSON padronizados localizados no diretório `data/extracted/`:
+> **Atenção (revisão):** `C_acid_final_mol_L` **não é uma titulação**. A tese (item 4.4.2 e Apêndice A4) o calcula a partir
+> do **pH medido**, por especiação ideal de ácido sulfúrico puro (balanço de cargas sem Zn²⁺). O **pH é a única medida independente**
+> do estado ácido; por isso a validação termodinâmica do White-Box usa pH, não $C_{Af}$. As duas colunas só fornecem a mesma informação.
+>
+> `ensaios_planta_piloto.json` informa 18 L por reator (volume_total 54 L), mas a dissertação (item 4.7.2) diz **6 L** por reator
+> (τ = 14,6 e 28,6 min por reator); o código do contínuo usa 6 L. Corrigir o JSON antes de usá-lo.
 
-1. **`ensaios_bancada.json` (16 ensaios de bancada em triplicata):**
-   * Contém 128 registros planos $(t, X_{\text{Zn}})$.
-   * Variáveis operacionais monitoradas:
-     * `tempo_min`: Tempos discretos de amostragem ($0{,}0;\ 0{,}5;\ 1{,}0;\ 2{,}0;\ 3{,}0;\ 4{,}0;\ 5{,}0;\ 15{,}0\text{ min}$).
-     * `X_zn_exp`: Conversão fracionária de zinco medida por Espectrometria de Absorção Atômica (EAA).
-     * `razao_molar_eta`: Razão estequiométrica molar entre $\text{H}_2\text{SO}_4$ e $\text{ZnO}$ ($\eta \in \{0{,}5;\ 1{,}0;\ 1{,}5;\ 3{,}1\}$).
-     * `C_acid_0_mol_L`: Concentração inicial de ácido ($C_{A0} \in \{0{,}1;\ 0{,}5;\ 1{,}0;\ 1{,}5\}\text{ mol/L}$).
-     * `razao_SL_g_L`: Razão sólido/líquido em $\text{g/L}$.
-     * `C_acid_final_mol_L` e `pH_final`: Concentração final de ácido e pH medidos.
-   * *Fonte:* Tabelas A1.1 e A1.4 da dissertação de Bortot Coelho (2017).
+## 3. Funções
+| Função | Retorno |
+| :--- | :--- |
+| `obter_caminhos()` | caminhos absolutos dos dados (a partir da posição do script) |
+| `carregar_dados_bancada()` | DataFrame de 128 linhas: operação, `X_zn_exp` e `razao_molar_eta_real` (Eq. 4.3, pelas massas; o `razao_molar_eta` é o nível nominal 0,5/1,0/1,5/3,1) |
+| `carregar_respostas_finais()` | uma linha por ensaio: `pH_0`, `pH_final`, `C_acid_final_mol_L` (derivado do pH), `Zn_licor_final_g_L`, `X_zn_final`, `X_fe_final`, η nominal e real |
+| `carregar_parametros()` | dicionário de `parametros_processo.json` |
+| `carregar_dados_piloto()` | dicionário do piloto |
+| `carregar_dados_com_residuo()` | **obsoleto**: cache do resíduo do White-Box antigo, em `arquivo/`. O pipeline recalcula o PBM a cada execução |
 
-2. **`parametros_processo.json`:**
-   * Constantes cinéticas ($k_s$, $E_a$), propriedades do sólido ($\rho_s = 69{,}2\text{ mol/L}$, teor de $\text{ZnO} = 76{,}1\%$, fração de zinco solúvel $f_{\text{ZnO}} = 0{,}87$), e parâmetros granulométricos RRB ($m = 1{,}022$, $D_{63{,}2} = 41{,}65\ \mu\text{m}$).
-
-3. **`ensaios_planta_piloto.json`:**
-   * Dados contínuos da cascata de 3 reatores CSTR em série ($18\text{ L}$ cada) sob vazões de $0{,}41\text{ L/min}$ e $0{,}21\text{ L/min}$ (Tabelas A1.6 e A1.7).
-
-Além disso, gerencia o acesso aos dados pré-calculados/processados em `data/processed/`:
-4. **`dados_com_residuo.csv`:**
-   * Dataset de 128 pontos contendo as variáveis de processo, a conversão física do PBM ($X_{\text{PBM}}$), a concentração ácida remanescente ($C_{A,\text{PBM}}$) e o resíduo experimental ($\Delta X$).
-
----
-
-## 3. Funções Disponíveis
-
-### `obter_caminhos() -> dict`
-Descobre dinamicamente a localização absoluta dos diretórios e arquivos em `data/extracted/` e `data/processed/` a partir da posição do script, evitando erros de caminho relativo em diferentes sistemas operacionais.
-
-### `carregar_dados_bancada() -> pd.DataFrame`
-Carrega os 16 ensaios de bancada e retorna um `pd.DataFrame` contendo 128 linhas e 16 colunas com todos os atributos operacionais e respostas analíticas.
-
-### `carregar_parametros() -> dict`
-Retorna um dicionário hierárquico com todas as propriedades termodinâmicas, granulométricas e cinéticas da calcina de zinco e da solução lixiviante.
-
-### `carregar_dados_com_residuo() -> Optional[pd.DataFrame]`
-Carrega o conjunto consolidado de dados processados com resíduos (`data/processed/dados_com_residuo.csv`) para uso direto no treinamento e validação do modelo híbrido (*Grey-Box*).
-
----
-
-## 4. Exemplo de Uso
-
+## 4. Exemplo
 ```python
-from data_loader import carregar_dados_bancada, carregar_parametros
+from data_loader import carregar_dados_bancada, carregar_respostas_finais
 
-# 1. Carrega os ensaios de bancada
 df = carregar_dados_bancada()
-print(f"Total de observações carregadas: {len(df)}")
-
-# Filtrar ensaios com razão estequiométrica unitária (eta = 1.0)
-df_eta1 = df[df["razao_molar_eta"] == 1.0]
-print(df_eta1[["ensaio_id", "tempo_min", "X_zn_exp"]].head())
-
-# 2. Carrega as constantes do processo
-params = carregar_parametros()
-ks = params["parametros_cineticos_reacao_quimica"]["constante_cinetica_ks"]["valor_um_min"]
-print(f"Constante cinética de referência: {ks} um/min")
+print(len(df), df['ensaio_id'].nunique())                     # 128 16
+print(df[df['razao_molar_eta'] == 1.0][['ensaio_id', 'tempo_min', 'X_zn_exp']].head(3))
+resp = carregar_respostas_finais()
+print(resp[['ensaio_id', 'pH_0', 'pH_final', 'X_zn_final']].head(3))
 ```
 
----
-
-## 5. Como Testar
-No terminal PowerShell com o ambiente virtual ativado:
+## 5. Teste
 ```powershell
-& .venv\Scripts\python.exe scripts/data_loader.py
+& .venv\Scripts\python.exe -m pytest tests -q          # usa estes carregadores em todos os testes
 ```
-*Saída esperada:* Confirmação de 128 observações e exibição das 5 primeiras linhas do DataFrame.

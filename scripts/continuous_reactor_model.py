@@ -6,6 +6,11 @@ Trabalho de Conclusão de Curso (TCC) -- Engenharia Química -- UFMG (2026)
 Alunos: Daniel Couto, Guilherme Moura, Matheus Póvoas, Rodrigo Mata
 Orientador: Prof. Dr. Fabrício Eduardo Bortot Coelho
 
+NOTA (revisão de validade, batelada): este módulo usa o modelo híbrido no modo 'legado' (White-Box do TCC antes
+da revisão, 6 atributos, acoplador legado) e NÃO foi revisado: o escopo da revisão foi só a batelada. Pendências
+conhecidas: fator 0,05 arbitrário em calcular_conversoes_estacionarias_cstr, vetor x_cstr_mecanicista fixo (Tabela
+5.15 da tese) e volumes divergentes entre ensaios_planta_piloto.json (18 L por reator) e a dissertação (6 L).
+
 Fundamentação Teórica:
   1. Configuração da Planta Piloto:
      - Cascata de 3 CSTRs em aço inox, operando por transbordo em regime contínuo.
@@ -296,7 +301,7 @@ def executar_benchmark_planta_piloto(cascade: ContinuousReactorCascade,
 
     # 4. Avaliar cada regressor Grey-Box nas abordagens DTR e CSTR
     for nome_mod in catalogo.keys():
-        h = ModeloHibridoCinza(nome_algoritmo=nome_mod)
+        h = ModeloHibridoCinza(nome_algoritmo=nome_mod, entradas='legado')
         df_tr = h.preparar_dados_base(df_bancada)
         h.treinar(df_tr)
         
@@ -400,7 +405,7 @@ def plotar_perfil_estacionario(cascade: ContinuousReactorCascade,
 
         # 3. Modelos Grey-Box CSTR avaliados
         for nome_mod, cor, estilo, espessura in modelos_destaque:
-            h = ModeloHibridoCinza(nome_algoritmo=nome_mod)
+            h = ModeloHibridoCinza(nome_algoritmo=nome_mod, entradas='legado')
             df_tr = h.preparar_dados_base(df_bancada)
             h.treinar(df_tr)
             vals = cascade.calcular_conversoes_estacionarias_cstr(h, tau_i, vazao)
@@ -579,7 +584,7 @@ if __name__ == "__main__":
     print(f"\n-> Modelo Híbrido Campeão na Planta Piloto: '{melhor_nome}' (MAE = {melhor_modelo_row['MAE (%)']:.2f}%, R² = {melhor_modelo_row['R2']:.4f})")
 
     # 4. Inicializar o melhor modelo híbrido para detalhamento
-    hibrido_campeao = ModeloHibridoCinza(nome_algoritmo=melhor_nome)
+    hibrido_campeao = ModeloHibridoCinza(nome_algoritmo=melhor_nome, entradas='legado')
     df_treino = hibrido_campeao.preparar_dados_base(df_bancada)
     hibrido_campeao.treinar(df_treino)
 

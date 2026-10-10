@@ -3,7 +3,7 @@ validacao.py
 ------------
 Protocolos de validação, baselines e métricas do modelo híbrido da lixiviação em batelada.
 
-Princípios (ver lop/docs/plano_validade.md):
+Princípios (ver docs/validade_modelo_hibrido.md):
   - Todas as dobras são feitas por ENSAIO INTEIRO (o PBM é recalculado a cada dobra, de modo que os
     parâmetros do White-Box que dependem dos dados, como nu, só usam ensaios de treino).
   - Quatro protocolos: GroupKFold(8) repetido, LOGO, deixa-um-nível-de-η-fora (extrapolação em η),

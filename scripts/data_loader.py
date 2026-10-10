@@ -12,7 +12,7 @@ def obter_caminhos():
         "parametros": os.path.join(pasta_dados, "parametros_processo.json"),
         "piloto": os.path.join(pasta_dados, "ensaios_planta_piloto.json"),
         "pasta_processados": pasta_processados,
-        "dados_com_residuo": os.path.join(pasta_processados, "dados_com_residuo.csv")
+        "dados_com_residuo": os.path.abspath(os.path.join(diretorio_atual, "..", "arquivo", "dados_com_residuo_legado.csv"))
     }
 
 def carregar_dados_bancada():
@@ -43,7 +43,7 @@ def carregar_parametros():
     return parametros
 
 def carregar_dados_com_residuo():
-    """OBSOLETO: cache do resíduo do White-Box legado. O pipeline atual recalcula o PBM a cada uso."""
+    """OBSOLETO: lê o cache do resíduo do White-Box legado (arquivo/). O pipeline atual recalcula o PBM a cada uso."""
     caminhos = obter_caminhos()
     caminho_csv = caminhos["dados_com_residuo"]
     if os.path.exists(caminho_csv):

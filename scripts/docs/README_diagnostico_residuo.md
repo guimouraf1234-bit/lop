@@ -1,79 +1,32 @@
-# README -- Módulo de Diagnóstico do Resíduo (`diagnostico_residuo.py`)
+# README -- Exportador do resíduo (`diagnostico_residuo.py`)
 
-## 1. Visão Geral e Objetivo
-O módulo `diagnostico_residuo.py` realiza a ponte quantitativa entre o **Modelo Mecanicista (\textit{White-Box})** e o **Modelo de Aprendizado de Máquina (\textit{Black-Box})**.
+## 1. Papel
+Exporta a tabela do **resíduo do White-Box**, $\Delta X = X_{exp} - X_{PBM}$, para a configuração escolhida (padrão: o White-Box
+principal). É só uma ferramenta de inspeção: o pipeline **não lê** o arquivo e sempre recalcula o PBM (não há cache).
 
-Ele executa a simulação do Balanço Populacional (`population_balance.py`) para todos os 16 ensaios de bancada da tese de Bortot Coelho (2017), compara com os 128 pontos experimentais reais e calcula o **Resíduo Físico ($\Delta X$)**:
-$$\Delta X = X_{\text{experimental}} - X_{\text{PBM}}$$
-
-Ao final, gera e salva o arquivo de dados consolidado `data/processed/dados_com_residuo.csv`, que serve como conjunto de dados de entrada para o treinamento do modelo híbrido (*Grey-Box*).
-
----
-
-## 2. Fundamentação Teórica: O Significado do Resíduo
-
-O modelo de primeiros princípios assume partículas esféricas homogêneas e ácido sulfúrico em solução ideal. Na prática experimental de laboratório, ocorrem três fenômenos secundários complexos:
-
-1. **Desvios Iniciais Positivos ($\Delta X > 0$ nos primeiros minutos):**
-   * O concentrado ustulado contém uma fração elevada de partículas ultrafinas com arestas vivas e alta rugosidade superficial.
-   * Essas partículas dissolvem-se quase que instantaneamente no contato inicial com o ácido, fazendo com que a conversão real nos primeiros 60 segundos seja ligeiramente superior à de esferas lisas ideais.
-
-2. **Desvios Terminais Negativos ($\Delta X < 0$ nos minutos finais):**
-   * Conforme a lixiviação avança, acumulam-se grandes quantidades de íons $\text{Zn}^{2+}$, $\text{Fe}^{2+}/\text{Fe}^{3+}$ e $\text{SO}_4^{2-}$ em solução, reduzindo a atividade termodinâmica do próton $\text{H}^+$ (**efeito de íon comum**).
-   * Silicatos solúveis presentes na calcina polimerizam em meio ácido, formando um filme superficial de gel de sílica amorfa (**passivação difusional**).
-   * A reação desacelera antes do previsto pela física pura.
-
-O resíduo $\Delta X$ não é ruído aleatório gaussiano: **ele carrega uma assinatura físico-química determinística**, perfeitamente adequada para ser aprendida por algoritmos de regressão supervisionada.
-
----
-
-## 3. Desempenho do Modelo Mecanicista Puro (White-Box)
-
-A avaliação estatística dos 128 pontos de bancada confirma a alta precisão da física fundamental:
-
-* **Coeficiente de Determinação ($R^2$):** **$0{,}9253$**  
-  *(A física pura sozinha explica $92{,}5\%$ da variância de todos os experimentos)*.
-* **Raiz do Erro Quadrático Médio ($RMSE$):** **$0{,}0886$** ($8{,}86\%$).
-* **Erro Médio Absoluto ($MAE$):** **$0{,}0507$** ($5{,}07\%$).
-
----
-
-## 4. Estrutura do Código e Dados Gerados
-
-### `calcular_residuos() -> pd.DataFrame`
-1. Chama `carregar_dados_bancada()` para obter os dados experimentais.
-2. Agrupa por `ensaio_id` e executa `pbm.simular_ensaio` para cada condição operacional $(C_{A0}, \eta, t)$.
-3. Adiciona as colunas:
-   * `X_pbm`: Conversão teórica mecanicista calculada.
-   * `delta_X`: Resíduo ($X_{\text{exp}} - X_{\text{pbm}}$).
-4. Exporta para `data/processed/dados_com_residuo.csv`.
-
----
-
-## 5. Exemplo de Saída dos Dados Gerados
-
-Trecho dos primeiros registros com o resíduo calculado para o Ensaio 1 ($C_{A0} = 0{,}1\text{ mol/L}$, $\eta = 0{,}5$):
-
-| ensaio_id | tempo_min | X_zn_exp | X_pbm | delta_X |
-| :---: | :---: | :---: | :---: | :---: |
-| 1 | 0.0 | 0.00 | 0.0000 | 0.0000 |
-| 1 | 0.5 | 0.42 | 0.3239 | +0.0961 |
-| 1 | 1.0 | 0.46 | 0.4216 | +0.0384 |
-| 1 | 2.0 | 0.46 | 0.4810 | -0.0210 |
-| 1 | 3.0 | 0.49 | 0.4950 | -0.0050 |
-| 1 | 4.0 | 0.51 | 0.4987 | +0.0113 |
-| 1 | 5.0 | 0.49 | 0.4996 | -0.0096 |
-| 1 | 15.0 | 0.50 | 0.5000 | 0.0000 |
-
----
-
-## 6. Como Executar
-Execute no terminal:
 ```powershell
-& .venv\Scripts\python.exe scripts/diagnostico_residuo.py
+& .venv\Scripts\python.exe scripts/diagnostico_residuo.py              # White-Box principal -> resultados/dados_com_residuo.csv
+& .venv\Scripts\python.exe scripts/diagnostico_residuo.py --legado     # White-Box anterior à revisão (V0, nu = 1)
 ```
-*Saída:*
-```text
-Resíduos calculados e salvos com sucesso em: ...\data\processed\dados_com_residuo.csv
+```python
+from diagnostico_residuo import calcular_residuos
+df = calcular_residuos()          # DataFrame com X_pbm, C_acid_pbm_mol_L, H_pbm_mol_L, delta_X
 ```
-O arquivo `data/processed/dados_com_residuo.csv` estará pronto para alimentar o **Modelo Híbrido Grey-Box**!
+
+## 2. O que o resíduo contém (fatos medidos; as causas são hipóteses)
+Resíduo aos 15 min do White-Box principal (Tabela T14 de `resultados/tabelas.md`):
+
+* **η = 0,5:** ≈ 0 (−0,004 a −0,014): o ν corrige o patamar; a versão antiga previa 0,535 contra 0,50 medido (resíduo −0,035).
+* **η = 1,0:** **−0,10 a −0,14**. O experimento satura em 0,85–0,87 com ácido e zincita em proporção estequiométrica; o PBM prevê 0,97–0,99.
+* **η = 1,5:** −0,02 a −0,03; **η = 3,1:** ≈ 0.
+* O desvio concentra-se em η ≈ 1 e cresce com $C_{A0}$ (−0,10 a 0,1 mol/L; −0,14 a 1,5 mol/L).
+
+Nesse patamar a cinética parece **não** ser o limitante: nos ensaios 8 a 10 o pH final medido (0,6 a 1,2) indica [H⁺] de 0,06 a
+0,25 mol/L e, com o $k_s$ de Balarini ($v = 617\,[\text{H}^+]$ µm/min por mol/L), qualquer partícula da distribuição se dissolveria em
+poucos minutos (é o que o PBM prevê: X = 0,99). Hipóteses a testar (nenhuma foi testada neste trabalho): fração de zinco ocluída ou refratária
+(ferrita, silicatos), passivação por CaSO₄/PbSO₄ (a calcina tem 1,4% de Ca e 2,3% de Pb), efeito de íon comum e atividade iônica,
+erro de base de cálculo da Eq. 4.5. O ML aprende esse desvio **como função empírica de (t, η, $C_{A0}$)**, só onde há ensaios.
+
+## 3. Estrutura
+`calcular_residuos(config=CONFIG_WB_PRINCIPAL, caminho_saida=None)` usa `hybrid_model.construir_base`: simula o PBM rápido em cada
+ensaio com `config` e devolve o quadro com `X_pbm`, `C_acid_pbm_mol_L`, `H_pbm_mol_L` e `delta_X`.

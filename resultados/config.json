@@ -1,0 +1,70 @@
+{
+  "atributos_principais": {
+    "colunas": [
+      "tempo_min",
+      "razao_molar_eta_real",
+      "C_acid_0_mol_L",
+      "X_pbm"
+    ],
+    "conjunto": "B"
+  },
+  "consistencia_com_constantes": {
+    "entradas": true,
+    "whitebox": true
+  },
+  "dominio_de_aplicabilidade": {
+    "T_celsius": 40.0,
+    "ca0_mol_L": [
+      0.1,
+      1.5
+    ],
+    "eta_real": [
+      0.53,
+      3.3
+    ],
+    "tempo_max_min": 15.0
+  },
+  "modo": "completo",
+  "nu_a_priori": 1.06,
+  "parametros": {
+    "n_boot": 2000,
+    "n_rep_ablacao": 10,
+    "n_rep_escada": 10,
+    "n_rep_gkf": 20,
+    "n_sorteios_curva": 30,
+    "n_sorteios_escada": 15,
+    "ns_curva": [
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "rapido": false,
+    "semente": 0
+  },
+  "sementes": {
+    "bootstrap": 0,
+    "curva_aprendizado": 1000,
+    "modelos": 42,
+    "particoes": 0
+  },
+  "sigma_piso_ruido": 0.017546812388579303,
+  "versoes": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.10",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "white_box_principal": {
+    "T_celsius": 40.0,
+    "alpha": 0.0,
+    "especiacao": "V2",
+    "forca_motriz": "H+",
+    "ks_arrhenius": true,
+    "nu": 1.06,
+    "rrb": "massica"
+  }
+}

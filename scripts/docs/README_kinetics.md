@@ -1,81 +1,85 @@
-# README -- Módulo de Cinética Química Heterogênea (`kinetics.py`)
+# README -- Cinética, estequiometria e especiação (`kinetics.py`)
 
-## 1. Visão Geral e Papel Físico
-O módulo `kinetics.py` implementa as leis cinéticas de dissolução da zincita ($\text{ZnO}$) por ácido sulfúrico ($\text{H}_2\text{SO}_4$), a partir do modelo de Bortot Coelho (2017) (item 4.3 e Tabela 5.9 da dissertação), com as correções de consistência descritas em `docs/modelagem_white_box.md`: $k_s$ referido a 30 °C e força motriz $[\text{H}^+]$ por especiação.
+## 1. Papel
+`kinetics.py` reúne as leis do White-Box que não dependem da granulometria: a velocidade de dissolução, o balanço de
+ácido e a **especiação do H₂SO₄**. Todo parâmetro tem proveniência declarada no código e nenhum é ajustado aos 128
+pontos de conversão. A configuração física completa é um objeto congelado, `ConfigWB`, gravado junto de todo resultado.
 
-Ele atua como o **motor cinético elementar** da modelagem mecanicista (\textit{White-Box}), convertendo o estado do licor na **taxa de variação do diâmetro da partícula** ($v = -dD/dt$).
+## 2. `ConfigWB` (configuração do White-Box)
 
----
+| Campo | Valores | Significado |
+| :--- | :--- | :--- |
+| `rrb` | `'massica'` (padrão), `'numerica'` | RRB integrada em base mássica (correta) ou como a Eq. 3.49 da tese |
+| `ks_arrhenius` | `True` / `False` | $k_s$ referido a 30 °C e corrigido por Arrhenius, ou fixo em 1,8·10⁴ µm/min |
+| `forca_motriz` | `'H+'` (padrão), `'H2SO4'` | força motriz = [H⁺] da especiação, ou a molaridade do ácido (tese) |
+| `especiacao` | `'V0'`, `'V1'`, `'V2'` | ver seção 3 (só vale com `forca_motriz = 'H+'`) |
+| `nu` | float ≥ 0 | mol de H₂SO₄ consumidos por mol de ZnO dissolvido (seção 4) |
+| `T_celsius`, `alpha` | 40, 0 | temperatura e parâmetro $\alpha$ da Eq. 4.1 (0 = Eq. 3.42) |
 
-## 2. Fundamentação Teórica e Equacionamento
+Fábricas: `ConfigWB.legado()` (White-Box do TCC antes da revisão: V0, ν = 1), `ConfigWB.tese(alpha)` (Apêndice A2.1),
+`cfg.com_nu(nu)`. O White-Box **principal** do trabalho é `hybrid_model.CONFIG_WB_PRINCIPAL = ConfigWB(especiacao='V2', nu=1.06)`.
 
-### 2.1. Estequiometria e Balanço de Massa do Ácido
-$$\text{ZnO}_{(s)} + \text{H}_2\text{SO}_{4(aq)} \longrightarrow \text{ZnSO}_{4(aq)} + \text{H}_2\text{O}_{(l)} \qquad (4.2)$$
+## 3. Especiação do H₂SO₄ (concentrações, sem coeficientes de atividade)
+Com prótons totais $H_T = 2\,C_{Af}$ e sulfato total $S_T = C_{A0}$ (o sulfato do ZnSO₄ formado fica em solução):
 
-Pelo balanço molar no reator batelada (Eq. 3.51), com $X_{\text{Zn}}$ a conversão da zincita (Eq. 4.5) e $\eta$ a razão molar H₂SO₄ / ZnO calculada com as massas do ensaio (Eq. 4.3):
-$$C_{Af}(t) = C_{A0} \left( 1 - \frac{X_{\text{Zn}}(t)}{\eta} \right), \qquad C_{Af} \ge 0$$
+$$[\text{H}^+] + [\text{HSO}_4^-] = H_T,\qquad [\text{HSO}_4^-]+[\text{SO}_4^{2-}]+[\text{ZnSO}_4^0] = S_T,\qquad
+K_2 = \frac{[\text{H}^+][\text{SO}_4^{2-}]}{[\text{HSO}_4^-]},\qquad [\text{ZnSO}_4^0] = K_z\,[\text{Zn}^{2+}][\text{SO}_4^{2-}]$$
 
-### 2.2. Concentração de H⁺ por Especiação
-$\text{HSO}_4^- \rightleftharpoons \text{H}^+ + \text{SO}_4^{2-}$, com $K_2 = 0{,}0099\ \text{mol/L}$ (`K2_HSO4_MOL_L`), valor que reproduz o $[\text{H}^+] = 0{,}0689\ \text{mol/L}$ usado por Balarini para 6 g/L de H₂SO₄. Com prótons totais $H_T = 2\,C_{Af}$ e sulfato total $S_T = C_{A0}$ (o ZnSO₄ formado mantém o sulfato em solução):
-$$[\text{HSO}_4^-] = \frac{(S_T + H_T + K_2) - \sqrt{(S_T + H_T + K_2)^2 - 4\,S_T H_T}}{2}, \qquad [\text{H}^+] = H_T - [\text{HSO}_4^-]$$
+| Variante | $K_2$ | Par iônico ZnSO₄⁰ | Fonte |
+| :--- | :--- | :--- | :--- |
+| **V0** (TCC) | 0,0099 mol/L, constante | não | reproduz o [H⁺] = 0,0689 mol/L de Balarini (6 g/L, 30 °C) |
+| **V1** | van't Hoff: 0,01096 (25 °C), 0,00949 (30 °C), **0,00720 (40 °C)** | não | Apêndice A4 da tese: pKa₂ = 1,96 e ΔH° = −5,2 kcal/mol |
+| **V2** | igual a V1 | sim: $K_z$ = 201 (25 °C), 226 (40 °C) L/mol | IUPAC (Powell et al., *Pure Appl. Chem.* 85, 2249, 2013, Parte 5): log₁₀K° = 2,304 ± 0,042 e ΔrH° = +6,0 ± 0,5 kJ/mol |
 
-### 2.3. Taxa de Variação do Diâmetro
-$$v(t) \equiv -\frac{dD}{dt} = \frac{2}{\rho_s} \Big[ k_s \, C - \alpha \, \big(C_{A0} - C_{Af}(t)\big) \Big] \quad [\mu\text{m/min}]$$
+Sem par iônico, a solução é a raiz da quadrática (`concentracao_h_livre`). Com ele, resolve-se a equação monótona
+$f(s) = K_2 b - (H_T - b)s$ em $s = [\text{SO}_4^{2-}]$ por `brentq` (`especiar_escalar`).
 
-com $C = [\text{H}^+]$ (argumento `C_motriz_mol_L`) ou, se ele não for informado, $C = C_{Af}$ (formulação da tese).
+**Ressalvas honestas**
+* Os valores IUPAC foram obtidos de um resumo secundário (o texto primário não pôde ser aberto): **conferir no relatório antes de citar**.
+* $K_z$ é de força iônica zero e é aplicada **sem correção de atividade**; em licor concentrado (I > 1 mol/L) a constante aparente é bem menor. V2 é, portanto, uma **cota superior** do efeito do par iônico, e V0/V1 a cota inferior (sem par).
+* A tese lista pKa₂ = 1,96 em um ponto e Ka₂ = 12,383·10⁻³ (pKa₂ = 1,91) em outro; usa-se 1,96, que reproduz Balarini a 30 °C (diferença de −0,4%).
 
-| Parâmetro | Valor | Fonte |
-| :--- | :---: | :--- |
-| $k_s$ a 30 °C, base [H⁺] (`KS_REF_UM_MIN`) | $1{,}8 \times 10^4\ \mu\text{m/min}$ | Balarini (2009) |
-| $E_a$ (`EA_KJ_MOL`) | $13{,}45\ \text{kJ/mol}$ | Balarini (2009) |
-| $\rho_s$ (`RHO_S_MOL_L`) | $69{,}2\ \text{mol/L}$ | Tabela 5.9 |
-| $\alpha$ da tese (`ALPHA_TESE_UM_MIN`) | $5{,}5 \times 10^3\ \mu\text{m/min}$ | Tabela 5.9 (só referência) |
+**Validação independente (pH medido).** O pH é a única medida independente do estado ácido (o "ácido livre final" da Tabela A1.1
+é calculado a partir do pH, por especiação ideal de ácido puro, ver `docs/validade_modelo_hibrido.md`). V2 é a única
+variante coerente com o pH final: ver `resultados/selecao_whitebox.csv`.
 
-* $\alpha = 0$ (padrão): Eq. 3.42, White-Box do modelo híbrido.
-* $\alpha = 5500$: Eq. 4.1 da tese, usada como referência nos gráficos.
+## 4. Fator de fechamento estequiométrico ν
+$C_{Af}(t) = C_{A0}\,(1 - \nu X/\eta)$ (Eq. 3.51 com ν = 1). Nos ensaios com η = 0,5 o ácido é totalmente consumido (pH final 5–6)
+com $X_{final} = 0{,}50 < \eta_{real} = 0{,}535$, logo $\nu = \eta_{real}/X_{final} \approx 1{,}07$: há outro consumo de ácido
+(óxidos de Ca, Cu, Cd e Mn; ferrita) ou erro de fechamento do balanço. `nu_a_priori()` = **1,06**, estimado só pela composição da
+calcina (ver docstring); `validacao.estimar_nu` o estima dentro de cada dobra de CV. O teto do acoplador passa a ser $\min(1, \eta_{real}/\nu)$.
 
-### 2.4. Dependência Térmica
-$$k_s(T) = k_{s,30^\circ\text{C}} \exp \left[ -\frac{E_a}{R} \left( \frac{1}{T} - \frac{1}{303{,}15} \right) \right]$$
-A 40 °C: $k_s = 21\,344\ \mu\text{m/min}$.
+## 5. Funções
+| Função | Descrição |
+| :--- | :--- |
+| `calcular_ks(T)` | $k_s$ em µm/min (18000 a 30 °C; 21344 a 40 °C) |
+| `k2_hso4(T, especiacao)`, `k_znso4(T)` | constantes de equilíbrio por van't Hoff |
+| `concentracao_acido_livre(C_A0, X, eta, nu=1.0)` | $C_{Af}$ (≥ 0) |
+| `concentracao_h_livre(C_A0, C_Af, K2)` | [H⁺] sem par iônico (V0/V1) |
+| `especiar_escalar(S, H, K2, zn, kz)`, `especiar(C_A0, C_Af, cfg, zn)` | especiação completa (h, HSO₄⁻, SO₄²⁻, ZnSO₄⁰) |
+| `ph_de_h(h)` | −log₁₀[H⁺] (NaN se h = 0) |
+| `estado_quimico(C_A0, X, eta, cfg)` | $(C_{Af},\ \text{força motriz},\ [\text{H}^+])$ usado pelo PBM |
+| `taxa_retricao_linear_v(...)` | $v = -dD/dt = \tfrac{2}{\rho_s}[k_s C - \alpha(C_{A0}-C_{Af})]$ |
 
----
-
-## 3. Funções Disponíveis
-
-### `calcular_ks(temperatura_celsius: float) -> float`
-Retorna $k_s$ em $\mu\text{m/min}$ na base [H⁺] (18000 a 30 °C; 21344 a 40 °C).
-
-### `concentracao_acido_livre(C_acid_0: float, X_zn: float, eta: float) -> float`
-Concentração de $\text{H}_2\text{SO}_4$ livre em mol/L (Eq. 3.51), garantindo valor $\ge 0$.
-
-### `concentracao_h_livre(C_acid_0: float, C_acid_livre: float, K2: float = 0.0099) -> float`
-Concentração de $\text{H}^+$ em mol/L pela especiação $\text{HSO}_4^-/\text{SO}_4^{2-}$.
-
-### `taxa_retricao_linear_v(C_acid_mol_L, ks_um_min, alpha=0.0, C_acid_0_mol_L=0.0, C_motriz_mol_L=None) -> float`
-Calcula $v$ em $\mu\text{m/min}$. O termo de $\alpha$ só atua quando `C_acid_0_mol_L` é informado.
-
----
-
-## 4. Exemplo de Uso
-
+## 6. Exemplo (CA0 = 1,0 mol/L, X = 0,85, η = 1,069, ν = 1,06; o ensaio 9 mediu pH_f = 0,9)
 ```python
-from kinetics import calcular_ks, concentracao_acido_livre, concentracao_h_livre, taxa_retricao_linear_v
-
-ks = calcular_ks(40.0)                                     # 21344 um/min
-caf = concentracao_acido_livre(C_acid_0=0.5, X_zn=0.50, eta=1.0)
-h = concentracao_h_livre(C_acid_0=0.5, C_acid_livre=caf)
-v = taxa_retricao_linear_v(C_acid_mol_L=caf, ks_um_min=ks, C_acid_0_mol_L=0.5, C_motriz_mol_L=h)
-print(f"CAf = {caf:.3f} mol/L | [H+] = {h:.4f} mol/L | v = {v:.2f} um/min")
+from kinetics import ConfigWB, concentracao_acido_livre, especiar, ph_de_h
+for esp in ('V0', 'V1', 'V2'):
+    cfg = ConfigWB(especiacao=esp, nu=1.06)
+    caf = concentracao_acido_livre(1.0, 0.85, 1.069, cfg.nu)
+    e = especiar(1.0, caf, cfg, zn_dissolvido=0.85 * 1.0 / 1.069)
+    print(esp, f"CAf = {caf:.4f}  [H+] = {e['h']:.4f}  pH = {ph_de_h(e['h']):.2f}")
 ```
-
----
-
-## 5. Como Testar
-```powershell
-& .venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'scripts'); from kinetics import *; ks=calcular_ks(40.0); c=concentracao_acido_livre(0.5,0.5,1.0); h=concentracao_h_livre(0.5,c); print(ks, c, h, taxa_retricao_linear_v(c, ks, C_acid_0_mol_L=0.5, C_motriz_mol_L=h))"
-```
-*Saída esperada (CA0 = 0,5 mol/L, η = 1,0, X = 50%):*
 ```text
-ks(40 °C) ≈ 21344,1 um/min | CAf = 0,25 mol/L | [H+] ≈ 0,0656 mol/L | v ≈ 40,46 um/min
+V0 CAf = 0.1572  [H+] = 0.0044  pH = 2.35
+V1 CAf = 0.1572  [H+] = 0.0033  pH = 2.49
+V2 CAf = 0.1572  [H+] = 0.0541  pH = 1.27
 ```
-Com ZnSO₄ = 0,25 mol/L no licor, só 13% dos prótons do ácido livre restante estão como H⁺: é o tamponamento pelo sulfato.
+Sem o par iônico o [H⁺] fica ~12× abaixo do valor de V2 (e ~30× abaixo do medido, 10⁻⁰·⁹ = 0,126); com ele, o sulfato (0,705 mol/L) fica quase todo
+como ZnSO₄⁰ e o H⁺ deixa de ser tamponado como HSO₄⁻.
+
+## 7. Testes
+`tests/test_especiacao.py` (balanços, limites, [H⁺] de Balarini, pH₀ dos 16 ensaios) e `tests/test_pbm.py`.
+```powershell
+& .venv\Scripts\python.exe -m pytest tests/test_especiacao.py -q
+```
