@@ -20,3 +20,9 @@ matplotlib>=3.7.0
 
 # Utilitário para leitura e validação de relatórios PDF (gerar_pdf.py)
 pypdf>=3.9.0
+
+# Paralelização do pipeline de validação (já instalado com scikit-learn)
+joblib>=1.3.0
+
+# Testes automatizados (pytest)
+pytest>=8.0.0
