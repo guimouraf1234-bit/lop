@@ -9,3 +9,7 @@ teste/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Resultados gerados pelo pipeline da revisao (figuras sao regeneraveis)
+resultados/figuras/
+.pytest_cache/

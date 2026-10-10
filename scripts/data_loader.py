@@ -20,6 +20,13 @@ def carregar_dados_bancada():
     with open(caminhos["bancada"], "r", encoding="utf-8") as arquivo:
         dados_brutos = json.load(arquivo)
     df = pd.DataFrame(dados_brutos["registros_planos"])
+    # Razão molar recalculada pelas massas (Eq. 4.3 da tese), usada no PBM;
+    # 'razao_molar_eta' guarda o valor nominal do planejamento (0,5 / 1,0 / 1,5 / 3,1)
+    from population_balance import calcular_eta
+    df["razao_molar_eta_real"] = [
+        calcular_eta(v, c, m) for v, c, m in
+        zip(df["volume_solucao_L"], df["C_acid_0_mol_L"], df["massa_solido_g"])
+    ]
     return df
 
 def carregar_parametros():

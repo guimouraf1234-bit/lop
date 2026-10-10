@@ -9,175 +9,185 @@
 ---
 
 ## Resumo
-Este documento apresenta a fundamentação teórica rigorosa, as hipóteses simplificadoras e o equacionamento matemático do Modelo Mecanicista Baseado em Primeiros Princípios (*White-Box*) para o processo de lixiviação ácida atmosférica de concentrado ustulado de zinco (calcina) em reator batelada. O modelo acopla o Balanço Populacional unidimensional com taxa de retração governada pelo Método das Características à distribuição granulométrica inicial de Rosin-Rammler-Bennett (RRB), considerando a cinética química interfacial heterogênea de dissolução da zincita ($\text{ZnO}$) e a estequiometria do consumo de ácido sulfúrico livre. A formulação descrita estabelece a base física do modelo híbrido cinza (*Grey-Box*), fornecendo a referência mecanicista sobre a qual o aprendizado de máquina atua na predição de desvios e fenômenos secundários não modelados.
+Este documento apresenta as hipóteses e o equacionamento do Modelo Mecanicista (*White-Box*) para a lixiviação ácida atmosférica de concentrado ustulado de zinco (calcina) em reator batelada. O ponto de partida é o modelo de **Bortot Coelho (2017)** (item 4.3, Tabela 5.9 e Apêndice A2.1 da dissertação): Balanço Populacional unidimensional resolvido pelo Método das Características, distribuição granulométrica de Rosin-Rammler-Bennett (RRB), cinética de reação química interfacial (Eq. 3.42) e consumo estequiométrico de ácido sulfúrico (Eq. 3.51). Sobre ele aplicam-se três correções de consistência física: (i) a RRB, ajustada a frações mássicas, é integrada em base mássica; (ii) a constante $k_s$ é referida à temperatura em que foi estimada (30 °C); (iii) a força motriz é a concentração de $\text{H}^+$, a mesma base em que $k_s$ foi estimada, calculada pela especiação $\text{HSO}_4^-/\text{SO}_4^{2-}$. O parâmetro empírico $\alpha$ da Eq. 4.1 é fixado em zero: o desvio que ele corrigia passa a ser aprendido pelo modelo de Machine Learning do híbrido *Grey-Box*. A formulação original da tese continua disponível no código (`formulacao='tese'`).
 
 ---
 
 ## 1. Introdução e Hipóteses do Modelo
 
-A lixiviação atmosférica de concentrado ustulado de zinco (calcina) em meio de ácido sulfúrico diluído constitui a etapa primordial da rota hidrometalúrgica de recuperação do zinco metálico. O concentrado ustulado é composto majoritariamente por zincita ($\text{ZnO}$), mineral prontamente solúvel, e ferrita de zinco ($\text{ZnFe}_2\text{O}_4$), fase refratária de dissolução lenta em condições brandas.
+A lixiviação atmosférica de concentrado ustulado de zinco (calcina) em meio de ácido sulfúrico diluído constitui a etapa primordial da rota hidrometalúrgica de recuperação do zinco metálico. O concentrado ustulado é composto majoritariamente por zincita ($\text{ZnO}$, 76,1% m/m), mineral prontamente solúvel, e por ferrita de zinco ($\text{ZnFe}_2\text{O}_4$), willemita e esfalerita, fases de dissolução lenta em condições brandas.
 
-Para o desenvolvimento do modelo de primeiros princípios (*White-Box*), estabeleceram-se as seguintes premissas físico-químicas e hidrodinâmicas:
-1. **Regime Hidrodinâmico:** O reator batelada opera sob agitação mecânica intensa ($\ge 1000\text{ rpm}$), garantindo que a resistência difusional na camada limite fluida ao redor da partícula seja desprezível ($Sh \to \infty$).
-2. **Mecanismo Controlador:** A dissolução do sólido é controlada pela reação química superficial na interface sólido-líquido, descrita pelo Modelo de Núcleo Não Reagido (*Shrinking Core Model* -- SCM) com encolhimento contínuo do raio da partícula.
-3. **Morfologia das Partículas:** Assume-se geometria esférica isotrópica com fator de forma volumétrico constante ($\psi = 1$) para todas as frações granulométricas.
-4. **Fenômenos Populacionais:** Ausência de quebra mecânica de partículas e ausência de aglomeração/agregação no meio reacional ($B = D = 0$).
-5. **Isotermicidade:** O sistema é mantido isotérmico na temperatura controlada do banho termostático ($T = 40^\circ\text{C} = 313{,}15\text{ K}$).
-6. **Seletividade Mineralógica:** Em lixiviação neutra/branda ($T \le 40^\circ\text{C}$), apenas a zincita solúvel ($\text{ZnO}$) participa ativamente da reação no período monitorado ($t \le 15\text{ min}$). A fração de zinco associada à ferrita ($13\%$) permanece inerte.
+Premissas do modelo (Bortot Coelho, 2017, item 4.3):
+1. **Regime Hidrodinâmico:** agitação intensa ($1000\text{ rpm}$), com resistência difusional na camada limite desprezível.
+2. **Mecanismo Controlador:** reação química superficial de primeira ordem em $[\text{H}^+]$ (Balarini, 2009), com encolhimento contínuo das partículas.
+3. **Morfologia das Partículas:** partículas esféricas.
+4. **Fenômenos Populacionais:** sem quebra nem aglomeração ($B = D = 0$).
+5. **Isotermicidade:** $T = 40^\circ\text{C}$.
+6. **Seletividade Mineralógica:** apenas a reação da zincita é considerada (Eq. 4.2), tanto na cinética quanto no consumo de ácido. A conversão experimental é normalizada pelo zinco da zincita, descontando o zinco da ferrita (Eq. 4.5).
 
 ---
 
 ## 2. Estequiometria e Balanço de Massa no Reator Batelada
 
-A reação de dissolução da zincita por ácido sulfúrico aquoso obedece à estequiometria mássica e molar unitária (1:1):
+$$\text{ZnO}_{(s)} + \text{H}_2\text{SO}_{4(aq)} \longrightarrow \text{ZnSO}_{4(aq)} + \text{H}_2\text{O}_{(l)} \qquad (4.2)$$
 
-$$\text{ZnO}_{(s)} + \text{H}_2\text{SO}_{4(aq)} \longrightarrow \text{ZnSO}_{4(aq)} + \text{H}_2\text{O}_{(l)}$$
+A razão molar é definida sobre a zincita (Eq. 4.3):
 
-Sejam $n_{A0}$ o número inicial de moles de reagente fluido ($\text{H}_2\text{SO}_4$) e $n_{B0}$ o número inicial de moles de reagente sólido solúvel ($\text{ZnO}$) carregados no reator de volume líquido $V$:
+$$\eta = \frac{n_{A0}}{n_{B0}} = \frac{V \, C_{A0}}{m_{B0} \, T_{\text{ZnO}} / M_{\text{ZnO}}} \qquad (4.3)$$
 
-$$n_{A0} = C_{A0} \, V$$
+com $T_{\text{ZnO}} = 0{,}761$ e $M_{\text{ZnO}} = 81{,}38\text{ g}\cdot\text{mol}^{-1}$. O modelo usa o $\eta$ calculado com as massas de cada ensaio (coluna `razao_molar_eta_real`): $0{,}535 / 1{,}069 / 1{,}58\text{–}1{,}61 / 3{,}19\text{–}3{,}29$ para os níveis nominais $0{,}5 / 1{,}0 / 1{,}5 / 3{,}1$ do planejamento. É com esses valores que se reproduz a soma quadrática de $\approx 0{,}05$ relatada no ajuste de $\alpha$ da tese (item 5.2.4).
 
-$$n_{B0} = \frac{m_{B0} \, T_{\text{ZnO}}}{M_{\text{ZnO}}}$$
+A conversão experimental (Eq. 4.5) também está na base da zincita:
 
-onde $C_{A0}$ é a concentração inicial de ácido ($\text{mol}\cdot\text{L}^{-1}$), $m_{B0}$ é a massa total de concentrado ustulado alimentada ($\text{g}$), $T_{\text{ZnO}}$ é o teor em massa de zincita na amostra ($76{,}1\% = 0{,}761$), e $M_{\text{ZnO}} = 81{,}38\text{ g}\cdot\text{mol}^{-1}$ é a massa molar da zincita.
+$$X_{\text{Zn}} = \frac{D \, V \, (C_{\text{Zn},f} - C_{\text{Fe},f}/2)}{m_{B0} \, T_{\text{ZnO}}} \qquad (4.5)$$
 
-A razão molar estequiométrica $\eta$ entre o ácido sulfúrico e a zincita é definida por:
+Balanço de ácido em sistema fechado (Eq. 3.51, Herbst, 1979):
 
-$$\eta = \frac{n_{A0}}{n_{B0}} = \frac{C_{A0} \, V \, M_{\text{ZnO}}}{m_{B0} \, T_{\text{ZnO}}}$$
+$$C_{Af}(t) = C_{A0} \left( 1 - \frac{X(t)}{\eta} \right) \qquad (3.51)$$
 
-Pelo balanço molar de conservação de espécies em sistema fechado, a concentração instantânea de ácido sulfúrico livre em solução, $C_{Af}(t)$, relaciona-se diretamente com a conversão fracionária da zincita, $X(t)$:
-
-$$C_{Af}(t) = \frac{n_{A0} - n_{B0} \, X(t)}{V} = C_{A0} \left( 1 - \frac{n_{B0}}{n_{A0}} X(t) \right)$$
-
-Substituindo a razão estequiométrica $\eta$, obtém-se a lei de consumo de ácido:
-
-$$C_{Af}(t) = C_{A0} \left( 1 - \frac{X(t)}{\eta} \right)$$
-
-### Análise dos Três Regimes Operacionais:
-* **Deficiência de Ácido ($\eta < 1{,}0$):** O ácido livre esgota-se ($C_{Af} \to 0$) antes da solubilização completa do zinco. A reação cessa no patamar estequiométrico máximo teórico:
-  $$X_{\text{máx}} = \eta \quad (\text{para } \eta < 1{,}0)$$
-  *(Para $\eta = 0{,}5$, a conversão máxima estabiliza-se rigorosamente em $X \approx 0{,}50$)*.
-* **Proporção Estequiométrica ($\eta = 1{,}0$):** Ácido e sólido em proporções equivalentes. Conforme $X \to 1$, $C_{Af} \to 0$, gerando acentuada desaceleração cinética terminal.
-* **Excesso de Ácido ($\eta > 1{,}0$):** Permanece ácido residual no licor final ($C_{Af} > 0$), permitindo que a conversão da zincita atinja $X \to 1{,}0$ ($100\%$).
+> O consumo de ácido medido é de $1{,}07$ a $1{,}13$ mol por mol de ZnO dissolvido, e não $1{,}00$: outros óxidos do concentrado também consomem ácido. Por coerência com a hipótese 6, esse consumo não entra no modelo; é a causa do desvio de $-0{,}04$ no patamar com $\eta = 0{,}5$ (Seção 9).
 
 ---
 
-## 3. Cinética Química Heterogênea e Taxa de Retração
+## 3. Cinética Química e Taxa de Variação do Diâmetro
 
-Para uma partícula de diâmetro esférico $D$, o número de moles de zincita remanescente é:
+Para controle por reação química, a taxa de variação do diâmetro (Eq. 3.42 da tese, LeBlanc e Fogler, 1987) é:
 
-$$N_B = \rho_s \, \left( \frac{\pi}{6} D^3 \right)$$
+$$v \equiv -\frac{dD}{dt} = \frac{2 \, k_s}{\rho_s} \, C_A \qquad (3.42)$$
 
-Diferenciando em relação ao tempo:
+com $\rho_s = 69{,}2\ \text{mol}\cdot\text{L}^{-1}$.
 
-$$\frac{dN_B}{dt} = \frac{\pi}{2} \rho_s \, D^2 \frac{dD}{dt}$$
+### 3.1. Base e temperatura de $k_s$
+Balarini (2009) estimou $k_s = 3{,}00 \times 10^{-2}\ \text{cm}\cdot\text{s}^{-1} = 1{,}8 \times 10^4\ \mu\text{m}\cdot\text{min}^{-1}$ usando, na Eq. 3.42, a **concentração hidrogeniônica** $C_A = [\text{H}^+]$ (item 3.3.2 da tese), a **$30^\circ\text{C}$** (Balarini et al., 2025, Fig. 8: $T = 30^\circ\text{C}$, $6\ \text{g/L}$ de $\text{H}_2\text{SO}_4$, $[\text{H}^+] = 0{,}0689\ \text{mol/L}$). A tese aplica esse valor a $40^\circ\text{C}$ e sobre a molaridade de $\text{H}_2\text{SO}_4$. Para manter a coerência com a estimação:
 
-A taxa intrínseca de reação heterogênea na interface sólido-líquido de área superficial $A_p = \pi D^2$ é de primeira ordem em relação ao ácido livre:
+$$k_s(T) = k_{s,30^\circ\text{C}} \exp \left[ -\frac{E_a}{R} \left( \frac{1}{T} - \frac{1}{303{,}15} \right) \right], \qquad E_a = 13{,}45\ \text{kJ}\cdot\text{mol}^{-1}$$
 
-$$\left( -\frac{1}{A_p} \frac{dN_B}{dt} \right) = k_s \, C_{Af}(t)$$
+o que dá $k_s(40^\circ\text{C}) = 2{,}13 \times 10^4\ \mu\text{m}\cdot\text{min}^{-1}$, e a força motriz é $C_A = [\text{H}^+]$.
 
-onde $k_s$ é a constante cinética superficial ($\mu\text{m}\cdot\text{min}^{-1}$) e $\rho_s = 69{,}2\text{ mol}\cdot\text{L}^{-1}$ de sólido. Igualando as taxas, deduz-se a velocidade linear de retração do diâmetro da partícula:
+### 3.2. Concentração de $\text{H}^+$ por especiação
+O ácido sulfúrico tem a primeira dissociação completa e a segunda parcial:
 
-$$v(t) \equiv -\frac{dD}{dt} = \frac{2 \, k_s}{\rho_s} \, C_{Af}(t)$$
+$$\text{HSO}_4^- \rightleftharpoons \text{H}^+ + \text{SO}_4^{2-}, \qquad K_2 = \frac{[\text{H}^+][\text{SO}_4^{2-}]}{[\text{HSO}_4^-]} = 0{,}0099\ \text{mol/L}$$
 
-### Dependência Térmica (Arrhenius)
-$$k_s(T) = k_{s,\text{ref}} \exp \left[ -\frac{E_a}{R} \left( \frac{1}{T} - \frac{1}{T_{\text{ref}}} \right) \right]$$
+Cada mol de ZnO dissolvido consome 2 mol de $\text{H}^+$, mas o sulfato permanece em solução como $\text{ZnSO}_4$. Assim, com prótons totais $H_T = 2\,C_{Af}$ e sulfato total $S_T = C_{A0}$:
 
-onde $E_a = 13{,}45\text{ kJ}\cdot\text{mol}^{-1}$ (Balarini et al., 2025), $T_{\text{ref}} = 313{,}15\text{ K}$ ($40^\circ\text{C}$), e $k_{s,\text{ref}} = 1{,}8 \times 10^4\ \mu\text{m}\cdot\text{min}^{-1}$.
+$$[\text{H}^+] + [\text{HSO}_4^-] = 2\,C_{Af}, \qquad [\text{HSO}_4^-] = \frac{[\text{H}^+]\,\big(C_{A0} - [\text{HSO}_4^-]\big)}{K_2}$$
 
-### Termo de Amortecimento Empírico (Tese Bortot Coelho, 2017)
-$$v(t) = \frac{2}{\rho_s} \max \Big( k_s \, C_{Af}(t) - \alpha \, [C_{A0} - C_{Af}(t)],\ 0 \Big)$$
-com $\alpha = 5{,}5 \times 10^3\ \mu\text{m}\cdot\text{min}^{-1}$.
+$$[\text{HSO}_4^-] = \frac{(S_T + H_T + K_2) - \sqrt{(S_T + H_T + K_2)^2 - 4\,S_T H_T}}{2}, \qquad [\text{H}^+] = H_T - [\text{HSO}_4^-]$$
+
+O valor $K_2 = 0{,}0099$ não é ajustado: é o que reproduz o $[\text{H}^+] = 0{,}0689\ \text{mol/L}$ usado por Balarini para $6\ \text{g/L}$ de $\text{H}_2\text{SO}_4$ ($0{,}0612\ \text{mol/L}$). Fisicamente, o sulfato liberado pela dissolução tampona o $\text{H}^+$ e a reação desacelera mesmo com ácido livre disponível. A especiação usa concentrações (sem coeficientes de atividade), uma aproximação nas forças iônicas mais altas ($C_{A0} = 1{,}5\ \text{mol/L}$).
+
+### 3.3. Parâmetro $\alpha$ da tese
+Bortot Coelho (2017) adicionou um parâmetro ajustável à Eq. 3.42 para corrigir a conversão final (Eq. 4.1):
+
+$$v = \frac{2}{\rho_s} \Big[ k_s \, C_{Af} - \alpha \, (C_{A0} - C_{Af}) \Big] \qquad (4.1)$$
+
+com $\alpha = 5{,}5 \times 10^3\ \mu\text{m}\cdot\text{min}^{-1}$. **Neste trabalho, $\alpha = 0$**: o termo é um ajuste empírico das conversões finais e, quando o ácido é limitante, impede o seu esgotamento (Seção 8). No modelo híbrido, esse papel é assumido pelo regressor de Machine Learning. O modelo da tese com $\alpha = 5500$ é mantido nos gráficos como referência ("Tese 2017").
 
 ---
 
 ## 4. Balanço Populacional e Método das Características
 
-A equação diferencial parcial populacional para a densidade $\psi(D,t)$ em sistema perfeitamente misturado é:
+Equação do balanço populacional em batelada (Eq. 3.38):
 
-$$\frac{\partial \psi(D,t)}{\partial t} + \frac{\partial \big[ -v(t) \, \psi(D,t) \big]}{\partial D} = 0$$
+$$\frac{\partial \psi(D,t)}{\partial t} = -\frac{\partial}{\partial D} \big[ -v \, \psi(D,t) \big] \qquad (3.38)$$
 
-Pelo Método das Características, como $v(t)$ não depende de $D$:
+Como $v$ não depende de $D$, a solução pelo Método das Características é um deslocamento da distribuição inicial:
 
-$$\frac{dD}{dt} = -v(t) \implies D(t) = \max \big( D_0 - \Delta D(t),\ 0 \big)$$
+$$\psi(D,t) = \psi\big(D + \Delta D(t),\ 0\big), \qquad \Delta D(t) = \int_0^t v(t') \, dt'$$
 
-onde o encolhimento acumulado do diâmetro no intervalo $[0, t]$ é:
-
-$$\Delta D(t) = \int_0^t v(t') \, dt'$$
+A tese resolve a EDP pelo Método Numérico das Linhas (`NDSolve` do Mathematica, Apêndice A2.1). A solução pelas características é a mesma solução exata, integrada aqui com RK45 (`scipy.integrate.solve_ivp`).
 
 ---
 
-## 5. Distribuição Granulométrica de Rosin-Rammler-Bennett (RRB)
+## 5. Distribuição Granulométrica Inicial (RRB)
 
-A distribuição granulométrica cumulativa $F_0(D)$ e a densidade de probabilidade $f_0(D)$ inicial da calcina de Três Marias são dadas por:
+A RRB foi ajustada às frações **mássicas** passantes do peneiramento e da difração a laser (Tabela 5.4 da tese). Sua derivada é, portanto, a densidade mássica $q_3(D)$:
 
-$$F_0(D) = 1 - \exp \left[ -\left( \frac{D}{D_{63{,}2}} \right)^m \right]$$
+$$q_3(D) = \frac{m}{D_{63{,}2}} \left( \frac{D}{D_{63{,}2}} \right)^{m-1} \exp \left[ -\left( \frac{D}{D_{63{,}2}} \right)^m \right]$$
 
-$$f_0(D) = \frac{m}{D_{63{,}2}} \left( \frac{D}{D_{63{,}2}} \right)^{m-1} \exp \left[ -\left( \frac{D}{D_{63{,}2}} \right)^m \right]$$
-
-com $m = 1{,}022$ e $D_{63{,}2} = 41{,}65\ \mu\text{m}$.
+com $m = 1{,}022$ e $D_{63{,}2} = 41{,}65\ \mu\text{m}$, no domínio $D_{\text{mín}} = 0{,}1\ \mu\text{m}$ a $D_{\text{máx}} = 297\ \mu\text{m}$ (peneira 50#) (Tabela 5.9). Verificação: $F(38\ \mu\text{m}) = 0{,}598$, próximo das frações mássicas medidas ($53{,}6\%$ passante na peneira de $38\ \mu\text{m}$; $55{,}9\%$ abaixo de $36{,}5\ \mu\text{m}$ na difração a laser).
 
 ---
 
-## 6. Conversão Fracionária ($X_{\text{PBM}}$) pelo 3º Momento Volumétrico
+## 6. Conversão Fracionária da Zincita
 
-A conversão volumétrica/mássica da zincita é calculada pela razão entre o 3º momento volumétrico residual e o inicial:
+Como $q_3$ já é ponderada pela massa, uma partícula de diâmetro inicial $D$ retém a fração $(1 - \Delta D/D)^3$ da sua massa:
 
-$$X_{\text{PBM}}(t) = 1 - \frac{\mu_3(t)}{\mu_3(0)} = 1 - \frac{\displaystyle \int_{\Delta D(t)}^\infty \big[ D - \Delta D(t) \big]^3 f_0(D) \, dD}{\displaystyle \int_0^\infty D^3 f_0(D) \, dD}$$
+$$X(t) = 1 - \frac{\int_{\max(\Delta D,\,D_{\text{mín}})}^{D_{\text{máx}}} \left( 1 - \frac{\Delta D}{D} \right)^3 q_3(D) \, dD}{\int_{D_{\text{mín}}}^{D_{\text{máx}}} q_3(D) \, dD}$$
 
-### Solução Analítica Exata do 3º Momento Inicial ($I_0$)
-Para a distribuição RRB/Weibull:
+> A tese usa a Eq. 3.49, $X = 1 - \int (D - \Delta D)^3 f\,dD \,/ \int D^3 f\,dD$, que só vale se $f$ for densidade **em número**. Aplicada à RRB mássica, pondera a massa duas vezes e torna a população efetiva muito mais grossa: com $\Delta D = 5\ \mu\text{m}$, a conversão sai $0{,}12$ em vez de $0{,}51$.
 
-$$I_0 \equiv \int_0^\infty D^3 f_0(D) \, dD = D_{63{,}2}^3 \, \Gamma \left( 1 + \frac{3}{m} \right)$$
-
-Para $m = 1{,}022$ e $D_{63{,}2} = 41{,}65\ \mu\text{m}$:
-$$\Gamma \left( 1 + \frac{3}{1{,}022} \right) \approx 5{,}6645 \implies I_0 \approx 4{,}094 \times 10^5\ \mu\text{m}^3$$
-
-### Sistema Dinâmico Acoplado (Integrado via RK45)
+### Sistema Dinâmico Acoplado
 $$\begin{cases}
-\displaystyle \frac{d(\Delta D)}{dt} = v \big( C_{Af}(t) \big) \\[1em]
-\displaystyle X_{\text{PBM}}(t) = 1 - \frac{1}{I_0} \int_{\Delta D(t)}^{D_{\text{máx}}} \big[ D - \Delta D(t) \big]^3 f_0(D) \, dD \\[1em]
-\displaystyle C_{Af}(t) = C_{A0} \left( 1 - \frac{X_{\text{PBM}}(t)}{\eta} \right)
+\displaystyle \frac{d(\Delta D)}{dt} = \frac{2 \, k_s(T)}{\rho_s} \, [\text{H}^+](t) \\[1em]
+\displaystyle X(t) = 1 - \frac{\int_{\max(\Delta D,\,D_{\text{mín}})}^{D_{\text{máx}}} (1 - \Delta D/D)^3 \, q_3(D) \, dD}{\int_{D_{\text{mín}}}^{D_{\text{máx}}} q_3(D) \, dD} \\[1em]
+\displaystyle C_{Af}(t) = C_{A0} \left( 1 - \frac{X(t)}{\eta} \right) \\[1em]
+\displaystyle [\text{H}^+](t) = f_{\text{especiação}}\big(C_{A0},\ C_{Af}(t);\ K_2\big)
 \end{cases}$$
 
-com $\Delta D(0) = 0{,}0\ \mu\text{m}$, $X_{\text{PBM}}(0) = 0{,}0$ e $C_{Af}(0) = C_{A0}$.
+com $\Delta D(0) = 0$, $X(0) = 0$ e $C_{Af}(0) = C_{A0}$.
 
 ---
 
-## 7. Tabela de Parâmetros Físico-Químicos
+## 7. Tabela de Parâmetros
 
 | Símbolo | Descrição | Valor | Unidade | Fonte |
 | :--- | :--- | :---: | :---: | :--- |
-| $k_{s,\text{ref}}$ | Constante cinética superficial a $40^\circ\text{C}$ | $1{,}8 \times 10^4$ | $\mu\text{m}\cdot\text{min}^{-1}$ | Balarini et al. (2025) |
-| $E_a$ | Energia de ativação aparente | $13{,}45$ | $\text{kJ}\cdot\text{mol}^{-1}$ | Balarini et al. (2025) |
-| $\rho_s$ | Densidade molar da fase sólida | $69{,}2$ | $\text{mol}\cdot\text{L}^{-1}$ | Bortot Coelho (2017) |
-| $m$ | Índice de uniformidade RRB | $1{,}022$ | adim. | Bortot Coelho (2017) |
-| $D_{63{,}2}$ | Diâmetro característico RRB | $41{,}65$ | $\mu\text{m}$ | Bortot Coelho (2017) |
-| $T_{\text{ZnO}}$ | Teor de zincita na calcina bruta | $76{,}1$ | $\% \text{ m/m}$ | Bortot Coelho (2017) |
-| $f_{\text{ZnO}}$ | Fração de zinco solúvel (zincita) | $0{,}87$ | adim. | Bortot Coelho (2017) |
-| $M_{\text{ZnO}}$ | Massa molar da zincita | $81{,}38$ | $\text{g}\cdot\text{mol}^{-1}$ | Lide (2005) |
-| $M_{\text{H}_2\text{SO}_4}$ | Massa molar do ácido sulfúrico | $98{,}08$ | $\text{g}\cdot\text{mol}^{-1}$ | Lide (2005) |
+| $k_{s,30^\circ\text{C}}$ | Constante de velocidade (base $[\text{H}^+]$, $30^\circ\text{C}$) | $1{,}8 \times 10^4$ | $\mu\text{m}\cdot\text{min}^{-1}$ | Balarini (2009); Balarini et al. (2025) |
+| $E_a$ | Energia de ativação | $13{,}45$ | $\text{kJ}\cdot\text{mol}^{-1}$ | Balarini (2009) |
+| $K_2$ | Constante da 2ª dissociação do $\text{H}_2\text{SO}_4$ | $0{,}0099$ | $\text{mol}\cdot\text{L}^{-1}$ | Implícita em Balarini et al. (2025) |
+| $\alpha$ | Parâmetro da Eq. 4.1 (tese: $5{,}5 \times 10^3$) | $0$ | $\mu\text{m}\cdot\text{min}^{-1}$ | Este trabalho |
+| $\rho_s$ | Densidade molar da zincita | $69{,}2$ | $\text{mol}\cdot\text{L}^{-1}$ | Perry e Green (1984) |
+| $T_{\text{ZnO}}$ | Teor de zincita no concentrado ustulado | $76{,}1$ | $\% \text{ m/m}$ | Bortot Coelho (2017) |
+| $M_{\text{ZnO}}$ | Massa molar da zincita | $81{,}38$ | $\text{g}\cdot\text{mol}^{-1}$ | Bortot Coelho (2017) |
+| $m$ | Índice de uniformidade RRB (base mássica) | $1{,}022$ | adim. | Bortot Coelho (2017) |
+| $D_{63{,}2}$ | Diâmetro característico RRB (base mássica) | $41{,}65$ | $\mu\text{m}$ | Bortot Coelho (2017) |
+| $D_{\text{mín}}$ | Limite inferior da distribuição | $0{,}1$ | $\mu\text{m}$ | Bortot Coelho (2017) |
+| $D_{\text{máx}}$ | Limite superior da distribuição | $297$ | $\mu\text{m}$ | Bortot Coelho (2017) |
 | $V$ | Volume reacional de bancada | $0{,}40$ | $\text{L}$ | Bortot Coelho (2017) |
 | $T$ | Temperatura de operação | $40{,}0$ | $^\circ\text{C}$ | Bortot Coelho (2017) |
-| $\alpha$ | Amortecimento empírico da tese | $5{,}5 \times 10^3$ | $\mu\text{m}\cdot\text{min}^{-1}$ | Bortot Coelho (2017) |
 
 ---
 
-## 8. Justificativa para a Modelagem Híbrida Grey-Box
+## 8. Pontos da Formulação da Tese e Correções Adotadas
 
-Embora o modelo *White-Box* apresente sólida consistência física ($R^2 = 0{,}9253$), a existência do resíduo sistemático $\Delta X = X_{\text{exp}} - X_{\text{PBM}}$ decorre de fenômenos não modelados:
-1. **Efeito de Íon Comum:** O acúmulo de $\text{Zn}^{2+}$ e $\text{SO}_4^{2-}$ reduz o coeficiente de atividade do ácido livre $\gamma_{\text{H}^+}$, diminuindo a velocidade real da reação.
-2. **Passivação Difusional por Sílica:** Silicatos solúveis na calcina precipitam um gel de sílica amorfa que oclui microporos das partículas.
-3. **Morfologia dos Finos:** Partículas ultrafinas com cantos vivos e rugosidade dissolvem mais rápido no início ($t \le 1\text{ min}$) do que esferas lisas ideais.
+| # | Ponto da tese | Tratamento neste trabalho |
+| :-: | :--- | :--- |
+| 1 | **Base da RRB.** A RRB foi ajustada a frações mássicas (Tabela 5.4), mas é usada como distribuição em número (Eq. 3.45) e ponderada por $D^3$ (Eq. 3.49), contando a massa duas vezes. | **Corrigido:** integração em base mássica (Seção 6). |
+| 2 | **Temperatura de $k_s$.** Estimado a $30^\circ\text{C}$ (Balarini et al., 2025), aplicado a $40^\circ\text{C}$ sem correção. | **Corrigido:** Arrhenius a partir de $30^\circ\text{C}$ (Seção 3.1). |
+| 3 | **Base de $k_s$.** Estimado com $C_A = [\text{H}^+]$ (item 3.3.2 da tese), aplicado sobre $[\text{H}_2\text{SO}_4]$. | **Corrigido:** força motriz $[\text{H}^+]$ por especiação (Seção 3.2). Um fator fixo de conversão ($1{,}126$) não basta, porque o tamponamento pelo sulfato varia ao longo da reação. |
+| 4 | **Parâmetro $\alpha$.** Pela Eq. 5.3, com $\eta = 0{,}535$ o modelo para em $X = 0{,}41$ e deixa 23% do ácido sem reagir, enquanto os ensaios 1, 3, 4 e 5 medem $X = 0{,}50$ e ácido residual $\le 5 \times 10^{-6}\ \text{mol/L}$. O texto e a Tabela 5.9 informam $5{,}5 \times 10^3$, o Apêndice A2.1 usa $5\,396$ e o mínimo da Eq. 5.4 está em $\approx 3{,}7 \times 10^3$. | **Removido** ($\alpha = 0$); o desvio é aprendido pelo ML. |
+| 5 | **Consumo de ácido por outros minerais.** O ácido consumido é de $1{,}07$ a $1{,}13$ mol por mol de ZnO dissolvido. | **Mantido fora do modelo** (hipótese 6); fica no resíduo. |
+| 6 | **Detalhes menores.** $\rho_B$ com unidade $\text{mol}\cdot\text{m}^{-3}$ na Tabela 5.9 (o correto é $\text{mol}\cdot\text{L}^{-1}$); $D_{\text{mín}} = 0{,}01\ \mu\text{m}$ no Apêndice A2.1 contra $0{,}1\ \mu\text{m}$ na Tabela 5.9; $D_{63{,}2} = 42{,}09\ \mu\text{m}$ no ajuste linear da Tabela 5.6 contra $41{,}65\ \mu\text{m}$ no modelo. | Adotados os valores da Tabela 5.9. |
 
-A modelagem **Grey-Box** combina a confiabilidade estequiométrica do PBM à flexibilidade do Machine Learning, que prevê esse resíduo e eleva o coeficiente de determinação para $R^2 = 0{,}9979$.
+Efeito de cada correção sobre o $R^2$ excluindo $t = 0$ (128 pontos, $\alpha = 0$):
+
+| Formulação | $R^2$ ($t > 0$) | $RMSE$ |
+| :--- | :---: | :---: |
+| Tese ($\alpha = 0$) | $0{,}7475$ | $0{,}098$ |
+| + RRB em base mássica | $0{,}8348$ | $0{,}079$ |
+| + $k_s$ referido a $30^\circ\text{C}$ | $0{,}8269$ | $0{,}081$ |
+| + força motriz $[\text{H}^+]$ por especiação (**modelo adotado**) | $\mathbf{0{,}9486}$ | $\mathbf{0{,}044}$ |
+| Tese com $\alpha = 5500$ (referência) | $0{,}7697$ | $0{,}094$ |
+
+---
+
+## 9. Justificativa para a Modelagem Híbrida Grey-Box
+
+O modelo *White-Box* corrigido apresenta $R^2 = 0{,}9837$ ($RMSE = 0{,}0414$, $MAE = 0{,}0309$; $R^2 = 0{,}9486$ excluindo os pontos triviais em $t = 0$). O resíduo $\Delta X = X_{\text{exp}} - X_{\text{PBM}}$ remanescente tem três assinaturas:
+1. **Patamar incompleto com $\eta = 1$:** o modelo chega a $0{,}96\text{–}0{,}97$ e o experimento para em $0{,}85\text{–}0{,}87$ (resíduo de $-0{,}11$ em 15 min), com ácido livre residual medido de $0{,}056 / 0{,}12 / 0{,}23\ \text{mol/L}$ (previsto: $0{,}048 / 0{,}095 / 0{,}142$). A tese (item 5.2.2) explica esse platô pela queda da força motriz: cerca de $90\%$ do ácido é consumido no início da reação, quando a taxa é alta, e a conversão não é total mesmo com ácido e zincita em proporção estequiométrica. A especiação reproduz esse mecanismo e leva o modelo de $1{,}00$ a $0{,}96	ext{–}0{,}97$, mas não até $0{,}85	ext{–}0{,}87$. A parte restante pode vir de efeitos não incluídos (coeficientes de atividade, concentração de ZnSO₄ no licor, que a própria tese cita em 4.3) e dos demais minerais (ferrita, willemita, esfalerita), a que a tese atribui os $98\%$ com $\eta = 1{,}5$; isso não foi testado.
+2. **Transientes iniciais ($t = 0{,}5$ min):** resíduo médio de $+0{,}09$ com $\eta = 1$ e de $-0{,}05$ com $\eta = 3{,}1$ (dentro de $\pm 0{,}10$ em todos os ensaios).
+3. **Patamar com $\eta = 0{,}5$:** o modelo para em $X = \eta = 0{,}535$ e o experimento em $0{,}50$ ($-0{,}04$), pelo consumo de ácido por outros óxidos (Seção 8, item 5). Com $\eta \ge 1{,}5$, a conversão final é reproduzida ($-0{,}03$ a $0{,}00$).
+
+A modelagem **Grey-Box** combina a estrutura estequiométrica do PBM com a flexibilidade do Machine Learning, que prevê esse resíduo. Em validação cruzada agrupada (GroupKFold, 8 dobras), os melhores regressores são o Gaussian Process ($R^2_{\text{CV}} = 0{,}9966$; $0{,}9893$ excluindo $t = 0$) e o Extra Trees ($0{,}9965$; $0{,}9891$), empatados também em 10 partições aleatórias dos ensaios ($0{,}9883 \pm 0{,}0013$ e $0{,}9888 \pm 0{,}0013$ com $t > 0$).
 
 ---
 
 ## Referências Bibliográficas
-1. BALARINI, J. C.; ARAÚJO, E. M. R.; COELHO, F. E. B.; POLLI, L. O.; KONZEN, C.; MIRANDA, T. L. S.; SALUM, A. Leaching kinetics of roasted zinc concentrate in sulphuric acid solutions. *Revista Observatorio de la Economía Latinoamericana*, v. 23, n. 11, 2025. DOI: 10.55905/oelv23n11-188.
-2. BORTOT COELHO, F. E. *Desenvolvimento e Validação de um Modelo de Balanço Populacional para a Lixiviação de um Concentrado Ustulado de Zinco em Bancada e em Escala Piloto*. 2017. 248 f. Dissertação (Mestrado em Engenharia Química) -- Universidade Federal de Minas Gerais, Belo Horizonte, 2017.
-3. CRUNDWELL, F. K.; BRYSON, A. W. The calculation of the rate of dissolution of minerals in batch and continuous reactors. *Hydrometallurgy*, v. 29, n. 1-3, p. 275-295, 1992.
-4. FOGLER, H. S. *Elements of Chemical Reaction Engineering*. 4. ed. Boston: Prentice Hall, 2006.
-5. LEVENSPIEL, O. *Chemical Reaction Engineering*. 3. ed. New York: John Wiley & Sons, 1999.
-6. LIDE, D. R. *CRC Handbook of Chemistry and Physics*. 86. ed. Boca Raton: CRC Press, 2005.
+1. BALARINI, J. C. *Estudo Cinético do Ustulado de Zinco da Votorantim Metais: Mecanismo Não Catalítico Associado à Caracterização e à Determinação de Tempos de Residência*. Universidade Federal de Minas Gerais, 2009.
+2. BALARINI, J. C.; ARAÚJO, E. M. R.; COELHO, F. E. B.; POLLI, L. O.; KONZEN, C.; MIRANDA, T. L. S.; SALUM, A. Leaching kinetics of roasted zinc concentrate in sulphuric acid solutions. *Revista Observatorio de la Economía Latinoamericana*, v. 23, n. 11, 2025. DOI: 10.55905/oelv23n11-188.
+3. BORTOT COELHO, F. E. *Desenvolvimento e Validação de um Modelo de Balanço Populacional para a Lixiviação de um Concentrado Ustulado de Zinco em Bancada e em Escala Piloto*. 2017. 248 f. Dissertação (Mestrado em Engenharia Química) -- Universidade Federal de Minas Gerais, Belo Horizonte, 2017.
+4. CRUNDWELL, F. K.; BRYSON, A. W. The calculation of the rate of dissolution of minerals in batch and continuous reactors. *Hydrometallurgy*, v. 29, n. 1-3, p. 275-295, 1992.
+5. HERBST, J. A. Rate Processes in Multiparticle Metallurgical Systems. In: SOHN, H. Y.; WADSWORTH, M. E. (Ed.). *Rate Processes of Extractive Metallurgy*. New York: Plenum Press, 1979.
+6. LEBLANC, S. E.; FOGLER, H. S. Population balance modeling of the dissolution of polydisperse solids: rate limiting regimes. *AIChE Journal*, v. 33, n. 1, p. 54-63, 1987.

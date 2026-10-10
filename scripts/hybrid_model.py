@@ -31,10 +31,10 @@ from sklearn.ensemble import (
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import Matern, WhiteKernel
-from sklearn.preprocessing import StandardScaler
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel, ConstantKernel
+from sklearn.preprocessing import StandardScaler, FunctionTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import LeaveOneGroupOut
+from sklearn.model_selection import LeaveOneGroupOut, GroupKFold
 from sklearn.base import clone
 
 # Importações dos módulos locais do projeto
@@ -60,7 +60,7 @@ def preparar_features_e_alvo(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, 
     """
     if 'C_acid_pbm_mol_L' not in df.columns:
         df['C_acid_pbm_mol_L'] = df['C_acid_0_mol_L'] * np.maximum(
-            0.0, 1.0 - (df['X_pbm'] / df['razao_molar_eta'])
+            0.0, 1.0 - (df['X_pbm'] / df['razao_molar_eta_real'])
         )
 
     y = None
@@ -76,18 +76,25 @@ def preparar_features_e_alvo(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, 
     return X, y, grupos
 
 
+def selecionar_entradas_gp(X: np.ndarray) -> np.ndarray:
+    """Entradas do GP a partir de FEATURES_FISICAS: [log(1 + t), eta, CA0]."""
+    return np.column_stack([np.log1p(X[:, 0]), X[:, 1], X[:, 2]])
+
+
 # Definição e configuração dos modelos de machine learning
 def obter_catalogo_modelos(random_state: int = 42) -> Dict[str, Any]:
     """
     Retorna o catálogo de regressores residuais avaliados no TCC:
-      - Gradient Boosting (GBDT): Campeão geral com minimização sequencial de resíduos (R²_CV = 0.9934).
-      - Extra Trees: Árvores extremamente aleatorizadas com excelente suavização de variância (R²_CV = 0.9932).
-      - Random Forest: Robusto contra ruídos e não-linearidades (R²_CV = 0.9907).
-      - Gaussian Process (Kriging): Processo Gaussiano com kernel Matérn e ruído WhiteKernel (R²_CV = 0.9878).
-      - SVR (Otimizado): Kernel RBF com regularização balanceada C=5.0 e eps=0.005 (R²_CV = 0.9870).
-      - Rede Neural (MLP Tanh + L-BFGS): Ativação suave tanh e Quasi-Newton de segunda ordem (R²_CV = 0.9688).
-      - SVR (Baseline): Kernel RBF com C=1.0 e eps=0.01 (R²_CV = 0.9833).
-      - Rede Neural (MLP ReLU + Adam): Baseline linear por partes com Adam estocástico (R²_CV = 0.8013).
+      - Gradient Boosting (GBDT): Minimização sequencial de resíduos (R²_CV = 0.9963).
+      - Extra Trees: Árvores extremamente aleatorizadas com excelente suavização de variância (R²_CV = 0.9965).
+      - Random Forest: Robusto contra ruídos e não-linearidades (R²_CV = 0.9955).
+      - Gaussian Process (Kriging): C·Matérn ARD + WhiteKernel sobre (log t, eta, CA0) (R²_CV = 0.9966).
+      - SVR (GridSearch): Kernel RBF com C=2.0 e eps=0.01 (R²_CV = 0.9952).
+      - SVR (Otimizado): Kernel RBF com regularização balanceada C=5.0 e eps=0.005 (R²_CV = 0.9945).
+      - Rede Neural (MLP Tanh + L-BFGS): Ativação suave tanh e Quasi-Newton de segunda ordem (R²_CV = 0.9899).
+      - SVR (Baseline): Kernel RBF com C=1.0 e eps=0.01 (R²_CV = 0.9954).
+      - Rede Neural (MLP ReLU + Adam): Baseline linear por partes com Adam estocástico (R²_CV = 0.9197).
+    (GroupKFold 8 dobras; White-Box corrigido (RRB mássica, ks a 30 °C, [H+] por especiação) e alpha = 0.)
     """
     return {
         'Gradient Boosting (GBDT)': GradientBoostingRegressor(
@@ -111,11 +118,16 @@ def obter_catalogo_modelos(random_state: int = 42) -> Dict[str, Any]:
             random_state=random_state
         ),
         
+        # Entradas independentes do planejamento fatorial (log t, eta, CA0): S/L, X_pbm e
+        # C_acid_pbm são funções delas. Amplitude ajustável e escala própria por entrada (ARD).
         'Gaussian Process (Kriging)': Pipeline([
+            ('entradas', FunctionTransformer(selecionar_entradas_gp)),
             ('scaler', StandardScaler()),
             ('gpr', GaussianProcessRegressor(
-                kernel=Matern(nu=1.5) + WhiteKernel(noise_level=1e-4),
-                n_restarts_optimizer=2,
+                kernel=ConstantKernel(1.0) * Matern(length_scale=[1.0, 1.0, 1.0], nu=1.5)
+                       + WhiteKernel(noise_level=1e-3),
+                normalize_y=True,
+                n_restarts_optimizer=5,
                 random_state=random_state
             ))
         ]),
@@ -125,7 +137,7 @@ def obter_catalogo_modelos(random_state: int = 42) -> Dict[str, Any]:
             ('svr', SVR(kernel='rbf', C=5.0, epsilon=0.005, gamma='scale'))
         ]),
 
-        'Rede Neural (MLP Tanh + L-BFGS)': Pipeline([
+        'Rede Neural (MLP Tanh)': Pipeline([
             ('scaler', StandardScaler()),
             ('mlp', MLPRegressor(
                 hidden_layer_sizes=(12, 6),
@@ -135,6 +147,11 @@ def obter_catalogo_modelos(random_state: int = 42) -> Dict[str, Any]:
                 max_iter=3000,
                 random_state=random_state
             ))
+        ]),
+
+        'SVR (GridSearch)': Pipeline([
+            ('scaler', StandardScaler()),
+            ('svr', SVR(kernel='rbf', C=2.0, epsilon=0.01, gamma='scale'))
         ]),
 
         'SVR (Baseline)': Pipeline([
@@ -217,7 +234,7 @@ class ModeloHibridoCinza:
         if df_cache is not None:
             if 'C_acid_pbm_mol_L' not in df_cache.columns:
                 df_cache['C_acid_pbm_mol_L'] = df_cache['C_acid_0_mol_L'] * np.maximum(
-                    0.0, 1.0 - (df_cache['X_pbm'] / df_cache['razao_molar_eta'])
+                    0.0, 1.0 - (df_cache['X_pbm'] / df_cache['razao_molar_eta_real'])
                 )
             return df_cache
         
@@ -229,9 +246,10 @@ class ModeloHibridoCinza:
         for ens_id, grupo in df.groupby("ensaio_id", sort=False):
             ca0 = float(grupo["C_acid_0_mol_L"].iloc[0])
             eta = float(grupo["razao_molar_eta"].iloc[0])
+            eta_real = float(grupo['razao_molar_eta_real'].iloc[0])  # Eq. 4.3
             tempos = grupo["tempo_min"].tolist()
             
-            res = self.pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta, alpha=0.0)
+            res = self.pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta_real)
             x_pbm_lista.extend(res["X_pbm"])
             c_acid_lista.extend(res["C_acid_mol_L"])
             
@@ -264,13 +282,17 @@ class ModeloHibridoCinza:
         X, _, _ = preparar_features_e_alvo(df)
         return self.regressor.predict(X)
 
-    def validacao_cruzada_logo(self, df: pd.DataFrame) -> np.ndarray:
-        """Executa validação cruzada Leave-One-Group-Out (LOGO-CV)."""
+    def validacao_cruzada_group_kfold(self, df: pd.DataFrame, n_splits: int = 8) -> np.ndarray:
+        """
+        Executa validação cruzada agrupada (GroupKFold com 8 dobras: proporção 85/15).
+        Em cada uma das 8 dobras, 2 ensaios são mantidos como teste cego (12,5% ~ 15%)
+        e 14 ensaios são utilizados no treinamento (87,5% ~ 85%).
+        """
         X, y, grupos = preparar_features_e_alvo(df)
-        logo = LeaveOneGroupOut()
+        gkf = GroupKFold(n_splits=n_splits)
         y_cv_pred = np.zeros(len(df))
 
-        for train_idx, val_idx in logo.split(X, y, grupos):
+        for train_idx, val_idx in gkf.split(X, y, grupos):
             modelo_fold = clone(self.regressor)
             modelo_fold.fit(X[train_idx], y[train_idx])
             delta_val_pred = modelo_fold.predict(X[val_idx])
@@ -279,6 +301,10 @@ class ModeloHibridoCinza:
             y_cv_pred[val_idx] = self.acoplador.acoplar_e_restringir(df_val, delta_val_pred)
 
         return y_cv_pred
+
+    def validacao_cruzada_logo(self, df: pd.DataFrame) -> np.ndarray:
+        """Alias para manter retrocompatibilidade, direcionando para GroupKFold com 8 dobras (85/15)."""
+        return self.validacao_cruzada_group_kfold(df, n_splits=8)
 
 
 # =============================================================================
@@ -310,25 +336,27 @@ def calcular_metricas(y_real: np.ndarray, y_pred: np.ndarray) -> Dict[str, float
 # 6. BENCHMARK COMPARATIVO ENTRE TODOS OS MODELOS
 # =============================================================================
 
-def executar_benchmark_comparativo(df: pd.DataFrame, random_state: int = 42) -> pd.DataFrame:
+def executar_benchmark_comparativo(df: pd.DataFrame, n_splits: int = 8, random_state: int = 42) -> pd.DataFrame:
     """
     Executa benchmark comparativo de todos os modelos do catálogo sob:
       1. Ajuste global (in-sample)
-      2. Validação Cruzada Estrita LOGO-CV (16 folds independentes)
+      2. Validação Cruzada Agrupada GroupKFold (8 dobras: 14 ensaios treino [85%], 2 ensaios teste [15%])
     """
     X, y, grupos = preparar_features_e_alvo(df)
     catalogo = obter_catalogo_modelos(random_state=random_state)
-    logo = LeaveOneGroupOut()
+    gkf = GroupKFold(n_splits=n_splits)
     acoplador = AcopladorFisico()
     y_exp = df['X_zn_exp'].values
-    
+    # Os pontos t = 0 têm resíduo trivial (ΔX = 0) e inflam o R²; reporta-se também sem eles
+    mask_t = df['tempo_min'].values > 0
+
     resultados = []
-    
-    print("\n" + "=" * 90)
-    print("BENCHMARK COMPARATIVO MULTI-MODELO -- VALIDAÇÃO CRUZADA ESTRITA (LOGO-CV)")
-    print("=" * 90)
-    print(f"{'Algoritmo / Variação':<35} | {'R² Ajuste':<10} | {'R² LOGO-CV':<11} | {'RMSE CV':<9} | {'MAE CV':<9} | {'Violação':<8}")
-    print("-" * 90)
+
+    print("\n" + "=" * 112)
+    print("BENCHMARK COMPARATIVO MULTI-MODELO -- VALIDAÇÃO CRUZADA GROUP-KFOLD (8 DOBRAS: 85/15)")
+    print("=" * 112)
+    print(f"{'Algoritmo / Variação':<35} | {'R² Ajuste':<10} | {'R² CV (85/15)':<14} | {'R² CV t>0':<10} | {'RMSE CV':<9} | {'MAE CV':<9} | {'Violação':<8}")
+    print("-" * 112)
     
     for nome, modelo in catalogo.items():
         # Ajuste in-sample
@@ -337,9 +365,9 @@ def executar_benchmark_comparativo(df: pd.DataFrame, random_state: int = 42) -> 
         y_fit = acoplador.acoplar_e_restringir(df, modelo_fit.predict(X))
         m_fit = calcular_metricas(y_exp, y_fit)
         
-        # LOGO-CV
+        # GroupKFold (8 dobras, 2 ensaios deixados de fora por vez)
         y_cv = np.zeros(len(df))
-        for train_idx, val_idx in logo.split(X, y, grupos):
+        for train_idx, val_idx in gkf.split(X, y, grupos):
             m_fold = clone(modelo)
             m_fold.fit(X[train_idx], y[train_idx])
             pred_val = m_fold.predict(X[val_idx])
@@ -347,19 +375,21 @@ def executar_benchmark_comparativo(df: pd.DataFrame, random_state: int = 42) -> 
             y_cv[val_idx] = acoplador.acoplar_e_restringir(df_val, pred_val)
             
         m_cv = calcular_metricas(y_exp, y_cv)
-        
-        print(f"{nome:<35} | {m_fit['R2']:^10.4f} | {m_cv['R2']:^11.4f} | {m_cv['RMSE']:^9.4f} | {m_cv['MAE']:^9.4f} | {m_cv['Violacao_pct']:^8.1f}%")
-        
+        m_cv_t = calcular_metricas(y_exp[mask_t], y_cv[mask_t])
+
+        print(f"{nome:<35} | {m_fit['R2']:^10.4f} | {m_cv['R2']:^14.4f} | {m_cv_t['R2']:^10.4f} | {m_cv['RMSE']:^9.4f} | {m_cv['MAE']:^9.4f} | {m_cv['Violacao_pct']:^8.1f}%")
+
         resultados.append({
             'Algoritmo': nome,
             'R2_Ajuste': m_fit['R2'],
             'R2_CV': m_cv['R2'],
+            'R2_CV_t>0': m_cv_t['R2'],
             'RMSE_CV': m_cv['RMSE'],
             'MAE_CV': m_cv['MAE'],
             'Violacao_pct': m_cv['Violacao_pct']
         })
         
-    print("=" * 90)
+    print("=" * 112)
     return pd.DataFrame(resultados)
 
 
@@ -423,28 +453,36 @@ if __name__ == "__main__":
     hibrido.treinar(df)
     df['X_hibrido_ajuste'] = hibrido.prever(df)
     
-    # 4. Validação Cruzada Estrita (Generalização em dados cegos)
-    print(f"-> Executando validação cruzada LOGO-CV para '{algoritmo_selecionado}' (16 folds)...")
-    df['X_hibrido_cv'] = hibrido.validacao_cruzada_logo(df)
+    # 4. Validação Cruzada Agrupada (Generalização em dados cegos - 85/15)
+    print(f"-> Executando validação cruzada GroupKFold (8 dobras, 2 ensaios fora por vez: 85/15) para '{algoritmo_selecionado}'...")
+    df['X_hibrido_cv'] = hibrido.validacao_cruzada_group_kfold(df, n_splits=8)
     
     # 5. Avaliação Comparativa de Métricas do modelo ativo
     y_exp = df['X_zn_exp'].values
     m_pbm = calcular_metricas(y_exp, df['X_pbm'].values)
     m_ajuste = calcular_metricas(y_exp, df['X_hibrido_ajuste'].values)
     m_cv = calcular_metricas(y_exp, df['X_hibrido_cv'].values)
-    
-    print("\n" + "-" * 80)
-    print(f"{'Métrica':<25} | {'White-Box Puro':<15} | {f'Grey-Box Ajuste':<18} | {f'Grey-Box LOGO-CV':<18}")
-    print("-" * 80)
-    print(f"{'R² (Determinação)':<25} | {m_pbm['R2']:<15.4f} | {m_ajuste['R2']:<18.4f} | {m_cv['R2']:<18.4f}")
-    print(f"{'RMSE (Erro Médio Quad.)':<25} | {m_pbm['RMSE']:<15.4f} | {m_ajuste['RMSE']:<18.4f} | {m_cv['RMSE']:<18.4f}")
-    print(f"{'MAE (Erro Médio Abs.)':<25} | {m_pbm['MAE']:<15.4f} | {m_ajuste['MAE']:<18.4f} | {m_cv['MAE']:<18.4f}")
-    print(f"{'Violação Física (%)':<25} | {m_pbm['Violacao_pct']:<15.1f} | {m_ajuste['Violacao_pct']:<18.1f} | {m_cv['Violacao_pct']:<18.1f}")
-    print("-" * 80)
+    mask_t = df['tempo_min'].values > 0
+    r2_t = [calcular_metricas(y_exp[mask_t], df[c].values[mask_t])['R2']
+            for c in ('X_pbm', 'X_hibrido_ajuste', 'X_hibrido_cv')]
+
+    print("\n" + "-" * 85)
+    print(f"{'Métrica':<25} | {'White-Box Puro':<15} | {f'Grey-Box Ajuste':<18} | {f'Grey-Box CV (85/15)':<20}")
+    print("-" * 85)
+    print(f"{'R² (Determinação)':<25} | {m_pbm['R2']:<15.4f} | {m_ajuste['R2']:<18.4f} | {m_cv['R2']:<20.4f}")
+    print(f"{'R² (t > 0)':<25} | {r2_t[0]:<15.4f} | {r2_t[1]:<18.4f} | {r2_t[2]:<20.4f}")
+    print(f"{'RMSE (Erro Médio Quad.)':<25} | {m_pbm['RMSE']:<15.4f} | {m_ajuste['RMSE']:<18.4f} | {m_cv['RMSE']:<20.4f}")
+    print(f"{'MAE (Erro Médio Abs.)':<25} | {m_pbm['MAE']:<15.4f} | {m_ajuste['MAE']:<18.4f} | {m_cv['MAE']:<20.4f}")
+    print(f"{'Violação Física (%)':<25} | {m_pbm['Violacao_pct']:<15.1f} | {m_ajuste['Violacao_pct']:<18.1f} | {m_cv['Violacao_pct']:<20.1f}")
+    print("-" * 85)
     
     # 6. Gerar figura científica de paridade
     plotar_resultados(df, nome_algoritmo=algoritmo_selecionado)
     
     # 7. Executar o benchmark comparativo multi-modelo para todos os regressores do catálogo
     executar_benchmark_comparativo(df)
+
+    # 8. Gerar gráficos cinéticos (conversão gerada vs pontos experimentais em função do tempo)
+    from plotar_cinetica import gerar_graficos_cinetica
+    gerar_graficos_cinetica(pasta_saida="scripts/docs", algoritmo_hibrido=algoritmo_selecionado)
     print("=" * 80)

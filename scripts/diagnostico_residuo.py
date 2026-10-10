@@ -14,9 +14,10 @@ def calcular_residuos():
     for _, grupo in df.groupby("ensaio_id"):
         ca0 = float(grupo["C_acid_0_mol_L"].iloc[0])
         eta = float(grupo["razao_molar_eta"].iloc[0])
+        eta_real = float(grupo['razao_molar_eta_real'].iloc[0])  # Eq. 4.3
         tempos = grupo["tempo_min"].tolist()
         
-        res = pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta, alpha=0.0)
+        res = pbm.simular_ensaio(tempos_min=tempos, C_acid_0_mol_L=ca0, eta=eta_real)
         x_pbm_lista.extend(res["X_pbm"])
         c_acid_lista.extend(res["C_acid_mol_L"])
         

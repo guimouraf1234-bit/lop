@@ -1,0 +1,22 @@
+# ==============================================================================
+# Dependências do Projeto LOP - Modelagem Híbrida de Lixiviação de Zinco
+# Trabalho de Conclusão de Curso (TCC) - Engenharia Química - UFMG
+# ==============================================================================
+
+# Computação científica e cálculo numérico
+numpy>=1.24.0
+
+# Resolução de equações diferenciais (EDOs) e integração numérica (PBM)
+scipy>=1.10.0
+
+# Estruturas de dados e manipulação de tabelas/ensaios
+pandas>=2.0.0
+
+# Algoritmos de Machine Learning para o resíduo Grey-Box (RF, GB, SVR, MLP, GP)
+scikit-learn>=1.3.0
+
+# Geração de gráficos, curvas cinéticas e gráficos de paridade
+matplotlib>=3.7.0
+
+# Utilitário para leitura e validação de relatórios PDF (gerar_pdf.py)
+pypdf>=3.9.0
