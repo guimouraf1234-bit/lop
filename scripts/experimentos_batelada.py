@@ -19,6 +19,8 @@ Etapas (e arquivos gerados em lop/resultados/):
   dominio        dominio_incerteza_eta.csv                                                 (I8)
   escada_hibrido escada_hibrido.csv                                                       (Fase 3)
   curvas         curvas_logo.csv (curvas contínuas fora-da-dobra, GP e ET, para as figuras)
+  particao_comum particao_comum_*.csv: teste cego 7, 8, 14 + CV nas 4 dobras da Tabela B.3 (mesma partição e
+                 métricas dos modelos serial e black-box do relatório, para comparação direta)
 Sempre grava config.json (versões, sementes, White-Box e atributos principais).
 
 Reprodutibilidade: sementes fixas, floats gravados com 8 algarismos significativos, ordem estável.
@@ -50,7 +52,7 @@ DIR_RESULTADOS = os.path.abspath(os.path.join(DIR_SCRIPTS, '..', 'resultados'))
 SLUGS_PRINCIPAIS = ('gp', 'extra_trees', 'gbdt', 'random_forest', 'svr', 'mlp_tanh')
 SLUGS_CAIXA_PRETA = ('gp', 'extra_trees', 'gbdt', 'svr')
 ETAPAS = ('dados', 'whitebox', 'ablacao', 'benchmark', 'nu', 'aprendizado', 'intervalos', 'residuo',
-          'dominio', 'escada_hibrido', 'curvas')
+          'dominio', 'escada_hibrido', 'curvas', 'particao_comum')
 # O White-Box principal tem nu fixo (sem estimativa nos dados de treino): nenhum dado de conversão entra no fator de fechamento
 NU_MODO_PRINCIPAL = 'fixo'
 NU_FIXO_PRINCIPAL = CONFIG_WB_PRINCIPAL.nu
@@ -388,10 +390,183 @@ def etapa_curvas(ctx):
     salvar(pd.concat(linhas, ignore_index=True), 'curvas_logo.csv', ctx['saida'])
 
 
+# -----------------------------------------------------------------------------
+# Partição comum às abordagens do relatório (teste cego 7, 8, 14 + 4 dobras da Tabela B.3)
+# -----------------------------------------------------------------------------
+
+SEMENTES_COMITE = tuple(range(42, 52))
+SLUGS_PARTICAO_COMUM = SLUGS_PRINCIPAIS + ('knn', 'hist_gbdt', 'adaboost', 'kernel_ridge', 'poly_ridge', 'gp_rbf')
+
+
+def codigos_particao_comum(entradas: str):
+    """Baselines + cada regressor como ML do híbrido e como caixa-preta (mesmo regressor, sem física)."""
+    cods = [('wb',), ('tabela',), ('ridge', entradas)]
+    cods += [('hibrido', s, entradas) for s in SLUGS_PARTICAO_COMUM]
+    cods += [('caixa', s) for s in SLUGS_PARTICAO_COMUM]
+    return cods      # as mesmas do modelo serial e do black-box (42 a 51)
+PASSO_MALHA_MIN = 0.25                      # malha da inconsistência física (como no modelo serial)
+TOL_INCONSISTENCIA = 1e-3                   # mesma tolerância de AcopladorFisico.diagnosticar
+
+
+def _metricas_pp(y, yhat) -> dict:
+    """Métricas do relatório, em pontos percentuais de conversão (R² adimensional)."""
+    y, yhat = np.asarray(y, float), np.asarray(yhat, float)
+    e = y - yhat
+    sst = float(np.sum((y - y.mean()) ** 2))
+    return {'pontos': int(len(y)), 'R2': float(1 - np.sum(e ** 2) / sst) if sst > 0 else float('nan'),
+            'RMSE_pp': 100 * float(np.sqrt(np.mean(e ** 2))), 'MAE_pp': 100 * float(np.mean(np.abs(e))),
+            'erro_max_pp': 100 * float(np.max(np.abs(e)))}
+
+
+def _pct_inconsistente(malha: pd.DataFrame, x: np.ndarray, teto: np.ndarray, tol: float = TOL_INCONSISTENCIA) -> float:
+    """% dos nós (t > 0) com conversão decrescente em relação ao nó anterior, negativa ou acima do teto estequiométrico."""
+    d = pd.DataFrame({'e': malha['ensaio_id'].to_numpy(), 't': malha['tempo_min'].to_numpy(dtype=float),
+                      'x': np.asarray(x, float), 'teto': teto})
+    d = d[d['t'] > 0].sort_values(['e', 't'])
+    queda = d.groupby('e')['x'].diff() < -tol
+    ruim = queda | (d['x'] > d['teto'] + tol) | (d['x'] < -tol)
+    return 100.0 * float(ruim.mean())
+
+
+def _ajustar_e_prever(cod, semente, tr, alvos):
+    """Ajusta um estimador nos ensaios de treino e devolve a saída BRUTA em cada quadro de `alvos`."""
+    warnings.filterwarnings('ignore')
+    est = V.criar_estimador(cod, semente).ajustar(tr)
+    return [est.prever_bruto(a) for a in alvos]
+
+
+def etapa_particao_comum(ctx):
+    """
+    Mesma partição e mesma avaliação dos modelos serial e black-box do relatório (Apêndice B, Seção 5.4):
+      1. seleção do regressor só pela CV nos 13 ensaios de treino (4 dobras da Tabela B.3, 10 sementes);
+      2. modelo final = comitê das 10 sementes (média da saída bruta, depois o acoplador), treinado nos 13 ensaios;
+      3. teste cego (Ensaios 7, 8 e 14) consultado uma única vez; métricas em p.p., só em t > 0;
+      4. inconsistência física na malha de 0,25 min, antes e depois do acoplador.
+    Todos os modelos do benchmark passam pelo mesmo protocolo (baselines e caixas-pretas incluídos).
+    """
+    df, resp, p = ctx['df'], ctx['resp'], ctx['p']
+    sementes = SEMENTES_COMITE[:2] if p.rapido else SEMENTES_COMITE
+    cods = codigos_particao_comum(ENTRADAS_PRINCIPAL)
+    nome_por_cod = {c: V.criar_estimador(c).nome for c in cods}
+    treino, teste = V.ensaios_treino_comum(df), V.ENSAIOS_TESTE_CEGO
+    dobras = V.esquema_cv_tabela_b3(df)
+    rotulo_dobra = {d.rotulo: d.teste for d in dobras}
+
+    # 1. Validação cruzada (somente treino) ---------------------------------
+    preds, diags = [], []
+    for s in sementes:
+        pr, dg = V.executar_esquema(df, resp, 'CV 4 dobras (Tabela B.3)', dobras, cods, CONFIG_WB_PRINCIPAL,
+                                    NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL, ctx['n_jobs'], random_state=s)
+        pr['rep'], dg['rep'] = s, s
+        preds.append(pr)
+        diags.append(dg)
+    pcv, dcv = pd.concat(preds, ignore_index=True), pd.concat(diags, ignore_index=True)
+    cv = V.resumo_benchmark(pcv, dcv, ctx['sigma'], n_boot=p.n_boot)
+    hib = cv[cv['tipo'] == 'hibrido'].sort_values('RMSE')
+    escolhido = hib.iloc[0]['modelo']
+    cv['selecionado'] = cv['modelo'] == escolhido
+    salvar(cv, 'particao_comum_cv.csv', ctx['saida'])
+
+    q = pcv[pcv['tempo_min'] > 0].assign(se=lambda d: (d['X_exp'] - d['x_hat']) ** 2)
+    rm = lambda g: 100 * np.sqrt(g['se'].mean())
+    por_dobra = (q.groupby(['modelo', 'dobra', 'rep']).apply(rm, include_groups=False).rename('RMSE_pp').reset_index()
+                 .groupby(['modelo', 'dobra'])['RMSE_pp'].agg(RMSE_pp='mean', RMSE_dp_sementes_pp='std').reset_index())
+    por_dobra['ensaios_validacao'] = por_dobra['dobra'].map(lambda r: ', '.join(map(str, rotulo_dobra[r])))
+    salvar(por_dobra, 'particao_comum_cv_dobras.csv', ctx['saida'])
+    por_ens = (q.groupby(['modelo', 'ensaio_id', 'dobra', 'rep']).apply(rm, include_groups=False).rename('RMSE_pp')
+               .reset_index().groupby(['modelo', 'ensaio_id', 'dobra'])['RMSE_pp'].mean().reset_index())
+    salvar(por_ens, 'particao_comum_cv_ensaios.csv', ctx['saida'])
+    r = hib.iloc[0]
+    print(f"   CV (13 ensaios, 4 dobras, {len(sementes)} sementes): selecionado = {escolhido} "
+          f"(RMSE fora da dobra {100 * r['RMSE']:.2f} ± {100 * r['RMSE_dp_reps']:.2f} p.p.)", flush=True)
+
+    # 2. Modelo final: comitê de sementes treinado nos 13 ensaios -----------
+    cfg = CONFIG_WB_PRINCIPAL.com_nu(V.escolher_nu(resp, treino, NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL))
+    acop = V.AcopladorFisico(nu=cfg.nu)
+    base = construir_base(df, cfg).sort_values(['ensaio_id', 'tempo_min']).reset_index(drop=True)
+    tr = base[base['ensaio_id'].isin(treino)].reset_index(drop=True)
+    t_malha = np.round(np.arange(0.0, 15.0 + 1e-9, PASSO_MALHA_MIN), 4)
+    malha = []
+    for e, g in base.groupby('ensaio_id'):
+        malha.append(construir_base_condicao(float(g['razao_molar_eta_real'].iloc[0]), float(g['C_acid_0_mol_L'].iloc[0]),
+                                             t_malha, cfg, ensaio_id=int(e), eta_nominal=float(g['razao_molar_eta'].iloc[0])))
+    malha = pd.concat(malha, ignore_index=True)
+    teto_pts, teto_malha = acop.teto(base), acop.teto(malha)
+
+    tarefas = [(c, s) for c in cods for s in sementes]
+    from joblib import Parallel, delayed, parallel_config
+    with parallel_config(backend='loky', n_jobs=ctx['n_jobs'], inner_max_num_threads=1):
+        saidas = Parallel()(delayed(_ajustar_e_prever)(c, s, tr, [base, malha]) for c, s in tarefas)
+    brutos = {}
+    for (c, s), (xb_pts, xb_malha) in zip(tarefas, saidas):
+        brutos.setdefault(c, {})[s] = (xb_pts, xb_malha)
+
+    # 3. Métricas: treino, teste cego (consultado uma vez) e global ---------
+    pos = base['tempo_min'].to_numpy() > 0
+    ids = base['ensaio_id'].to_numpy()
+    ids_m = malha['ensaio_id'].to_numpy()
+    conjuntos = [('Treino', treino), ('Teste cego', teste), ('Global', tuple(sorted(set(treino) | set(teste))))]
+    linhas, preds_fin, curvas = [], [], []
+    for c in cods:
+        nome = nome_por_cod[c]
+        xb_pts = np.mean([v[0] for v in brutos[c].values()], axis=0)
+        xb_malha = np.mean([v[1] for v in brutos[c].values()], axis=0)
+        xh_pts, xh_malha = acop.restringir(base, xb_pts), acop.restringir(malha, xb_malha)
+        tipo = V.criar_estimador(c).tipo
+        for conj, ens in conjuntos:
+            m = pos & np.isin(ids, ens)
+            mm = np.isin(ids_m, ens)
+            met = _metricas_pp(base.loc[m, 'X_zn_exp'], xh_pts[m])
+            err = np.abs(base.loc[m, 'X_zn_exp'].to_numpy() - xh_pts[m])
+            k = np.argmax(err)
+            linha = {'modelo': nome, 'tipo': tipo, 'conjunto': conj, 'ensaios': len(ens), **met,
+                     'erro_max_ensaio': int(ids[m][k]), 'erro_max_t_min': float(base.loc[m, 'tempo_min'].to_numpy()[k]),
+                     'inconsistencia_bruta_pct': _pct_inconsistente(malha[mm], xb_malha[mm], teto_malha[mm]),
+                     'inconsistencia_final_pct': _pct_inconsistente(malha[mm], xh_malha[mm], teto_malha[mm])}
+            if conj == 'Teste cego':
+                for e in teste:
+                    me = pos & (ids == e)
+                    linha[f'RMSE_E{e}_pp'] = 100 * float(np.sqrt(np.mean((base.loc[me, 'X_zn_exp'] - xh_pts[me]) ** 2)))
+            linhas.append(linha)
+        preds_fin.append(pd.DataFrame({'modelo': nome, 'tipo': tipo, 'ensaio_id': ids,
+                                       'conjunto': np.where(np.isin(ids, teste), 'Teste cego', 'Treino'),
+                                       'tempo_min': base['tempo_min'], 'X_exp': base['X_zn_exp'],
+                                       'X_pbm': base['X_pbm'], 'x_bruto': xb_pts, 'x_hat': xh_pts}))
+        if tipo in ('hibrido', 'caixa-preta', 'white-box'):
+            curvas.append(pd.DataFrame({'modelo': nome, 'ensaio_id': ids_m, 'tempo_min': malha['tempo_min'],
+                                        'x_bruto': xb_malha, 'x_hat': xh_malha}))
+    des = pd.DataFrame(linhas)
+    des['selecionado'] = des['modelo'] == escolhido
+    salvar(des, 'particao_comum_desempenho.csv', ctx['saida'])
+    salvar(pd.concat(preds_fin, ignore_index=True), 'particao_comum_predicoes.csv', ctx['saida'])
+    salvar(pd.concat(curvas, ignore_index=True), 'particao_comum_curvas.csv', ctx['saida'])
+
+    # Variabilidade entre sementes do modelo selecionado
+    c_sel = next(c for c in cods if nome_por_cod[c] == escolhido)
+    mt = pos & np.isin(ids, teste)
+    sem = []
+    for s, (xb, _) in brutos[c_sel].items():
+        xh = acop.restringir(base, xb)
+        sem.append({'modelo': escolhido, 'semente': s, **{f'{k}_teste': v for k, v in
+                                                          _metricas_pp(base.loc[mt, 'X_zn_exp'], xh[mt]).items()}})
+    xs = np.array([acop.restringir(base, v[0])[pos] for v in brutos[c_sel].values()])
+    faixa = 100 * (xs.max(0) - xs.min(0))
+    sem = pd.DataFrame(sem)
+    sem['faixa_media_pp_112'] = float(faixa.mean())
+    sem['faixa_max_pp_112'] = float(faixa.max())
+    salvar(sem, 'particao_comum_sementes.csv', ctx['saida'])
+
+    t = des[(des['modelo'] == escolhido) & (des['conjunto'] == 'Teste cego')].iloc[0]
+    print(f"   teste cego ({escolhido}): RMSE {t['RMSE_pp']:.2f} p.p., R² {t['R2']:.3f}, MAE {t['MAE_pp']:.2f} p.p., "
+          f"erro máx. {t['erro_max_pp']:.2f} p.p. (E{t['erro_max_ensaio']}, {t['erro_max_t_min']:g} min)", flush=True)
+    ctx['particao_comum'] = {'ensaios_teste_cego': list(teste), 'dobras_tabela_b3': [list(d) for d in V.DOBRAS_TABELA_B3],
+                             'sementes': list(sementes), 'selecionado_pela_cv': escolhido}
+
+
 FUNCOES = {'dados': etapa_dados, 'whitebox': etapa_whitebox, 'ablacao': etapa_ablacao, 'benchmark': etapa_benchmark,
            'nu': etapa_nu, 'aprendizado': etapa_aprendizado, 'intervalos': etapa_intervalos,
            'residuo': etapa_residuo, 'dominio': etapa_dominio, 'escada_hibrido': etapa_escada_hibrido,
-           'curvas': etapa_curvas}
+           'curvas': etapa_curvas, 'particao_comum': etapa_particao_comum}
 
 
 def gravar_config(ctx):
@@ -409,6 +584,7 @@ def gravar_config(ctx):
         'parametros': {k: v for k, v in vars(ctx['p']).items()},
         'sigma_piso_ruido': ctx.get('sigma'),
         'consistencia_com_constantes': ctx['consistencia'],
+        'particao_comum': ctx.get('particao_comum'),
     }
     with open(os.path.join(ctx['saida'], 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(cfg, f, indent=2, ensure_ascii=False, sort_keys=True)

@@ -26,7 +26,8 @@ from hybrid_model import CONFIG_WB_PRINCIPAL, construir_base  # noqa: E402
 
 DIR_RESULTADOS = os.path.abspath(os.path.join(DIR_SCRIPTS, '..', 'resultados'))
 ROT = {'gp': 'GP', 'extra_trees': 'Extra Trees', 'gbdt': 'GBDT', 'random_forest': 'Random Forest', 'svr': 'SVR',
-       'mlp_tanh': 'MLP tanh', 'ridge': 'Ridge'}
+       'mlp_tanh': 'MLP tanh', 'ridge': 'Ridge', 'knn': 'k-NN', 'hist_gbdt': 'HistGBDT', 'adaboost': 'AdaBoost',
+       'kernel_ridge': 'Kernel Ridge', 'poly_ridge': 'Ridge polinomial', 'gp_rbf': 'GP (RBF)'}
 
 
 def num(v, casas=4):
@@ -231,6 +232,36 @@ def t_pbm(df):
     return '### T16. Conversão do White-Box principal e resíduo, por ensaio\n\n' + '\n\n'.join(blocos)
 
 
+def t_particao_comum(R):
+    """Mesma partição e métricas dos modelos serial e black-box do relatório (Tabela 5.4.1)."""
+    des = ler(R, 'particao_comum_desempenho.csv')
+    cv = ler(R, 'particao_comum_cv.csv')
+    sel = des.loc[des['selecionado'], 'modelo'].iloc[0]
+    g = des[des['modelo'] == sel]
+    out = pd.DataFrame({'Conjunto': g['conjunto'], 'Ensaios': g['ensaios'], 'Pontos': g['pontos'],
+                        'R²': g['R2'].map(lambda v: num(v, 3)), 'RMSE (p.p.)': g['RMSE_pp'].map(lambda v: num(v, 2)),
+                        'MAE (p.p.)': g['MAE_pp'].map(lambda v: num(v, 2)),
+                        'Erro máximo (p.p.)': g['erro_max_pp'].map(lambda v: num(v, 2)),
+                        'Inconsistência bruta (%)': g['inconsistencia_bruta_pct'].map(lambda v: num(v, 1)),
+                        'Inconsistência final (%)': g['inconsistencia_final_pct'].map(lambda v: num(v, 1))})
+    t = des[des['conjunto'] == 'Teste cego'].merge(cv[['modelo', 'RMSE', 'RMSE_dp_reps']], on='modelo')
+    t = t.sort_values('RMSE')
+    cols_e = [c for c in t.columns if c.startswith('RMSE_E')]
+    comp = pd.DataFrame({'Modelo': t['modelo'].map(nome_curto), 'Tipo': t['tipo'],
+                         'CV fora da dobra (p.p.)': [f'{num(100 * a, 2)} ± {num(100 * b, 2)}'
+                                                     for a, b in zip(t['RMSE'], t['RMSE_dp_reps'])],
+                         'Teste RMSE (p.p.)': t['RMSE_pp'].map(lambda v: num(v, 2)),
+                         'Teste R²': t['R2'].map(lambda v: num(v, 3)),
+                         **{f'E{c[6:-3]} (p.p.)': t[c].map(lambda v: num(v, 2)) for c in cols_e},
+                         'Inconsist. bruta (%)': t['inconsistencia_bruta_pct'].map(lambda v: num(v, 1))})
+    n_sem = len(ler(R, 'particao_comum_sementes.csv'))
+    return (f'### T17. Partição comum do relatório (teste cego 7, 8, 14; CV nas 4 dobras da Tabela B.3; {n_sem} sementes)\n\n'
+            f'Modelo selecionado só pela CV: **{nome_curto(sel)}**. Erros em p.p. de conversão, t > 0; inconsistência = % '
+            'dos nós da malha de 0,25 min com conversão decrescente ou acima do teto, antes (bruta) e depois do acoplador.\n\n'
+            + md(out) + '\n\nTodos os modelos, ordenados pelo erro da CV (o teste cego não participa da escolha):\n\n'
+            + md(comp))
+
+
 def main(argv=None):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -240,7 +271,7 @@ def main(argv=None):
     R = a.resultados
     secoes = [t_piso_ruido(R), t_escada_wb(R), t_selecao_wb(R), t_ph_por_ensaio(R), t_benchmark(R), t_por_nivel_eta(R),
               t_pareadas(R), t_pareadas_melhor(R), t_aprendizado(R), t_ablacao(R), t_nu(R), t_escada_hibrido(R),
-              t_cobertura(R), t_residuo_patamar(R), t_escalas_gp(R), t_pbm(carregar_dados_bancada())]
+              t_cobertura(R), t_residuo_patamar(R), t_escalas_gp(R), t_pbm(carregar_dados_bancada()), t_particao_comum(R)]
     cab = ('# Tabelas dos resultados da batelada\n\nGerado por `scripts/tabelas_batelada.py` a partir de `resultados/*.csv`. '
            'Não edite à mão.\n\n')
     saida = a.saida or os.path.join(R, 'tabelas.md')

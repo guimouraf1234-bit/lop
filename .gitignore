@@ -11,7 +11,11 @@ __pycache__/
 *$py.class
 
 # Resultados gerados pelo pipeline da revisao (figuras sao regeneraveis)
-resultados/figuras/
+resultados/figuras/*
+# exceção: figuras da partição comum (comparação com os outros modelos do grupo), para ver no GitHub
+!resultados/figuras/particao_comum/
+!resultados/figuras/f13_teste_cego_particao_comum.png
+!resultados/figuras/f14_resumo_regressores_particao_comum.png
 .pytest_cache/
 resultados/_log*.txt
 arquivo/figuras_antigas/

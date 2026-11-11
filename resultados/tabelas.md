@@ -444,3 +444,45 @@ Gerado por `scripts/tabelas_batelada.py` a partir de `resultados/*.csv`. Não ed
 | 14 | 1,5 | 1,0 | 0,00 | -0,09 | -0,04 | -0,05 | -0,03 | -0,05 | -0,02 | -0,03 |
 | 15 | 1,5 | 1,5 | 0,00 | -0,09 | -0,06 | -0,05 | -0,06 | -0,04 | -0,04 | -0,03 |
 | 16 | 3,1 | 1,5 | 0,00 | -0,02 | -0,02 | -0,04 | -0,01 | -0,01 | 0,00 | 0,00 |
+
+### T17. Partição comum do relatório (teste cego 7, 8, 14; CV nas 4 dobras da Tabela B.3; 10 sementes)
+
+Modelo selecionado só pela CV: **Híbrido GBDT [B]**. Erros em p.p. de conversão, t > 0; inconsistência = % dos nós da malha de 0,25 min com conversão decrescente ou acima do teto, antes (bruta) e depois do acoplador.
+
+| Conjunto | Ensaios | Pontos | R² | RMSE (p.p.) | MAE (p.p.) | Erro máximo (p.p.) | Inconsistência bruta (%) | Inconsistência final (%) |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Treino | 13 | 91 | 0,997 | 1,12 | 0,85 | 3,51 | 2,3 | 0,0 |
+| Teste cego | 3 | 21 | 0,878 | 2,11 | 1,40 | 7,27 | 2,2 | 0,0 |
+| Global | 16 | 112 | 0,995 | 1,36 | 0,95 | 7,27 | 2,3 | 0,0 |
+
+Todos os modelos, ordenados pelo erro da CV (o teste cego não participa da escolha):
+
+| Modelo | Tipo | CV fora da dobra (p.p.) | Teste RMSE (p.p.) | Teste R² | E7 (p.p.) | E8 (p.p.) | E14 (p.p.) | Inconsist. bruta (%) |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Híbrido GBDT [B] | hibrido | 1,97 ± 0,00 | 2,11 | 0,878 | 2,99 | 1,32 | 1,64 | 2,2 |
+| Híbrido GP [B] | hibrido | 1,98 ± 0,00 | 2,72 | 0,796 | 3,99 | 1,80 | 1,77 | 1,1 |
+| Híbrido HistGBDT [B] | hibrido | 2,06 ± 0,00 | 2,08 | 0,881 | 2,84 | 1,73 | 1,38 | 5,0 |
+| Híbrido Random Forest [B] | hibrido | 2,08 ± 0,03 | 2,36 | 0,847 | 3,31 | 1,89 | 1,49 | 1,7 |
+| Caixa-preta MLP tanh | caixa-preta | 2,23 ± 0,03 | 1,90 | 0,901 | 1,30 | 2,83 | 1,04 | 13,9 |
+| Híbrido Extra Trees [B] | hibrido | 2,32 ± 0,06 | 2,29 | 0,855 | 3,29 | 1,14 | 1,91 | 0,0 |
+| Híbrido AdaBoost [B] | hibrido | 2,34 ± 0,06 | 2,45 | 0,835 | 3,47 | 1,91 | 1,50 | 0,0 |
+| Caixa-preta GBDT | caixa-preta | 2,57 ± 0,00 | 2,03 | 0,886 | 2,30 | 2,05 | 1,71 | 0,0 |
+| Caixa-preta GP | caixa-preta | 2,62 ± 0,00 | 2,32 | 0,852 | 2,50 | 2,44 | 1,98 | 34,4 |
+| Caixa-preta HistGBDT | caixa-preta | 2,65 ± 0,00 | 1,93 | 0,897 | 2,32 | 1,86 | 1,54 | 14,4 |
+| Caixa-preta GP (RBF) | caixa-preta | 2,80 ± 0,05 | 2,80 | 0,785 | 3,64 | 2,44 | 2,07 | 27,8 |
+| Caixa-preta Random Forest | caixa-preta | 2,81 ± 0,05 | 2,32 | 0,852 | 2,49 | 2,66 | 1,68 | 0,0 |
+| Híbrido MLP tanh [B] | hibrido | 2,95 ± 0,23 | 2,27 | 0,859 | 3,21 | 0,92 | 2,06 | 0,0 |
+| Caixa-preta Extra Trees | caixa-preta | 3,00 ± 0,11 | 2,74 | 0,793 | 2,10 | 3,24 | 2,78 | 0,0 |
+| Tabela (η, t) | baseline | 3,19 ± 0,00 | 2,31 | 0,853 | 3,39 | 1,18 | 1,79 | 11,1 |
+| Híbrido Kernel Ridge [B] | hibrido | 3,21 ± 0,00 | 1,79 | 0,912 | 2,38 | 1,30 | 1,52 | 0,0 |
+| Caixa-preta AdaBoost | caixa-preta | 3,35 ± 0,04 | 3,36 | 0,689 | 4,74 | 2,54 | 2,24 | 0,0 |
+| Híbrido GP (RBF) [B] | hibrido | 3,47 ± 1,30 | 2,99 | 0,755 | 3,89 | 2,56 | 2,25 | 6,7 |
+| Híbrido k-NN [B] | hibrido | 3,67 ± 0,00 | 5,59 | 0,140 | 3,59 | 5,67 | 6,98 | 4,4 |
+| Ridge (resíduo) | baseline | 4,02 ± 0,00 | 4,17 | 0,521 | 3,82 | 4,69 | 3,96 | 0,0 |
+| Híbrido SVR [B] | hibrido | 4,32 ± 0,00 | 1,78 | 0,913 | 2,22 | 1,55 | 1,46 | 2,2 |
+| Híbrido Ridge polinomial [B] | hibrido | 4,65 ± 0,00 | 3,95 | 0,571 | 3,49 | 4,21 | 4,11 | 5,6 |
+| Caixa-preta Ridge polinomial | caixa-preta | 7,16 ± 0,00 | 7,12 | -0,394 | 7,13 | 6,88 | 7,34 | 45,0 |
+| White-Box | white-box | 7,96 ± 0,00 | 8,81 | -1,134 | 5,28 | 13,45 | 4,89 | 0,0 |
+| Caixa-preta Kernel Ridge | caixa-preta | 9,44 ± 0,00 | 5,45 | 0,183 | 5,18 | 6,29 | 4,76 | 45,6 |
+| Caixa-preta k-NN | caixa-preta | 18,59 ± 0,00 | 10,94 | -2,292 | 5,59 | 13,09 | 12,50 | 6,1 |
+| Caixa-preta SVR | caixa-preta | 19,85 ± 0,00 | 8,71 | -1,088 | 7,73 | 9,90 | 8,37 | 42,8 |

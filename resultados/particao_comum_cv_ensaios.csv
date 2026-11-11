@@ -1,0 +1,352 @@
+modelo,ensaio_id,dobra,RMSE_pp
+Caixa-preta adaboost,1,dobra1,2.691403
+Caixa-preta adaboost,2,dobra4,5.604314
+Caixa-preta adaboost,3,dobra3,1.6612385
+Caixa-preta adaboost,4,dobra2,2.4820956
+Caixa-preta adaboost,5,dobra1,1.9713955
+Caixa-preta adaboost,6,dobra4,4.9203846
+Caixa-preta adaboost,9,dobra3,1.2394827
+Caixa-preta adaboost,10,dobra2,0.8636059
+Caixa-preta adaboost,11,dobra1,5.6074228
+Caixa-preta adaboost,12,dobra4,3.6951141
+Caixa-preta adaboost,13,dobra3,1.42233
+Caixa-preta adaboost,15,dobra2,1.7116831
+Caixa-preta adaboost,16,dobra1,4.2192865
+Caixa-preta extra_trees,1,dobra1,1.6173258
+Caixa-preta extra_trees,2,dobra4,5.7195695
+Caixa-preta extra_trees,3,dobra3,1.8129709
+Caixa-preta extra_trees,4,dobra2,3.3473638
+Caixa-preta extra_trees,5,dobra1,2.4038643
+Caixa-preta extra_trees,6,dobra4,2.8810862
+Caixa-preta extra_trees,9,dobra3,3.5819855
+Caixa-preta extra_trees,10,dobra2,2.9290918
+Caixa-preta extra_trees,11,dobra1,3.2264831
+Caixa-preta extra_trees,12,dobra4,1.8076929
+Caixa-preta extra_trees,13,dobra3,2.8813423
+Caixa-preta extra_trees,15,dobra2,2.0393918
+Caixa-preta extra_trees,16,dobra1,2.155347
+Caixa-preta gbdt,1,dobra1,1.8404917
+Caixa-preta gbdt,2,dobra4,5.0821928
+Caixa-preta gbdt,3,dobra3,1.5412004
+Caixa-preta gbdt,4,dobra2,1.985079
+Caixa-preta gbdt,5,dobra1,2.3893555
+Caixa-preta gbdt,6,dobra4,3.3677885
+Caixa-preta gbdt,9,dobra3,1.3112659
+Caixa-preta gbdt,10,dobra2,0.84556562
+Caixa-preta gbdt,11,dobra1,3.2188051
+Caixa-preta gbdt,12,dobra4,2.327546
+Caixa-preta gbdt,13,dobra3,2.5216956
+Caixa-preta gbdt,15,dobra2,1.9516221
+Caixa-preta gbdt,16,dobra1,2.1582923
+Caixa-preta gp,1,dobra1,1.8290547
+Caixa-preta gp,2,dobra4,5.1863694
+Caixa-preta gp,3,dobra3,1.6432933
+Caixa-preta gp,4,dobra2,2.4730363
+Caixa-preta gp,5,dobra1,1.9936646
+Caixa-preta gp,6,dobra4,2.8059726
+Caixa-preta gp,9,dobra3,2.1323521
+Caixa-preta gp,10,dobra2,1.1934952
+Caixa-preta gp,11,dobra1,3.4133449
+Caixa-preta gp,12,dobra4,1.8986711
+Caixa-preta gp,13,dobra3,2.7254916
+Caixa-preta gp,15,dobra2,2.6437863
+Caixa-preta gp,16,dobra1,1.712839
+Caixa-preta gp_rbf,1,dobra1,1.9098698
+Caixa-preta gp_rbf,2,dobra4,5.8358287
+Caixa-preta gp_rbf,3,dobra3,1.5661212
+Caixa-preta gp_rbf,4,dobra2,2.5106167
+Caixa-preta gp_rbf,5,dobra1,1.8761259
+Caixa-preta gp_rbf,6,dobra4,3.71666
+Caixa-preta gp_rbf,9,dobra3,2.1153744
+Caixa-preta gp_rbf,10,dobra2,1.3255566
+Caixa-preta gp_rbf,11,dobra1,3.5836167
+Caixa-preta gp_rbf,12,dobra4,1.6419534
+Caixa-preta gp_rbf,13,dobra3,2.7118522
+Caixa-preta gp_rbf,15,dobra2,2.2489722
+Caixa-preta gp_rbf,16,dobra1,1.6377271
+Caixa-preta hist_gbdt,1,dobra1,2.0440062
+Caixa-preta hist_gbdt,2,dobra4,4.922185
+Caixa-preta hist_gbdt,3,dobra3,2.056094
+Caixa-preta hist_gbdt,4,dobra2,2.6036139
+Caixa-preta hist_gbdt,5,dobra1,1.8479526
+Caixa-preta hist_gbdt,6,dobra4,3.1553798
+Caixa-preta hist_gbdt,9,dobra3,1.4880695
+Caixa-preta hist_gbdt,10,dobra2,0.9662046
+Caixa-preta hist_gbdt,11,dobra1,2.4287822
+Caixa-preta hist_gbdt,12,dobra4,1.1792989
+Caixa-preta hist_gbdt,13,dobra3,3.9663499
+Caixa-preta hist_gbdt,15,dobra2,3.1640378
+Caixa-preta hist_gbdt,16,dobra1,1.6320161
+Caixa-preta kernel_ridge,1,dobra1,6.559547
+Caixa-preta kernel_ridge,2,dobra4,15.816233
+Caixa-preta kernel_ridge,3,dobra3,3.3553171
+Caixa-preta kernel_ridge,4,dobra2,4.3329415
+Caixa-preta kernel_ridge,5,dobra1,5.1208839
+Caixa-preta kernel_ridge,6,dobra4,9.9266868
+Caixa-preta kernel_ridge,9,dobra3,9.6637589
+Caixa-preta kernel_ridge,10,dobra2,12.513367
+Caixa-preta kernel_ridge,11,dobra1,5.0648745
+Caixa-preta kernel_ridge,12,dobra4,6.439483
+Caixa-preta kernel_ridge,13,dobra3,9.168254
+Caixa-preta kernel_ridge,15,dobra2,8.3047328
+Caixa-preta kernel_ridge,16,dobra1,15.490575
+Caixa-preta knn,1,dobra1,6.1473202
+Caixa-preta knn,2,dobra4,4.9771837
+Caixa-preta knn,3,dobra3,2.1363066
+Caixa-preta knn,4,dobra2,4.1435281
+Caixa-preta knn,5,dobra1,5.1208839
+Caixa-preta knn,6,dobra4,11.504577
+Caixa-preta knn,9,dobra3,35.580074
+Caixa-preta knn,10,dobra2,36.153004
+Caixa-preta knn,11,dobra1,10.482628
+Caixa-preta knn,12,dobra4,10.173675
+Caixa-preta knn,13,dobra3,6.472384
+Caixa-preta knn,15,dobra2,36.372929
+Caixa-preta knn,16,dobra1,9.9508998
+Caixa-preta mlp_tanh,1,dobra1,1.9712213
+Caixa-preta mlp_tanh,2,dobra4,2.587852
+Caixa-preta mlp_tanh,3,dobra3,1.4989393
+Caixa-preta mlp_tanh,4,dobra2,2.0722398
+Caixa-preta mlp_tanh,5,dobra1,1.4631866
+Caixa-preta mlp_tanh,6,dobra4,2.0645291
+Caixa-preta mlp_tanh,9,dobra3,2.3959554
+Caixa-preta mlp_tanh,10,dobra2,1.4841917
+Caixa-preta mlp_tanh,11,dobra1,3.1862214
+Caixa-preta mlp_tanh,12,dobra4,2.0369015
+Caixa-preta mlp_tanh,13,dobra3,2.5723536
+Caixa-preta mlp_tanh,15,dobra2,1.6770881
+Caixa-preta mlp_tanh,16,dobra1,3.0269504
+Caixa-preta poly_ridge,1,dobra1,4.9729873
+Caixa-preta poly_ridge,2,dobra4,8.1766217
+Caixa-preta poly_ridge,3,dobra3,1.69597
+Caixa-preta poly_ridge,4,dobra2,3.3338312
+Caixa-preta poly_ridge,5,dobra1,4.8481001
+Caixa-preta poly_ridge,6,dobra4,11.303782
+Caixa-preta poly_ridge,9,dobra3,6.2541134
+Caixa-preta poly_ridge,10,dobra2,7.2217826
+Caixa-preta poly_ridge,11,dobra1,8.8227049
+Caixa-preta poly_ridge,12,dobra4,9.0600113
+Caixa-preta poly_ridge,13,dobra3,8.1719342
+Caixa-preta poly_ridge,15,dobra2,8.1538914
+Caixa-preta poly_ridge,16,dobra1,5.006846
+Caixa-preta random_forest,1,dobra1,2.3342442
+Caixa-preta random_forest,2,dobra4,4.7901757
+Caixa-preta random_forest,3,dobra3,1.9259606
+Caixa-preta random_forest,4,dobra2,2.5533172
+Caixa-preta random_forest,5,dobra1,2.0159796
+Caixa-preta random_forest,6,dobra4,4.4978301
+Caixa-preta random_forest,9,dobra3,1.3868588
+Caixa-preta random_forest,10,dobra2,1.3080618
+Caixa-preta random_forest,11,dobra1,4.2614798
+Caixa-preta random_forest,12,dobra4,2.0334606
+Caixa-preta random_forest,13,dobra3,1.7739424
+Caixa-preta random_forest,15,dobra2,2.2587331
+Caixa-preta random_forest,16,dobra1,2.2633039
+Caixa-preta svr,1,dobra1,4.9818078
+Caixa-preta svr,2,dobra4,47.121586
+Caixa-preta svr,3,dobra3,6.2709566
+Caixa-preta svr,4,dobra2,6.4095334
+Caixa-preta svr,5,dobra1,5.2878514
+Caixa-preta svr,6,dobra4,11.425073
+Caixa-preta svr,9,dobra3,13.319297
+Caixa-preta svr,10,dobra2,15.07516
+Caixa-preta svr,11,dobra1,9.5047626
+Caixa-preta svr,12,dobra4,30.407356
+Caixa-preta svr,13,dobra3,10.687424
+Caixa-preta svr,15,dobra2,10.266657
+Caixa-preta svr,16,dobra1,31.604548
+Híbrido adaboost [B],1,dobra1,2.4087725
+Híbrido adaboost [B],2,dobra4,1.9482133
+Híbrido adaboost [B],3,dobra3,2.0190242
+Híbrido adaboost [B],4,dobra2,2.4898283
+Híbrido adaboost [B],5,dobra1,1.5266059
+Híbrido adaboost [B],6,dobra4,3.5236372
+Híbrido adaboost [B],9,dobra3,0.75500452
+Híbrido adaboost [B],10,dobra2,1.3860078
+Híbrido adaboost [B],11,dobra1,4.2503718
+Híbrido adaboost [B],12,dobra4,2.2028382
+Híbrido adaboost [B],13,dobra3,1.2483857
+Híbrido adaboost [B],15,dobra2,2.6248016
+Híbrido adaboost [B],16,dobra1,1.5206563
+Híbrido extra_trees [B],1,dobra1,1.1772213
+Híbrido extra_trees [B],2,dobra4,2.702864
+Híbrido extra_trees [B],3,dobra3,1.8931816
+Híbrido extra_trees [B],4,dobra2,2.5562231
+Híbrido extra_trees [B],5,dobra1,1.493306
+Híbrido extra_trees [B],6,dobra4,3.8999616
+Híbrido extra_trees [B],9,dobra3,1.2916988
+Híbrido extra_trees [B],10,dobra2,1.5719224
+Híbrido extra_trees [B],11,dobra1,4.1531253
+Híbrido extra_trees [B],12,dobra4,1.4976251
+Híbrido extra_trees [B],13,dobra3,0.71336736
+Híbrido extra_trees [B],15,dobra2,2.7115455
+Híbrido extra_trees [B],16,dobra1,1.3538326
+Híbrido gbdt [B],1,dobra1,1.2991503
+Híbrido gbdt [B],2,dobra4,1.5678952
+Híbrido gbdt [B],3,dobra3,1.8765955
+Híbrido gbdt [B],4,dobra2,2.344964
+Híbrido gbdt [B],5,dobra1,1.1837275
+Híbrido gbdt [B],6,dobra4,3.015455
+Híbrido gbdt [B],9,dobra3,1.2029151
+Híbrido gbdt [B],10,dobra2,1.6007071
+Híbrido gbdt [B],11,dobra1,4.0070365
+Híbrido gbdt [B],12,dobra4,1.6045724
+Híbrido gbdt [B],13,dobra3,0.99054116
+Híbrido gbdt [B],15,dobra2,1.373923
+Híbrido gbdt [B],16,dobra1,1.0145751
+Híbrido gp [B],1,dobra1,2.3785769
+Híbrido gp [B],2,dobra4,1.7161315
+Híbrido gp [B],3,dobra3,1.7140306
+Híbrido gp [B],4,dobra2,2.306359
+Híbrido gp [B],5,dobra1,1.7669727
+Híbrido gp [B],6,dobra4,3.2286139
+Híbrido gp [B],9,dobra3,0.80735619
+Híbrido gp [B],10,dobra2,1.1321415
+Híbrido gp [B],11,dobra1,3.7954915
+Híbrido gp [B],12,dobra4,1.2321775
+Híbrido gp [B],13,dobra3,0.74899124
+Híbrido gp [B],15,dobra2,0.96226478
+Híbrido gp [B],16,dobra1,1.0602071
+Híbrido gp_rbf [B],1,dobra1,2.226714
+Híbrido gp_rbf [B],2,dobra4,2.3838415
+Híbrido gp_rbf [B],3,dobra3,1.9064598
+Híbrido gp_rbf [B],4,dobra2,2.3701097
+Híbrido gp_rbf [B],5,dobra1,1.7285011
+Híbrido gp_rbf [B],6,dobra4,3.897701
+Híbrido gp_rbf [B],9,dobra3,6.1742626
+Híbrido gp_rbf [B],10,dobra2,3.5280113
+Híbrido gp_rbf [B],11,dobra1,4.2515179
+Híbrido gp_rbf [B],12,dobra4,2.8246641
+Híbrido gp_rbf [B],13,dobra3,1.352731
+Híbrido gp_rbf [B],15,dobra2,1.4200657
+Híbrido gp_rbf [B],16,dobra1,3.0897471
+Híbrido hist_gbdt [B],1,dobra1,1.8349861
+Híbrido hist_gbdt [B],2,dobra4,1.798456
+Híbrido hist_gbdt [B],3,dobra3,1.482917
+Híbrido hist_gbdt [B],4,dobra2,2.5699979
+Híbrido hist_gbdt [B],5,dobra1,2.5367073
+Híbrido hist_gbdt [B],6,dobra4,3.2677173
+Híbrido hist_gbdt [B],9,dobra3,0.76934165
+Híbrido hist_gbdt [B],10,dobra2,1.2520025
+Híbrido hist_gbdt [B],11,dobra1,3.8346829
+Híbrido hist_gbdt [B],12,dobra4,1.3301027
+Híbrido hist_gbdt [B],13,dobra3,0.9716644
+Híbrido hist_gbdt [B],15,dobra2,1.173826
+Híbrido hist_gbdt [B],16,dobra1,1.3597001
+Híbrido kernel_ridge [B],1,dobra1,2.912717
+Híbrido kernel_ridge [B],2,dobra4,7.0403477
+Híbrido kernel_ridge [B],3,dobra3,1.6674174
+Híbrido kernel_ridge [B],4,dobra2,2.2582511
+Híbrido kernel_ridge [B],5,dobra1,1.6318898
+Híbrido kernel_ridge [B],6,dobra4,3.9920557
+Híbrido kernel_ridge [B],9,dobra3,1.9948319
+Híbrido kernel_ridge [B],10,dobra2,0.49037613
+Híbrido kernel_ridge [B],11,dobra1,4.1029624
+Híbrido kernel_ridge [B],12,dobra4,1.3610662
+Híbrido kernel_ridge [B],13,dobra3,1.4062984
+Híbrido kernel_ridge [B],15,dobra2,4.587499
+Híbrido kernel_ridge [B],16,dobra1,1.8504852
+Híbrido knn [B],1,dobra1,2.7999124
+Híbrido knn [B],2,dobra4,2.5538774
+Híbrido knn [B],3,dobra3,1.8811181
+Híbrido knn [B],4,dobra2,2.6508981
+Híbrido knn [B],5,dobra1,3.2562299
+Híbrido knn [B],6,dobra4,5.7699026
+Híbrido knn [B],9,dobra3,4.7789406
+Híbrido knn [B],10,dobra2,4.0631174
+Híbrido knn [B],11,dobra1,5.1394915
+Híbrido knn [B],12,dobra4,1.5539211
+Híbrido knn [B],13,dobra3,1.9680221
+Híbrido knn [B],15,dobra2,5.4783216
+Híbrido knn [B],16,dobra1,2.0093055
+Híbrido mlp_tanh [B],1,dobra1,2.7462695
+Híbrido mlp_tanh [B],2,dobra4,5.9676804
+Híbrido mlp_tanh [B],3,dobra3,1.4551212
+Híbrido mlp_tanh [B],4,dobra2,2.231561
+Híbrido mlp_tanh [B],5,dobra1,1.0905522
+Híbrido mlp_tanh [B],6,dobra4,3.809927
+Híbrido mlp_tanh [B],9,dobra3,1.846811
+Híbrido mlp_tanh [B],10,dobra2,1.1982328
+Híbrido mlp_tanh [B],11,dobra1,3.7114203
+Híbrido mlp_tanh [B],12,dobra4,1.3789231
+Híbrido mlp_tanh [B],13,dobra3,1.0835354
+Híbrido mlp_tanh [B],15,dobra2,4.5070839
+Híbrido mlp_tanh [B],16,dobra1,1.3576009
+Híbrido poly_ridge [B],1,dobra1,3.0306285
+Híbrido poly_ridge [B],2,dobra4,4.0268344
+Híbrido poly_ridge [B],3,dobra3,1.9230327
+Híbrido poly_ridge [B],4,dobra2,2.5038089
+Híbrido poly_ridge [B],5,dobra1,2.864694
+Híbrido poly_ridge [B],6,dobra4,4.3821289
+Híbrido poly_ridge [B],9,dobra3,7.3842703
+Híbrido poly_ridge [B],10,dobra2,0.94014345
+Híbrido poly_ridge [B],11,dobra1,4.9111281
+Híbrido poly_ridge [B],12,dobra4,8.0173091
+Híbrido poly_ridge [B],13,dobra3,1.6146025
+Híbrido poly_ridge [B],15,dobra2,8.2759933
+Híbrido poly_ridge [B],16,dobra1,1.9272482
+Híbrido random_forest [B],1,dobra1,1.7492745
+Híbrido random_forest [B],2,dobra4,1.6678014
+Híbrido random_forest [B],3,dobra3,1.9690338
+Híbrido random_forest [B],4,dobra2,2.0807161
+Híbrido random_forest [B],5,dobra1,1.5928537
+Híbrido random_forest [B],6,dobra4,3.3867655
+Híbrido random_forest [B],9,dobra3,0.93157351
+Híbrido random_forest [B],10,dobra2,1.501212
+Híbrido random_forest [B],11,dobra1,4.2673134
+Híbrido random_forest [B],12,dobra4,1.6053072
+Híbrido random_forest [B],13,dobra3,0.71537696
+Híbrido random_forest [B],15,dobra2,1.5019166
+Híbrido random_forest [B],16,dobra1,1.2104166
+Híbrido svr [B],1,dobra1,2.7003027
+Híbrido svr [B],2,dobra4,6.0411687
+Híbrido svr [B],3,dobra3,1.829421
+Híbrido svr [B],4,dobra2,2.2962699
+Híbrido svr [B],5,dobra1,2.6794298
+Híbrido svr [B],6,dobra4,4.9085912
+Híbrido svr [B],9,dobra3,7.6565617
+Híbrido svr [B],10,dobra2,8.8562825
+Híbrido svr [B],11,dobra1,3.333619
+Híbrido svr [B],12,dobra4,1.6475089
+Híbrido svr [B],13,dobra3,1.3335778
+Híbrido svr [B],15,dobra2,1.5220643
+Híbrido svr [B],16,dobra1,1.9272482
+Ridge (resíduo),1,dobra1,2.2011069
+Ridge (resíduo),2,dobra4,4.4282062
+Ridge (resíduo),3,dobra3,2.2569595
+Ridge (resíduo),4,dobra2,3.2151172
+Ridge (resíduo),5,dobra1,2.5051278
+Ridge (resíduo),6,dobra4,4.1302821
+Ridge (resíduo),9,dobra3,6.7561542
+Ridge (resíduo),10,dobra2,7.4251719
+Ridge (resíduo),11,dobra1,4.7910648
+Ridge (resíduo),12,dobra4,1.4968106
+Ridge (resíduo),13,dobra3,1.9128331
+Ridge (resíduo),15,dobra2,2.5274968
+Ridge (resíduo),16,dobra1,3.2621326
+"Tabela (η, t)",1,dobra1,2.326663
+"Tabela (η, t)",2,dobra4,2.6884471
+"Tabela (η, t)",3,dobra3,1.7446962
+"Tabela (η, t)",4,dobra2,2.7196877
+"Tabela (η, t)",5,dobra1,2.0485172
+"Tabela (η, t)",6,dobra4,7.1990687
+"Tabela (η, t)",9,dobra3,2.6856294
+"Tabela (η, t)",10,dobra2,3.8900108
+"Tabela (η, t)",11,dobra1,4.7151566
+"Tabela (η, t)",12,dobra4,1.5585376
+"Tabela (η, t)",13,dobra3,1.1876067
+"Tabela (η, t)",15,dobra2,1.4251704
+"Tabela (η, t)",16,dobra1,1.6120986
+White-Box,1,dobra1,6.2555816
+White-Box,2,dobra4,4.230927
+White-Box,3,dobra3,4.8962187
+White-Box,4,dobra2,4.1435281
+White-Box,5,dobra1,5.1208839
+White-Box,6,dobra4,10.052787
+White-Box,9,dobra3,15.346993
+White-Box,10,dobra2,16.1979
+White-Box,11,dobra1,5.6367228
+White-Box,12,dobra4,1.647083
+White-Box,13,dobra3,5.5895634
+White-Box,15,dobra2,5.5918473
+White-Box,16,dobra1,1.9272482

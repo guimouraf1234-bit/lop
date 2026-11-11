@@ -38,7 +38,8 @@ os.environ['PYTHONPATH'] = _DIR_SCRIPTS + os.pathsep + os.environ.get('PYTHONPAT
 
 from kinetics import ConfigWB, NU_A_PRIORI, especiar_escalar, ph_de_h  # noqa: E402
 from hybrid_model import (AcopladorFisico, ModeloSpec, ajustar_regressor, construir_base,  # noqa: E402
-                          dados_de_entrada, obter_especificacoes, preparar_features_e_alvo)
+                          dados_de_entrada, obter_especificacoes, obter_especificacoes_adicionais,
+                          preparar_features_e_alvo)
 
 NIVEIS_ETA = (0.5, 1.0, 1.5, 3.1)
 
@@ -136,6 +137,32 @@ def esquema_deixa_nivel(df: pd.DataFrame, coluna: str) -> List[Dobra]:
 def esquema_extrapolacao_temporal(df: pd.DataFrame, t_corte: float = 5.0) -> List[Dobra]:
     ids = tuple(int(i) for i in _ids(df))
     return [Dobra(ids, ids, 0, f't<={t_corte:g}->t>{t_corte:g}', t_corte)]
+
+
+# Partição comum a todas as abordagens do relatório (Seção 4.2.1, Apêndice B): os modelos serial, black-box e PINN
+# usam o mesmo teste cego e as mesmas dobras; repetir aqui deixa o híbrido cooperativo comparável a eles.
+ENSAIOS_TESTE_CEGO = (7, 8, 14)
+DOBRAS_TABELA_B3 = ((1, 5, 11, 16), (4, 10, 15), (3, 9, 13), (2, 6, 12))   # ensaios de validação de cada dobra
+
+
+def ensaios_treino_comum(df: pd.DataFrame) -> Tuple[int, ...]:
+    return tuple(int(i) for i in _ids(df) if int(i) not in ENSAIOS_TESTE_CEGO)
+
+
+def esquema_cv_tabela_b3(df: pd.DataFrame) -> List[Dobra]:
+    """Validação cruzada por ensaio DENTRO dos 13 ensaios de treino, com as 4 dobras fixas da Tabela B.3."""
+    treino = ensaios_treino_comum(df)
+    validos = set(treino)
+    usados = sorted(i for d in DOBRAS_TABELA_B3 for i in d)
+    if usados != sorted(validos):
+        raise ValueError(f'As dobras da Tabela B.3 {DOBRAS_TABELA_B3} não particionam os ensaios de treino {treino}')
+    return [Dobra(tuple(i for i in treino if i not in val), tuple(sorted(val)), 0, f'dobra{k + 1}')
+            for k, val in enumerate(DOBRAS_TABELA_B3)]
+
+
+def esquema_teste_cego(df: pd.DataFrame) -> List[Dobra]:
+    """Uma dobra: treina nos 13 ensaios e prevê os Ensaios 7, 8 e 14 (consultar só com o modelo já definido)."""
+    return [Dobra(ensaios_treino_comum(df), tuple(ENSAIOS_TESTE_CEGO), 0, 'teste_cego')]
 
 
 def dobras_curva_aprendizado(df: pd.DataFrame, ns: Sequence[int], n_sorteios: int = 30, seed0: int = 1000,
@@ -274,7 +301,7 @@ def criar_estimador(codigo: Tuple, random_state: int = 42):
     São tuplas simples para poderem ser enviadas aos processos do joblib.
     """
     tipo = codigo[0]
-    specs = obter_especificacoes()
+    specs = {**obter_especificacoes(), **obter_especificacoes_adicionais()}
     if tipo == 'wb':
         return WhiteBoxPuro()
     if tipo == 'tabela':

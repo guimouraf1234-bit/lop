@@ -34,6 +34,22 @@ def test_gkf8_sklearn_reproduz_a_particao_do_tcc(df):
     assert obtido == esperado
 
 
+def test_particao_comum_igual_a_do_relatorio(df):
+    """Teste cego 7, 8, 14 e as 4 dobras da Tabela B.3: o teste nunca aparece na CV nem no treino final."""
+    teste = set(V.ENSAIOS_TESTE_CEGO)
+    assert teste == {7, 8, 14}
+    treino = set(V.ensaios_treino_comum(df))
+    assert treino == TODOS - teste and len(treino) == 13
+    cv = V.esquema_cv_tabela_b3(df)
+    assert [d.teste for d in cv] == [(1, 5, 11, 16), (4, 10, 15), (3, 9, 13), (2, 6, 12)]
+    assert sorted(t for d in cv for t in d.teste) == sorted(treino), 'cada ensaio de treino é validado uma vez'
+    for d in cv:
+        assert not (set(d.treino) | set(d.teste)) & teste, 'o teste cego não pode entrar na validação cruzada'
+        assert set(d.treino) | set(d.teste) == treino and not set(d.treino) & set(d.teste)
+    (final,) = V.esquema_teste_cego(df)
+    assert set(final.treino) == treino and set(final.teste) == teste
+
+
 def test_extrapolacao_temporal_separa_por_tempo(df):
     (d,) = V.esquema_extrapolacao_temporal(df, 5.0)
     assert d.t_corte == 5.0 and set(d.treino) == set(d.teste) == TODOS

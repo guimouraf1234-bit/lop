@@ -43,9 +43,11 @@ GRADE, EIXO = '#e1e0d9', '#c3c2b7'
 AZUL, LARANJA = '#2a78d6', '#eb6834'
 RAMPA = ['#86b6ef', '#3987e5', '#1c5cab', '#0d366b']      # ordinal (passos 250, 400, 550, 700)
 
-MARC = {'gp': 'o', 'extra_trees': 's', 'gbdt': '^', 'random_forest': 'v', 'svr': 'D', 'mlp_tanh': 'P'}
+MARC = {'gp': 'o', 'extra_trees': 's', 'gbdt': '^', 'random_forest': 'v', 'svr': 'D', 'mlp_tanh': 'P',
+        'knn': 'h', 'hist_gbdt': '>', 'adaboost': '<', 'kernel_ridge': 'd', 'poly_ridge': '*', 'gp_rbf': 'p'}
 ROT = {'gp': 'GP', 'extra_trees': 'Extra Trees', 'gbdt': 'GBDT', 'random_forest': 'Random Forest',
-       'svr': 'SVR', 'mlp_tanh': 'MLP'}
+       'svr': 'SVR', 'mlp_tanh': 'MLP', 'knn': 'k-NN', 'hist_gbdt': 'HistGBDT', 'adaboost': 'AdaBoost',
+       'kernel_ridge': 'Kernel Ridge', 'poly_ridge': 'Polinomial', 'gp_rbf': 'GP (RBF)'}
 ORDEM_MODELOS = ['White-Box', 'Tabela (η, t)', 'Ridge (resíduo)'] + \
                 [f'Híbrido {s} [B]' for s in ('gp', 'extra_trees', 'gbdt', 'random_forest', 'svr', 'mlp_tanh')] + \
                 [f'Caixa-preta {s}' for s in ('gp', 'extra_trees', 'gbdt', 'svr')]
@@ -595,9 +597,112 @@ def f12_paridade(R, S):
     salvar_fig(fig, S, 'f12_paridade_fora_da_dobra.png')
 
 
+# =============================================================================
+# F13 -- partição comum do relatório: Ensaio 1 (treino) e teste cego 7, 8, 14
+# =============================================================================
+
+def _curvas_teste_cego(R, S, hib, arquivo, pastas=''):
+    """Ensaio 1 (treino) e teste cego: híbrido `hib`, a caixa-preta com o mesmo regressor e o White-Box."""
+    des = ler(R, 'particao_comum_desempenho.csv')
+    cur = ler(R, 'particao_comum_curvas.csv')
+    pred = ler(R, 'particao_comum_predicoes.csv')
+    caixa = 'Caixa-preta ' + re.match(r'Híbrido (\w+) ', hib).group(1)
+    teste = sorted(pred.loc[pred['conjunto'] == 'Teste cego', 'ensaio_id'].unique())
+    ensaios = [1] + [int(e) for e in teste]
+    df = carregar_dados_bancada().groupby('ensaio_id').first()
+    ordem = [m for m in ('White-Box', caixa, hib) if m in set(cur['modelo'])]
+    fig, axes = plt.subplots(1, len(ensaios), figsize=(2.75 * len(ensaios), 3.1), sharey=True)
+    for ax, e in zip(axes, ensaios):
+        for m in ordem:
+            g = cur[(cur['modelo'] == m) & (cur['ensaio_id'] == e)].sort_values('tempo_min')
+            st = info_modelo(m)
+            ax.plot(g['tempo_min'], g['x_hat'], color=st['cor'], lw=1.8 if m == hib else 1.2,
+                    ls='--' if m == 'White-Box' else '-', zorder=3 if m == hib else 2)
+        g = pred[(pred['modelo'] == hib) & (pred['ensaio_id'] == e)]
+        ax.plot(g['tempo_min'], g['X_exp'], ls='none', marker='o', ms=5, color=TINTA, markerfacecolor=SUP,
+                markeredgewidth=1.2, zorder=5)
+        r = df.loc[e]
+        ax.set_title(f"Ensaio {e}{'*' if e in teste else ''}  ($C_{{A0}}$ = {fmt(r['C_acid_0_mol_L'], 2)}; "
+                     f"η = {fmt(r['razao_molar_eta'], 1)})", fontsize=9)
+        ax.set_xlabel('t (min)')
+        ax.set_ylim(0, 1.05)
+    axes[0].set_ylabel('$X_{Zn}$')
+    t = des[(des['modelo'] == hib) & (des['conjunto'] == 'Teste cego')].iloc[0]
+    tc = des[(des['modelo'] == caixa) & (des['conjunto'] == 'Teste cego')]
+    hs = [Line2D([], [], color=info_modelo(m)['cor'], ls='--' if m == 'White-Box' else '-', label=info_modelo(m)['rot'])
+          for m in ordem] + [Line2D([], [], ls='none', marker='o', color=TINTA, markerfacecolor=SUP, label='Experimental')]
+    fig.legend(handles=hs, loc='lower center', bbox_to_anchor=(0.5, -0.07), ncol=len(hs))
+    extra = f"; caixa-preta {fmt(tc['RMSE_pp'].iloc[0], 2)} p.p." if len(tc) else ''
+    fig.suptitle(f"Teste cego (Ensaios {', '.join(map(str, teste))}; * = teste): {info_modelo(hib)['rot']} com "
+                 f"RMSE {fmt(t['RMSE_pp'], 2)} p.p. e R² {fmt(t['R2'])}{extra}", y=1.02, fontsize=10.4,
+                 fontweight='semibold')
+    fig.tight_layout()
+    destino = os.path.join(S, pastas) if pastas else S
+    os.makedirs(destino, exist_ok=True)
+    salvar_fig(fig, destino, arquivo)
+
+
+def f13_teste_cego(R, S):
+    """Regressor selecionado pela CV (figura principal)."""
+    des = ler(R, 'particao_comum_desempenho.csv')
+    _curvas_teste_cego(R, S, des.loc[des['selecionado'], 'modelo'].iloc[0], 'f13_teste_cego_particao_comum.png')
+
+
+def f13_por_regressor(R, S):
+    """Uma figura igual à f13 para CADA regressor usado como ML do híbrido (pasta figuras/particao_comum/)."""
+    des = ler(R, 'particao_comum_desempenho.csv')
+    cv = ler(R, 'particao_comum_cv.csv').set_index('modelo')['RMSE']
+    hibs = sorted(des.loc[des['tipo'] == 'hibrido', 'modelo'].unique(), key=lambda m: cv[m])
+    for k, h in enumerate(hibs, 1):
+        slug = re.match(r'Híbrido (\w+) ', h).group(1)
+        _curvas_teste_cego(R, S, h, f'f13_{k:02d}_{slug}.png', 'particao_comum')
+
+
+def f14_resumo_particao_comum(R, S):
+    """RMSE da CV (só treino) e do teste cego para cada regressor, como híbrido e como caixa-preta."""
+    des = ler(R, 'particao_comum_desempenho.csv')
+    cv = ler(R, 'particao_comum_cv.csv').set_index('modelo')
+    t = des[des['conjunto'] == 'Teste cego'].set_index('modelo')
+    hibs = sorted(t.index[t['tipo'] == 'hibrido'], key=lambda m: cv.loc[m, 'RMSE'])
+    slugs = [re.match(r'Híbrido (\w+) ', h).group(1) for h in hibs]
+    xmax = 12.0
+    fig, axes = plt.subplots(1, 2, figsize=(10.4, 0.42 * len(slugs) + 1.6), sharey=True)
+    y = np.arange(len(slugs))[::-1]
+    for ax, (tit, col) in zip(axes, [('Validação cruzada (13 ensaios, 4 dobras)', 'cv'),
+                                     ('Teste cego (Ensaios 7, 8, 14)', 'teste')]):
+        for nome, dy in (('Híbrido', 0.17), ('Caixa-preta', -0.17)):
+            vals = []
+            for s_ in slugs:
+                m = f'Híbrido {s_} [B]' if nome == 'Híbrido' else f'Caixa-preta {s_}'
+                if m not in t.index:
+                    vals.append(np.nan)
+                    continue
+                vals.append(100 * cv.loc[m, 'RMSE'] if col == 'cv' else t.loc[m, 'RMSE_pp'])
+            cor = AZUL if nome == 'Híbrido' else LARANJA
+            ax.barh(y + dy, np.minimum(vals, xmax), height=0.32, color=cor, label=nome)
+            for yy, v in zip(y + dy, vals):
+                if np.isfinite(v):
+                    ax.text(min(v, xmax) + 0.15, yy, fmt(v, 2) + ('  (fora da escala)' if v > xmax else ''),
+                            va='center', fontsize=7.2, color=TINTA2)
+        wb = 100 * cv.loc['White-Box', 'RMSE'] if col == 'cv' else t.loc['White-Box', 'RMSE_pp']
+        ax.axvline(wb, color=TINTA, ls='--', lw=1.0)
+        ax.text(wb - 0.1, y.max() + 0.55, f'White-Box {fmt(wb, 1)}', fontsize=7.5, ha='right', color=TINTA2)
+        ax.set_xlim(0, xmax + 3)
+        ax.set_title(tit, fontsize=9.5)
+        ax.set_xlabel('RMSE (p.p.)')
+        ax.grid(axis='y', visible=False)
+    axes[0].set_yticks(y, [ROT.get(s_, s_) for s_ in slugs])
+    axes[0].legend(loc='lower right')
+    fig.suptitle('Cada regressor como ML do híbrido (azul) e sozinho (laranja); ordenado pela CV', y=1.0,
+                 fontsize=10.4, fontweight='semibold')
+    fig.tight_layout()
+    salvar_fig(fig, S, 'f14_resumo_regressores_particao_comum.png')
+
+
 FIGURAS = {'f01': f01_cinetica_logo, 'f02': f02_benchmark, 'f03': f03_curva_aprendizado, 'f04': f04_escada_whitebox,
            'f05': f05_ph_final, 'f06': f06_ablacao, 'f07': f07_extrapolacao_eta, 'f08': f08_cobertura,
-           'f09': f09_residuo, 'f10': f10_dominio, 'f11': f11_escada_hibrido, 'f12': f12_paridade}
+           'f09': f09_residuo, 'f10': f10_dominio, 'f11': f11_escada_hibrido, 'f12': f12_paridade,
+           'f13': f13_teste_cego, 'f13r': f13_por_regressor, 'f14': f14_resumo_particao_comum}
 
 
 def main(argv=None):

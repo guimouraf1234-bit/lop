@@ -1,0 +1,82 @@
+modelo,tipo,conjunto,ensaios,pontos,R2,RMSE_pp,MAE_pp,erro_max_pp,erro_max_ensaio,erro_max_t_min,inconsistencia_bruta_pct,inconsistencia_final_pct,RMSE_E7_pp,RMSE_E8_pp,RMSE_E14_pp,selecionado
+White-Box,white-box,Treino,13,91,0.85024436,7.9617873,6.2492331,16.999998,10,4,0,0,,,,False
+White-Box,white-box,Teste cego,3,21,-1.1338557,8.8064911,7.0670576,15.28861,8,1,0,0,5.2845266,13.447131,4.8899179,False
+White-Box,white-box,Global,16,112,0.82689034,8.1268597,6.4025752,16.999998,10,4,0,0,,,,False
+"Tabela (η, t)",baseline,Treino,13,91,0.98797215,2.2563838,1.6638152,8.6100777,6,0.5,10.897436,0,,,,False
+"Tabela (η, t)",baseline,Teste cego,3,21,0.85254935,2.3149612,1.62842,7.6419371,7,0.5,11.111111,0,3.3895884,1.182762,1.7857493,False
+"Tabela (η, t)",baseline,Global,16,112,0.98652392,2.2674824,1.6571786,8.6100777,6,0.5,10.9375,0,,,,False
+Ridge (resíduo),baseline,Treino,13,91,0.96879434,3.6344248,2.9624455,9.1051547,11,0.5,0,0,,,,False
+Ridge (resíduo),baseline,Teste cego,3,21,0.52064683,4.173959,3.7249832,8.2950873,7,0.5,0,0,3.8247541,4.685004,3.9607819,False
+Ridge (resíduo),baseline,Global,16,112,0.96330798,3.7415185,3.1054213,9.1051547,11,0.5,0,0,,,,False
+Híbrido gp [B],hibrido,Treino,13,91,0.99679149,1.1653892,0.85923796,3.6423777,4,4,1.2820513,0,,,,False
+Híbrido gp [B],hibrido,Teste cego,3,21,0.79576439,2.7244955,1.8314113,9.1319399,7,0.5,1.1111111,0,3.9894613,1.7963319,1.768055,False
+Híbrido gp [B],hibrido,Global,16,112,0.99345976,1.5796428,1.0415205,9.1319399,7,0.5,1.25,0,,,,False
+Híbrido extra_trees [B],hibrido,Treino,13,91,0.99701549,1.1239728,0.81690777,3.5757757,4,4,0,0,,,,False
+Híbrido extra_trees [B],hibrido,Teste cego,3,21,0.85527642,2.2934539,1.5202874,7.7990948,7,0.5,0,0,3.2913761,1.144132,1.9072488,False
+Híbrido extra_trees [B],hibrido,Global,16,112,0.99472466,1.4186897,0.94879145,7.7990948,7,0.5,0,0,,,,False
+Híbrido gbdt [B],hibrido,Treino,13,91,0.99703462,1.1203631,0.84620117,3.5124559,4,4,2.3076923,0,,,,True
+Híbrido gbdt [B],hibrido,Teste cego,3,21,0.87781523,2.1073123,1.3968674,7.2677563,7,0.5,2.2222222,0,2.9856409,1.315345,1.6364937,True
+Híbrido gbdt [B],hibrido,Global,16,112,0.99514449,1.3610674,0.94945109,7.2677563,7,0.5,2.2916667,0,,,,True
+Híbrido random_forest [B],hibrido,Treino,13,91,0.99697005,1.1324965,0.81349038,3.797239,11,0.5,2.3076923,0,,,,False
+Híbrido random_forest [B],hibrido,Teste cego,3,21,0.84666577,2.3606953,1.6330089,7.5505652,7,0.5,1.6666667,0,3.3053522,1.889893,1.4905025,False
+Híbrido random_forest [B],hibrido,Global,16,112,0.9945299,1.4446404,0.9671501,7.5505652,7,0.5,2.1875,0,,,,False
+Híbrido svr [B],hibrido,Treino,13,91,0.99499432,1.4556281,0.91859505,5.2538955,11,2,3.2051282,0,,,,False
+Híbrido svr [B],hibrido,Teste cego,3,21,0.91319977,1.7761548,1.4341423,5.0937129,7,0.5,2.2222222,0,2.2168809,1.5507107,1.464552,False
+Híbrido svr [B],hibrido,Global,16,112,0.9939373,1.520881,1.0152602,5.2538955,11,2,3.0208333,0,,,,False
+Híbrido mlp_tanh [B],hibrido,Treino,13,91,0.99446156,1.5311318,1.1439404,5.1511748,11,0.5,2.4358974,0,,,,False
+Híbrido mlp_tanh [B],hibrido,Teste cego,3,21,0.85872885,2.2659332,1.5416224,7.5003767,7,0.5,0,0,3.2131674,0.92172711,2.0565347,False
+Híbrido mlp_tanh [B],hibrido,Global,16,112,0.99248411,1.6933713,1.2185057,7.5003767,7,0.5,1.9791667,0,,,,False
+Híbrido knn [B],hibrido,Treino,13,91,0.99885339,0.69666921,0.41575092,2,4,2,19.230769,0,,,,False
+Híbrido knn [B],hibrido,Teste cego,3,21,0.14008796,5.590458,4.9624185,9.0232186,14,5,4.4444444,0,3.5871949,5.6680585,6.9831803,False
+Híbrido knn [B],hibrido,Global,16,112,0.98360709,2.5008647,1.2682511,9.0232186,14,5,16.458333,0,,,,False
+Híbrido hist_gbdt [B],hibrido,Treino,13,91,0.99864645,0.75693001,0.54172797,2.070197,4,2,8.974359,0,,,,False
+Híbrido hist_gbdt [B],hibrido,Teste cego,3,21,0.8812147,2.0777903,1.5008427,6.5841785,7,0.5,5,0,2.8370131,1.729843,1.3822584,False
+Híbrido hist_gbdt [B],hibrido,Global,16,112,0.99665817,1.1291561,0.72156199,6.5841785,7,0.5,8.2291667,0,,,,False
+Híbrido adaboost [B],hibrido,Treino,13,91,0.99443012,1.5354725,1.2136005,4.4541424,1,0.5,0.76923077,0,,,,False
+Híbrido adaboost [B],hibrido,Teste cego,3,21,0.83541747,2.445751,1.8629528,7.1494271,7,0.5,0,0,3.4690922,1.9141093,1.4988925,False
+Híbrido adaboost [B],hibrido,Global,16,112,0.99203939,1.7427507,1.3353541,7.1494271,7,0.5,0.625,0,,,,False
+Híbrido kernel_ridge [B],hibrido,Treino,13,91,0.99665634,1.1896795,0.9069864,3.5867866,11,3,2.5641026,0,,,,False
+Híbrido kernel_ridge [B],hibrido,Teste cego,3,21,0.91162922,1.7921515,1.3632476,5.5786177,7,0.5,0,0,2.3760965,1.3016694,1.515006,False
+Híbrido kernel_ridge [B],hibrido,Global,16,112,0.99540746,1.3236976,0.99253538,5.5786177,7,0.5,2.0833333,0,,,,False
+Híbrido poly_ridge [B],hibrido,Treino,13,91,0.98244548,2.7259223,2.1294524,8.374362,11,0.5,8.2051282,0,,,,False
+Híbrido poly_ridge [B],hibrido,Teste cego,3,21,0.57082548,3.9494565,3.5320092,7.707462,7,0.5,5.5555556,0,3.4875547,4.2102359,4.1116294,False
+Híbrido poly_ridge [B],hibrido,Global,16,112,0.97650994,2.9936714,2.3924318,8.374362,11,0.5,7.7083333,0,,,,False
+Híbrido gp_rbf [B],hibrido,Treino,13,91,0.99641787,1.2313738,0.93758747,3.498068,4,4,3.8461538,0,,,,False
+Híbrido gp_rbf [B],hibrido,Teste cego,3,21,0.75452637,2.9869145,2.5891998,7.5160773,7,0.5,6.6666667,0,3.8943333,2.5572376,2.2493732,False
+Híbrido gp_rbf [B],hibrido,Global,16,112,0.99238639,1.7043444,1.2472648,7.5160773,7,0.5,4.375,0,,,,False
+Caixa-preta gp,caixa-preta,Treino,13,91,0.99547495,1.3839827,1.0414995,3.3028231,4,4,30,0,,,,False
+Caixa-preta gp,caixa-preta,Teste cego,3,21,0.85211741,2.3183494,1.8487689,4.9151412,7,0.5,34.444444,0,2.496485,2.444385,1.9790849,False
+Caixa-preta gp,caixa-preta,Global,16,112,0.99327953,1.60126,1.1928625,4.9151412,7,0.5,30.833333,0,,,,False
+Caixa-preta extra_trees,caixa-preta,Treino,13,91,0.99190421,1.8511792,1.2164885,6.7326016,10,0.5,1.9230769,0,,,,False
+Caixa-preta extra_trees,caixa-preta,Teste cego,3,21,0.79276419,2.7444339,2.1656251,6.8642349,8,0.5,0,0,2.0979491,3.2356488,2.7793774,False
+Caixa-preta extra_trees,caixa-preta,Global,16,112,0.98900059,2.0485512,1.3944516,6.8642349,8,0.5,1.5625,0,,,,False
+Caixa-preta gbdt,caixa-preta,Treino,13,91,0.99311295,1.7074009,1.3222972,4.5915865,2,0.5,0.64102564,0,,,,False
+Caixa-preta gbdt,caixa-preta,Teste cego,3,21,0.88613354,2.0343154,1.867413,3.0234356,7,15,0,0,2.3007608,2.0523351,1.7057955,False
+Caixa-preta gbdt,caixa-preta,Global,16,112,0.99175791,1.7732941,1.4245064,4.5915865,2,0.5,0.52083333,0,,,,False
+Caixa-preta random_forest,caixa-preta,Treino,13,91,0.99412279,1.5772646,1.1732536,6.8185806,2,0.5,0.64102564,0,,,,False
+Caixa-preta random_forest,caixa-preta,Teste cego,3,21,0.85226074,2.3172257,1.9564892,5.1674431,7,0.5,0,0,2.4896139,2.6609345,1.6822173,False
+Caixa-preta random_forest,caixa-preta,Global,16,112,0.9920632,1.7401424,1.3201103,6.8185806,2,0.5,0.52083333,0,,,,False
+Caixa-preta svr,caixa-preta,Treino,13,91,0.8496486,7.9776084,4.7828461,30.791745,16,0.5,41.794872,0,,,,False
+Caixa-preta svr,caixa-preta,Teste cego,3,21,-1.0881958,8.7117615,5.6266885,23.899124,8,0.5,42.777778,0,7.7252907,9.8955824,8.3714813,False
+Caixa-preta svr,caixa-preta,Global,16,112,0.82716885,8.1203195,4.9410666,30.791745,16,0.5,41.979167,0,,,,False
+Caixa-preta mlp_tanh,caixa-preta,Treino,13,91,0.99330966,1.6828413,1.2281922,4.8015639,11,1,11.153846,0,,,,False
+Caixa-preta mlp_tanh,caixa-preta,Teste cego,3,21,0.90112428,1.8956808,1.4499234,5.817782,8,0.5,13.888889,0,1.3038809,2.8277094,1.0415236,False
+Caixa-preta mlp_tanh,caixa-preta,Global,16,112,0.99220299,1.7247505,1.2697668,5.817782,8,0.5,11.666667,0,,,,False
+Caixa-preta knn,caixa-preta,Treino,13,91,0.99885339,0.69666921,0.41575092,2,4,2,39.615385,0,,,,False
+Caixa-preta knn,caixa-preta,Teste cego,3,21,-2.2919446,10.938219,9.2809506,21.148018,14,0.5,6.1111111,0,5.5887378,13.093112,12.500814,False
+Caixa-preta knn,caixa-preta,Global,16,112,0.94016735,4.7778359,2.0779759,21.148018,14,0.5,33.333333,0,,,,False
+Caixa-preta hist_gbdt,caixa-preta,Treino,13,91,0.99807506,0.90266722,0.67432083,2.6586069,4,3,8.0769231,0,,,,False
+Caixa-preta hist_gbdt,caixa-preta,Teste cego,3,21,0.89708865,1.9339801,1.5468075,5.1154955,7,0.5,14.444444,0,2.3237185,1.8589484,1.538012,False
+Caixa-preta hist_gbdt,caixa-preta,Global,16,112,0.99642663,1.1676189,0.83791207,5.1154955,7,0.5,9.2708333,0,,,,False
+Caixa-preta adaboost,caixa-preta,Treino,13,91,0.97567053,3.2091151,2.365772,11.926315,2,0.5,0,0,,,,False
+Caixa-preta adaboost,caixa-preta,Teste cego,3,21,0.68896964,3.3621862,2.8786,6.3207893,7,15,0,0,4.7353159,2.5423731,2.2418767,False
+Caixa-preta adaboost,caixa-preta,Global,16,112,0.97251296,3.2383671,2.4619273,11.926315,2,0.5,0,0,,,,False
+Caixa-preta kernel_ridge,caixa-preta,Treino,13,91,0.9404608,5.0201937,2.9250973,18.081384,16,0.5,53.205128,0,,,,False
+Caixa-preta kernel_ridge,caixa-preta,Teste cego,3,21,0.1832586,5.4483206,3.8335574,15.412751,8,0.5,45.555556,0,5.1813468,6.2893802,4.7591948,False
+Caixa-preta kernel_ridge,caixa-preta,Global,16,112,0.93174073,5.1032041,3.0954336,18.081384,16,0.5,51.770833,0,,,,False
+Caixa-preta poly_ridge,caixa-preta,Treino,13,91,0.90546826,6.3256883,3.3617491,24.327674,16,0.5,46.666667,0,,,,False
+Caixa-preta poly_ridge,caixa-preta,Teste cego,3,21,-0.39413327,7.1182382,4.0973339,18.714439,14,0.5,45,0,7.1308083,6.8810587,7.3355675,False
+Caixa-preta poly_ridge,caixa-preta,Global,16,112,0.88988395,6.4816774,3.4996713,24.327674,16,0.5,46.354167,0,,,,False
+Caixa-preta gp_rbf,caixa-preta,Treino,13,91,0.9952197,1.4224808,1.0782997,3.4216778,4,4,31.666667,0,,,,False
+Caixa-preta gp_rbf,caixa-preta,Teste cego,3,21,0.78481247,2.7965908,2.0530117,7.2454647,7,0.5,27.777778,0,3.6360676,2.4412309,2.0693392,False
+Caixa-preta gp_rbf,caixa-preta,Global,16,112,0.99184728,1.7636544,1.2610582,7.2454647,7,0.5,30.9375,0,,,,False

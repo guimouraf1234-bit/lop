@@ -28,15 +28,20 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin, clone
-from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
+from sklearn.ensemble import (AdaBoostRegressor, ExtraTreesRegressor, GradientBoostingRegressor,
+                              HistGradientBoostingRegressor, RandomForestRegressor)
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import ConstantKernel, Matern, WhiteKernel
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern, WhiteKernel
 from sklearn.isotonic import IsotonicRegression
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import Ridge
 from sklearn.model_selection import GroupKFold, LeaveOneGroupOut
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import FunctionTransformer, StandardScaler
+from sklearn.preprocessing import FunctionTransformer, PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
 
 from kinetics import ConfigWB
 from population_balance import PopulationBalanceModel, MM_ZNO_G_MOL, TEOR_ZNO
@@ -369,6 +374,72 @@ def obter_especificacoes() -> Dict[str, ModeloSpec]:
         ModeloSpec('SVR (tunado)', 'svr', 'SVR RBF (C, ε por CV aninhada)', 'Support Vector', fabricar_svr_tunado),
         ModeloSpec('Rede Neural (MLP Tanh)', 'mlp_tanh', 'MLP tanh + L-BFGS (CV aninhada)',
                    'Rede Neural', fabricar_mlp_tunada),
+    ]
+    return {s.slug: s for s in specs}
+
+
+# -----------------------------------------------------------------------------
+# Regressores ADICIONAIS: só para a comparação na partição comum (etapa "particao_comum").
+# Ficam fora de obter_especificacoes() para não alterar o benchmark principal.
+# Hiperparâmetros por CV aninhada agrupada por ensaio (AjusteAninhado), usando só os ensaios de treino.
+# -----------------------------------------------------------------------------
+
+def _pre():
+    return [('entradas', FunctionTransformer(_log1p_primeira_coluna)), ('scaler', StandardScaler())]
+
+
+def fabricar_knn(n_entradas: int, random_state: int = 42):
+    """k vizinhos mais próximos (distância ponderada); k por CV aninhada."""
+    candidatos = [Pipeline(_pre() + [('knn', KNeighborsRegressor(n_neighbors=k, weights='distance'))])
+                  for k in (3, 5, 8, 12)]
+    return AjusteAninhado(candidatos=candidatos)
+
+
+def fabricar_hist_gbdt(n_entradas: int, random_state: int = 42):
+    """Gradient boosting por histogramas; folhas pequenas porque há poucos pontos."""
+    return HistGradientBoostingRegressor(max_iter=200, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=5,
+                                         random_state=random_state)
+
+
+def fabricar_adaboost(n_entradas: int, random_state: int = 42):
+    """AdaBoost.R2 sobre árvores de profundidade 3."""
+    return AdaBoostRegressor(DecisionTreeRegressor(max_depth=3), n_estimators=100, learning_rate=0.1,
+                             random_state=random_state)
+
+
+def fabricar_kernel_ridge(n_entradas: int, random_state: int = 42):
+    """Kernel Ridge RBF com alvo padronizado; α e γ por CV aninhada (grade 3 x 4)."""
+    candidatos = [Pipeline(_pre() + [('kr', KernelRidge(kernel='rbf', alpha=a, gamma=g))])
+                  for a in (1e-3, 1e-2, 1e-1) for g in (0.1, 0.3, 1.0, 3.0)]
+    return ComAlvoPadronizado(AjusteAninhado(candidatos=candidatos))
+
+
+def fabricar_poly_ridge(n_entradas: int, random_state: int = 42):
+    """Regressão polinomial de grau 3 com penalização Ridge; α por CV aninhada."""
+    candidatos = [Pipeline(_pre() + [('poly', PolynomialFeatures(degree=3, include_bias=False)),
+                                     ('ridge', Ridge(alpha=a))]) for a in (0.01, 0.1, 1.0, 10.0)]
+    return ComAlvoPadronizado(AjusteAninhado(candidatos=candidatos))
+
+
+def fabricar_gp_rbf(n_entradas: int, random_state: int = 42):
+    """Processo gaussiano com núcleo RBF (ARD) no lugar do Matérn 3/2: funções mais suaves."""
+    return Pipeline(_pre() + [('gpr', GaussianProcessRegressor(
+        kernel=ConstantKernel(1.0) * RBF(length_scale=[1.0] * n_entradas) + WhiteKernel(noise_level=1e-3),
+        normalize_y=True, n_restarts_optimizer=5, random_state=random_state))])
+
+
+def obter_especificacoes_adicionais() -> Dict[str, ModeloSpec]:
+    specs = [
+        ModeloSpec('k-NN', 'knn', 'k vizinhos (k por CV aninhada)', 'Vizinhança', fabricar_knn),
+        ModeloSpec('HistGradientBoosting', 'hist_gbdt', 'Gradient Boosting por histogramas', 'Árvores / Boosting',
+                   fabricar_hist_gbdt),
+        ModeloSpec('AdaBoost', 'adaboost', 'AdaBoost.R2 (árvores de prof. 3)', 'Árvores / Boosting', fabricar_adaboost),
+        ModeloSpec('Kernel Ridge (RBF)', 'kernel_ridge', 'Kernel Ridge RBF (α, γ por CV aninhada)', 'Kernel',
+                   fabricar_kernel_ridge),
+        ModeloSpec('Ridge polinomial (grau 3)', 'poly_ridge', 'Polinômio de grau 3 + Ridge', 'Linear (polinomial)',
+                   fabricar_poly_ridge),
+        ModeloSpec('Gaussian Process (RBF)', 'gp_rbf', 'Processo Gaussiano (RBF, ARD)', 'Processo Gaussiano',
+                   fabricar_gp_rbf),
     ]
     return {s.slug: s for s in specs}
 
