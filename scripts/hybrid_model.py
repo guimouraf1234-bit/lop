@@ -38,7 +38,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from sklearn.svm import SVR
 
-from kinetics import ConfigWB, NU_A_PRIORI
+from kinetics import ConfigWB
 from population_balance import PopulationBalanceModel, MM_ZNO_G_MOL, TEOR_ZNO
 
 
@@ -53,7 +53,7 @@ CONJUNTOS_ENTRADA: Dict[str, List[str]] = {
     'A': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L'],
     # A + conversão do White-Box (o ML "vê" onde a teoria está operando)
     'B': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L', 'X_pbm'],
-    # B + estado químico do licor segundo o White-Box
+    # B + estado químico do licor segundo o White-Box (exige força motriz [H+]: indisponível no White-Box de laboratório)
     'C': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L', 'X_pbm', 'C_acid_pbm_mol_L', 'H_pbm_mol_L'],
 }
 FEATURES_FISICAS = CONJUNTOS_ENTRADA['legado']
@@ -61,9 +61,9 @@ FEATURES_FISICAS = CONJUNTOS_ENTRADA['legado']
 # Conjunto principal: definido pela ablação (experimentos_batelada.py, etapa "ablacao") e fixado aqui.
 ENTRADAS_PRINCIPAL = 'B'
 
-# White-Box principal: definido pela validação termodinâmica independente (pH_0 e pH_f; etapa "whitebox").
-# V2 = especiação com par iônico ZnSO4(aq); nu = valor a priori pela composição da calcina.
-CONFIG_WB_PRINCIPAL = ConfigWB(especiacao='V2', nu=NU_A_PRIORI)
+# White-Box principal: de laboratório (CAf livre, nu = 1, alpha = 0, ks(T) de Balarini); sem dados de conversão ou pH.
+# A especiação por pH (V0, V1, V2) e nu a priori = 1,06 ficam como análises comparativas (etapa "whitebox", "nu").
+CONFIG_WB_PRINCIPAL = ConfigWB.laboratorio()
 
 # Domínio de aplicabilidade
 DOMINIO_TEMPO_MAX_MIN = 15.0

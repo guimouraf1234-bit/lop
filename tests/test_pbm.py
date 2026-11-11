@@ -10,6 +10,7 @@ from population_balance import PopulationBalanceModel
 
 DIR_DADOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dados')
 CONFIGS = {
+    'laboratorio': ConfigWB.laboratorio(),
     'legado': ConfigWB.legado(),
     'V1_nu': ConfigWB(especiacao='V1', nu=NU_A_PRIORI),
     'V2_nu': ConfigWB(especiacao='V2', nu=NU_A_PRIORI),
@@ -40,7 +41,7 @@ def test_invariantes_fisicas(df, nome):
             assert np.all(r['C_H_mol_L'] >= 0.0)
 
 
-@pytest.mark.parametrize('nome', ['legado', 'V2_nu', 'tese'])
+@pytest.mark.parametrize('nome', ['laboratorio', 'legado', 'V2_nu', 'tese'])
 def test_integrador_rapido_equivale_a_referencia(df, nome):
     """O integrador por tabela difere da referência em menos de 1e-4 em X."""
     cfg = CONFIGS[nome]

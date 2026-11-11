@@ -1,0 +1,125 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[margin=2.5cm]{geometry}
+
+\lstset{basicstyle=\ttfamily\small, frame=single, breaklines=true}
+
+\title{Formulação da lixiviação em batelada na tese de Bortot Coelho (2017)\\
+\large Eqs.~3.37--3.49, Tabelas 5.4 e 5.9 e Apêndice A2.1}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Balanço populacional}
+
+Balanço macroscópico em um reator de volume $V$ com propriedades $\zeta_j$:
+\begin{equation}\tag{3.37}
+\frac{\partial}{\partial t}\big(V\bar\psi\big) = -V\sum_{j=1}^{j}\frac{\partial}{\partial \zeta_j}\big(v_j\,\bar\psi\big)
+\end{equation}
+
+Com volume constante e a única propriedade sendo o diâmetro, $\bar\psi = \bar\psi(D,t)$:
+\begin{equation}\tag{3.38}
+\frac{\partial}{\partial t}\big[\bar\psi(D,t)\big] = -\frac{\partial}{\partial D}\Big[v(D)\,\bar\psi(D,t)\Big]
+\end{equation}
+
+Em batelada, com $v(D) = -\alpha D^{\beta}$:
+\begin{equation}\tag{3.44}
+\frac{\partial}{\partial t}\big[\bar\psi(D,t)\big] - \alpha D^{\beta}\frac{\partial}{\partial D}\big[\bar\psi(D,t)\big] = \alpha\beta D^{\beta-1}\,\bar\psi(D,t)
+\end{equation}
+
+Condição inicial, com $f$ a função densidade de tamanho (``fração das \emph{partículas}'', seção 3.5.1) e $N(0)$ o número total de partículas:
+\begin{equation}\tag{3.45}
+\bar\psi(D,0) = f(D,0)\,N(0)
+\end{equation}
+
+Portanto $\bar\psi$ é densidade \textbf{em número} (partículas por $\mu$m).
+
+\section{Conversão fracionária}
+
+\begin{equation}\tag{3.46}
+X(t) = \frac{M(0)-M(t)}{M(0)} = 1 - \frac{M(t)}{M(0)}
+\end{equation}
+
+Transformações entre densidade em número e em massa (Herbst, 1979):
+\begin{equation}\tag{3.47}
+\bar\psi_{massa}(D) = \frac{D^{3}\,\bar\psi(D)}{\displaystyle\int_0^\infty D^{3}\,\bar\psi(D)\,dD}
+\end{equation}
+\begin{equation}\tag{3.48}
+\bar\psi(D) = \frac{D^{-3}\,\bar\psi_{massa}(D)}{\displaystyle\int_0^\infty D^{-3}\,\bar\psi_{massa}(D)\,dD}
+\end{equation}
+
+Conversão pelo terceiro momento:
+\begin{equation}\tag{3.49}
+X(t) = 1 - \frac{\displaystyle\int_0^\infty D^{3}\,\bar\psi(D,t)\,dD}{\displaystyle\int_0^\infty D^{3}\,\bar\psi(D,0)\,dD}
+\end{equation}
+
+A Eq.~3.49 está correta \textbf{se} $\bar\psi$ for numérica, pois $D^3$ converte número em massa.
+
+\section{Dados granulométricos}
+
+A Tabela 5.4 é \textbf{fração mássica acumulada} (peneiramento a úmido e difração a laser). A RRB da Tabela 5.9 ($m=1{,}022$, $D_{63,2}=41{,}65\ \mu$m) foi ajustada a ela:
+\begin{equation}
+F(D) = 1-\exp\!\left[-\left(\frac{D}{D_{63,2}}\right)^{m}\right], \qquad
+\frac{dF}{dD} = \frac{m}{D_{63,2}}\left(\frac{D}{D_{63,2}}\right)^{m-1}\exp\!\left[-\left(\frac{D}{D_{63,2}}\right)^{m}\right]
+\end{equation}
+
+Como a tabela é mássica, $dF/dD = \bar\psi_{massa}$ (a menos de normalização).
+
+\section{Apêndice A2.1 (Mathematica 11)}
+
+\begin{lstlisting}
+fi = (m*(x/d632)^(m-1)*Exp[-(x/d632)^m])/d632;
+conv = X = 1 - (Integrate[(x^3)*u[x,t], {x,xmim,xmax}] /
+                NIntegrate[(x^3)*fi,    {x,xmim,xmax}]);
+...
+sol = NDSolve[{ D[u[x,t],t] == -D[v[x,t]*u[x,t],x], u[x,0] == fi }, ...]
+\end{lstlisting}
+
+\section{Onde está o desvio}
+
+O código faz $u(x,0) = $ \texttt{fi}, isto é, $\bar\psi(D,0) = dF/dD = \bar\psi_{massa}$. A Eq.~3.48, que a própria tese apresenta para passar de massa a número, não é aplicada. Com isso, a Eq.~3.49 calcula
+\begin{equation}
+\int_0^\infty D^{3}\,\bar\psi_{massa}\,dD = \int_0^\infty D^{6}\,\bar\psi_{N}\,dD \quad (\text{não é massa}).
+\end{equation}
+
+\paragraph{Forma corrigida.} Aplicar a Eq.~3.48 antes:
+\begin{equation}
+\bar\psi(D,0) \propto \frac{1}{D^{3}}\,\frac{dF}{dD},
+\end{equation}
+ou, equivalentemente, com $\Delta D(t) = \int_0^t |v|\,dt'$ (caso $\beta=0$) e $q_3 = dF/dD$:
+\begin{equation}
+X(t) = 1 - \frac{\displaystyle\int_{\Delta D}^{D_{max}}\left(1-\frac{\Delta D}{D}\right)^{3} q_3(D)\,dD}{\displaystyle\int_{D_{min}}^{D_{max}} q_3(D)\,dD}.
+\end{equation}
+
+\paragraph{Teste com os dados da tese.} Sob a Eq.~3.49 aplicada a $q_3$, a distribuição mássica implícita é $D^3 q_3/\!\int D^3 q_3\,dD$:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+ & Medido (Tab.~5.4) & RRB mássica & Implícito na 3.49 \\
+\midrule
+Passante em 38\,$\mu$m & 53,6\% & 59,7\% & 1,7\% \\
+$D_{50}$ & --- & $\approx 33\ \mu$m & $\approx 141\ \mu$m \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$\Delta D$ ($\mu$m) & 1 & 2 & 5 & 10 & 20 \\
+\midrule
+$X$ (base mássica) & 0,19 & 0,31 & 0,51 & 0,69 & 0,85 \\
+$X$ (código da tese) & 0,03 & 0,05 & 0,12 & 0,23 & 0,41 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

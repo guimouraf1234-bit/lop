@@ -9,8 +9,7 @@
     "conjunto": "B"
   },
   "consistencia_com_constantes": {
-    "entradas": true,
-    "whitebox": true
+    "entradas": true
   },
   "dominio_de_aplicabilidade": {
     "T_celsius": 40.0,
@@ -61,10 +60,10 @@
   "white_box_principal": {
     "T_celsius": 40.0,
     "alpha": 0.0,
-    "especiacao": "V2",
-    "forca_motriz": "H+",
+    "especiacao": "V0",
+    "forca_motriz": "H2SO4",
     "ks_arrhenius": true,
-    "nu": 1.06,
+    "nu": 1.0,
     "rrb": "massica"
   }
 }

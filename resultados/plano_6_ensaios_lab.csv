@@ -1,0 +1,7 @@
+id,grupo,eta_nominal,eta_real,C_A0_mol_L,massa_solido_g,volume_L,T_C,discordancia_media,X_hibrido_15min
+D1,refinar,0.75,0.802,1.25,66.67,0.4,40,0.087,0.74
+D2,refinar,1.25,1.337,0.25,8.0,0.4,40,0.041,0.94
+D3,refinar,2.5,2.673,1.25,20.0,0.4,40,0.04,0.99
+F1,validar,0.35,0.374,1.0,114.3,0.4,40,0.058,0.33
+F2,validar,0.75,0.802,2.0,106.68,0.4,40,0.092,0.74
+F3,validar,4.0,4.278,0.5,5.0,0.4,40,0.07,0.97

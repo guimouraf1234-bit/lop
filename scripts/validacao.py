@@ -493,9 +493,10 @@ def _q_conforme(tr: pd.DataFrame, codigo: Tuple, acop: AcopladorFisico, nivel: f
     return float(e[k - 1])
 
 
-def _rodar_dobra_intervalos(df_raw, resp, dobra, slugs, entradas, cfg_base, nu_modo, nivel, esquema, random_state):
+def _rodar_dobra_intervalos(df_raw, resp, dobra, slugs, entradas, cfg_base, nu_modo, nivel, esquema, random_state,
+                            nu_fixo=None):
     warnings.filterwarnings('ignore')
-    nu = escolher_nu(resp, dobra.treino, nu_modo)
+    nu = escolher_nu(resp, dobra.treino, nu_modo, nu_fixo)
     cfg = cfg_base.com_nu(nu)
     base = construir_base(df_raw, cfg)
     ids = base['ensaio_id'].to_numpy()
@@ -524,9 +525,10 @@ def _rodar_dobra_intervalos(df_raw, resp, dobra, slugs, entradas, cfg_base, nu_m
 
 
 def cobertura_intervalos(df_raw, resp, nome_esquema, dobras, slugs, entradas, cfg_base, nivel=0.95,
-                         nu_modo='dobra', n_jobs=-1, random_state=42) -> pd.DataFrame:
+                         nu_modo='dobra', n_jobs=-1, random_state=42, nu_fixo=None) -> pd.DataFrame:
     """Pontos com intervalo [inf, sup] fora-da-dobra; a cobertura é a fração de X_exp dentro do intervalo (t > 0)."""
-    args = [(df_raw, resp, d, list(slugs), entradas, cfg_base, nu_modo, nivel, nome_esquema, random_state) for d in dobras]
+    args = [(df_raw, resp, d, list(slugs), entradas, cfg_base, nu_modo, nivel, nome_esquema, random_state, nu_fixo)
+            for d in dobras]
     if n_jobs == 1 or len(args) == 1:
         res = [_rodar_dobra_intervalos(*a) for a in args]
     else:
@@ -602,8 +604,8 @@ def metricas_x_whitebox(df_raw: pd.DataFrame, config: ConfigWB) -> Dict[str, flo
 
 def escada_whitebox(df_raw: pd.DataFrame, resp: pd.DataFrame, nu: float = NU_A_PRIORI) -> pd.DataFrame:
     """
-    Degraus do White-Box, da formulação da tese até o modelo com especiação e nu. Métricas de X e, quando a
-    força motriz é [H+], também os erros de pH. As linhas finais variam a especiação (V0, V1, V2).
+    Degraus do White-Box, da formulação da tese até o White-Box de laboratório (principal) e as variantes
+    comparativas com especiação e nu. Métricas de X e, quando a força motriz é [H+], também os erros de pH.
     """
     degraus = [
         ('Tese (α = 0)', ConfigWB.tese(0.0)),
@@ -616,6 +618,7 @@ def escada_whitebox(df_raw: pd.DataFrame, resp: pd.DataFrame, nu: float = NU_A_P
         ('V0 + nu', ConfigWB(especiacao='V0', nu=nu)),
         ('V1 + nu', ConfigWB(especiacao='V1', nu=nu)),
         ('V2 + nu', ConfigWB(especiacao='V2', nu=nu)),
+        ('Laboratório: CAf, nu = 1 (principal)', ConfigWB.laboratorio()),
     ]
     linhas = []
     for nome, cfg in degraus:
@@ -629,8 +632,9 @@ def escada_whitebox(df_raw: pd.DataFrame, resp: pd.DataFrame, nu: float = NU_A_P
 
 def selecionar_whitebox(df_raw: pd.DataFrame, resp: pd.DataFrame, nu: float = NU_A_PRIORI) -> Tuple[ConfigWB, pd.DataFrame]:
     """
-    Regra (D2): entre V0, V1 e V2 (todas com nu a priori), escolhe a de menor erro combinado de pH (pH_0 dos
-    16 ensaios e pH_f dos 12 com η >= 1) pela especiação sobre o estado final MEDIDO. O ajuste de X só desempata.
+    DIAGNÓSTICO (não define mais o White-Box principal, que é `ConfigWB.laboratorio()`): entre V0, V1 e V2 (todas com
+    nu a priori), a de menor erro combinado de pH (pH_0 dos 16 ensaios e pH_f dos 12 com η >= 1) pela especiação sobre
+    o estado final MEDIDO. O ajuste de X só desempata.
     """
     linhas = []
     for esp in ('V0', 'V1', 'V2'):

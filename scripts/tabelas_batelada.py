@@ -162,9 +162,13 @@ def t_ablacao(R):
     a = ler(R, 'ablacao_entradas.csv')
     a['slug'] = a['modelo'].str.extract(r'Híbrido (\w+) \[')[0].map(ROT)
     p = a.pivot_table(index=['esquema_ablacao', 'slug'], columns='entradas', values='RMSE', sort=False).reset_index()
-    out = pd.DataFrame({'Protocolo': p['esquema_ablacao'], 'Modelo': p['slug'], 'A (t, η, C_A0)': p['A'].map(num),
-                        'B (A + X_PBM)': p['B'].map(num), 'C (B + C_Af, [H⁺])': p['C'].map(num)})
-    return '### T10. Ablação dos atributos do ML (RMSE em t>0)\n\n' + md(out)
+    nomes = {'A': 'A (t, η, C_A0)', 'B': 'B (A + X_PBM)', 'C': 'C (B + C_Af, [H⁺])'}
+    out = pd.DataFrame({'Protocolo': p['esquema_ablacao'], 'Modelo': p['slug']})
+    for c in ('A', 'B', 'C'):
+        if c in p.columns:       # 'C' exige [H⁺]: ausente com a força motriz C_Af do White-Box principal
+            out[nomes[c]] = p[c].map(num)
+    nota = '' if 'C' in p.columns else ' (conjunto C omitido: exige [H⁺], indisponível com a força motriz C_Af)'
+    return '### T10. Ablação dos atributos do ML (RMSE em t>0)' + nota + '\n\n' + md(out)
 
 
 def t_nu(R):

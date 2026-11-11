@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Modelo White-Box: dedução e resolução</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  @page { size: A4; margin: 18mm 20mm 18mm 20mm; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.4; color: #111; background: #fff; margin: 0; }
+  h1 { font-size: 15pt; text-align: center; margin: 0 0 4px 0; }
+  .autores { text-align: center; font-size: 10pt; margin-bottom: 14px; }
+  h2 { font-size: 12pt; margin: 16px 0 4px 0; border-bottom: 0.5pt solid #444; padding-bottom: 2px; page-break-after: avoid; }
+  p { margin: 4px 0; text-align: justify; }
+  .katex-display { margin: 6px 0; }
+  .eq { display: flex; align-items: center; page-break-inside: avoid; }
+  .eq .m { flex: 1; }
+  .eq .n { width: 34px; text-align: right; font-size: 10pt; }
+  table { border-collapse: collapse; margin: 6px auto; font-size: 10pt; page-break-inside: avoid; }
+  th, td { padding: 2px 9px; text-align: center; }
+  thead th { border-top: 1pt solid #000; border-bottom: 0.5pt solid #000; }
+  tbody tr:last-child td { border-bottom: 1pt solid #000; }
+  td.l, th.l { text-align: left; }
+  ul { margin: 3px 0; padding-left: 20px; }
+  li { margin: 1px 0; }
+  .nota { font-size: 9.5pt; color: #333; }
+</style>
+</head>
+<body>
+
+<h1>Modelo White-Box da lixiviação da zincita: dedução e resolução</h1>
+<div class="autores">TCC – Engenharia Química – UFMG · Daniel C. Vieira, Guilherme M. S. Franco, Matheus H. B. Póvoas, Rodrigo A. da Mata<br>
+Orientador: Prof. Fabrício E. Bortot Coelho · outubro de 2026</div>
+
+<p>Configuração usada: <code>ConfigWB.laboratorio()</code>. Força motriz \(C_{Af}\), \(\nu = 1\), \(\alpha = 0\), \(k_s(T)\) por Arrhenius, RRB em base mássica. Nenhum parâmetro é ajustado aos pontos de conversão.</p>
+
+<h2>1. Hipóteses</h2>
+<ul>
+  <li>Batelada isotérmica a 40 °C, 1000 rpm: difusão externa desprezível.</li>
+  <li>Controle por reação química na superfície, 1ª ordem no ácido (Balarini, 2009).</li>
+  <li>Partículas esféricas, sem quebra nem aglomeração.</li>
+  <li>Só a zincita reage: \(\mathrm{ZnO + H_2SO_4 \rightarrow ZnSO_4 + H_2O}\).</li>
+</ul>
+
+<h2>2. Balanço de ácido</h2>
+<p>Sejam \(n_{A0}\) os mols iniciais de ácido e \(n_{B0}\) os de ZnO. A razão molar é</p>
+<div class="eq"><div class="m">\[ \eta = \frac{n_{A0}}{n_{B0}} = \frac{V\,C_{A0}}{m_{B0}\,T_{\mathrm{ZnO}}/M_{\mathrm{ZnO}}} \]</div><div class="n">(1)</div></div>
+<p>Com conversão \(X\), cada mol de ZnO dissolvido consome \(\nu\) mol de ácido:</p>
+\[ n_A(t) = n_{A0} - \nu\, n_{B0}\, X(t) \]
+<p>Dividindo por \(V\) e usando \(n_{B0}/V = C_{A0}/\eta\), que sai de (1):</p>
+\[ C_{Af}(t) = C_{A0} - \nu\,\frac{C_{A0}}{\eta}\,X(t) \]
+<div class="eq"><div class="m">\[ \boxed{\,C_{Af}(t) = C_{A0}\left(1 - \frac{\nu\,X(t)}{\eta}\right)\,}, \qquad \nu = 1 \]</div><div class="n">(2)</div></div>
+<p>O ácido acaba quando \(X = \eta/\nu\). Então a conversão máxima é</p>
+\[ X_{\max} = \min\!\left(1,\ \frac{\eta}{\nu}\right) \]
+
+<h2>3. Velocidade de encolhimento da partícula</h2>
+<p>Uma partícula de diâmetro \(D\) tem \(n_p = \rho_s\,\pi D^3/6\) mols de ZnO. A taxa de reação por área é \(k_s C_A\), e a área é \(\pi D^2\):</p>
+\[ \frac{dn_p}{dt} = -k_s\,C_A\,\pi D^2 \]
+<p>Derivando \(n_p\) em relação ao tempo:</p>
+\[ \frac{dn_p}{dt} = \rho_s\,\frac{\pi}{6}\,3D^2\,\frac{dD}{dt} = \rho_s\,\frac{\pi}{2}\,D^2\,\frac{dD}{dt} \]
+<p>Igualando as duas expressões, o \(\pi D^2\) cancela:</p>
+\[ \rho_s\,\frac{\pi}{2}\,D^2\,\frac{dD}{dt} = -k_s\,C_A\,\pi D^2 \]
+<div class="eq"><div class="m">\[ \boxed{\,v \equiv -\frac{dD}{dt} = \frac{2\,k_s}{\rho_s}\,C_{Af}\,} \]</div><div class="n">(3)</div></div>
+<p>\(v\) não depende de \(D\): todas as partículas encolhem na mesma velocidade. É isso que torna o problema quase analítico.</p>
+<p class="nota">Unidades: \(k_s\) [µm·min⁻¹], \(C\) e \(\rho_s\) [mol·L⁻¹] ⇒ \(v\) [µm·min⁻¹]. A Eq. 4.1 da tese tem ainda o termo \(-\alpha(C_{A0}-C_{Af})\); aqui \(\alpha = 0\).</p>
+
+<h2>4. \(k_s\) a 40 °C</h2>
+<p>\(k_s\) foi estimado a 30 °C (303,15 K). Por Arrhenius:</p>
+\[ \frac{k_s(T)}{k_s(T_{\mathrm{ref}})} = \exp\!\left[-\frac{E_a}{R}\left(\frac{1}{T} - \frac{1}{T_{\mathrm{ref}}}\right)\right] \]
+\[ \frac{E_a}{R} = \frac{13\,450}{8{,}314} = 1617{,}7\ \mathrm{K}, \qquad \frac{1}{313{,}15} - \frac{1}{303{,}15} = -1{,}0534\times10^{-4}\ \mathrm{K^{-1}} \]
+\[ \frac{k_s(\text{40 °C})}{k_s(\text{30 °C})} = e^{0{,}1704} = 1{,}186 \quad\Rightarrow\quad k_s = 1{,}8\times10^4 \times 1{,}186 = 2{,}134\times10^4\ \mu\mathrm{m\,min^{-1}} \]
+<p>Daí a velocidade inicial (quando \(C_{Af} = C_{A0}\)):</p>
+<div class="eq"><div class="m">\[ v_0 = \frac{2\,k_s}{\rho_s}\,C_{A0} = \frac{2 \times 21\,344}{69{,}2}\,C_{A0} = 616{,}9\,C_{A0}\ \ \mu\mathrm{m\,min^{-1}} \quad (C_{A0}\ \text{em mol/L}) \]</div><div class="n">(4)</div></div>
+
+<h2>5. Balanço populacional</h2>
+<p>Sem quebra e sem aglomeração, a densidade \(\psi(D,t)\) obedece</p>
+\[ \frac{\partial \psi}{\partial t} + \frac{\partial}{\partial D}\big[G\,\psi\big] = 0, \qquad G = \frac{dD}{dt} = -v(t) \]
+<p>Como \(G\) não depende de \(D\), sai da derivada:</p>
+\[ \frac{\partial \psi}{\partial t} - v(t)\,\frac{\partial \psi}{\partial D} = 0 \]
+<p>Pelo método das características, ao longo da curva \(dD/dt = -v(t)\) temos \(d\psi/dt = 0\). Integrando a curva a partir de \(D_0\):</p>
+\[ D(t) = D_0 - \Delta D(t), \qquad \Delta D(t) = \int_0^t v(t')\,dt' \]
+<div class="eq"><div class="m">\[ \psi(D,t) = \psi_0\big(D + \Delta D(t)\big) \]</div><div class="n">(5)</div></div>
+<p>A distribuição só se desloca para a esquerda. Partículas com \(D_0 \le \Delta D\) já sumiram. Todo o estado do sistema fica em uma variável: \(\Delta D(t)\).</p>
+
+<h2>6. Conversão em função de \(\Delta D\)</h2>
+<p>A RRB foi ajustada a frações <em>mássicas</em> passantes, então a sua derivada é a densidade mássica \(q_3\):</p>
+\[ F(D) = 1 - \exp\!\left[-\left(\frac{D}{D_{63,2}}\right)^{m}\right], \qquad q_3(D) = \frac{dF}{dD} = \frac{m}{D_{63,2}}\left(\frac{D}{D_{63,2}}\right)^{m-1}\exp\!\left[-\left(\frac{D}{D_{63,2}}\right)^{m}\right] \]
+<p>Uma partícula que começou com \(D\) e encolheu \(\Delta D\) guarda a fração de massa</p>
+\[ \frac{(D-\Delta D)^3}{D^3} = \left(1 - \frac{\Delta D}{D}\right)^3 \]
+<p>Somando sobre a massa inicial \(q_3(D)\,dD\) das partículas que ainda existem (\(D > \Delta D\)):</p>
+<div class="eq"><div class="m">\[ \boxed{\,X(\Delta D) = 1 - \frac{1}{I_0}\int_{\max(\Delta D,\,D_{\min})}^{D_{\max}} \left(1 - \frac{\Delta D}{D}\right)^3 q_3(D)\,dD\,} \]</div><div class="n">(6)</div></div>
+<p>O denominador é a massa da RRB truncada em \([D_{\min}, D_{\max}]\):</p>
+\[ I_0 = F(D_{\max}) - F(D_{\min}) = e^{-(0{,}1/41{,}65)^{1{,}022}} - e^{-(297/41{,}65)^{1{,}022}} = 0{,}99790 - 0{,}00058 = 0{,}99732 \]
+
+<p><b>Por que não a Eq. 3.49 da tese.</b> A densidade mássica se relaciona com a numérica \(q_0\) por</p>
+\[ q_3(D) = \frac{D^3\,q_0(D)}{\int D^3 q_0\,dD} \]
+<p>Substituindo em (6):</p>
+\[ 1 - X = \frac{\int (1 - \Delta D/D)^3\,D^3\,q_0\,dD}{\int D^3 q_0\,dD} = \frac{\int (D - \Delta D)^3\,q_0\,dD}{\int D^3 q_0\,dD} \]
+<p>que é a Eq. 3.49, mas com \(q_0\). A tese coloca \(q_3\) no lugar de \(q_0\), o que pesa a massa duas vezes (\(D^6\)). Com \(\Delta D = 5\) µm: \(X = 0{,}51\) por (6) e \(0{,}12\) pela 3.49 com \(q_3\).</p>
+
+<p><b>Derivada de \(X\).</b> Vai ser usada na seção 7. Pela regra de Leibniz (para \(\Delta D > D_{\min}\)), o termo de contorno some porque o integrando é zero em \(D = \Delta D\):</p>
+\[ \frac{dX}{d\Delta D} = -\frac{1}{I_0}\left[-\big(1 - 1\big)^3 q_3(\Delta D) + \int_{\Delta D}^{D_{\max}} \frac{\partial}{\partial \Delta D}\left(1 - \frac{\Delta D}{D}\right)^3 q_3\,dD\right] \]
+<div class="eq"><div class="m">\[ \frac{dX}{d\Delta D} = \frac{3}{I_0}\int_{\Delta D}^{D_{\max}} \left(1 - \frac{\Delta D}{D}\right)^2 \frac{q_3(D)}{D}\,dD \;>\; 0 \]</div><div class="n">(7)</div></div>
+
+<table>
+<thead><tr><th>\(\Delta D\) [µm]</th><th>1</th><th>2</th><th>5</th><th>10</th><th>20</th><th>50</th><th>100</th></tr></thead>
+<tbody><tr><td>\(X\)</td><td>0,194</td><td>0,305</td><td>0,508</td><td>0,687</td><td>0,848</td><td>0,972</td><td>0,997</td></tr></tbody>
+</table>
+<p class="nota">Os finos dominam o começo: 5 µm de encolhimento já dissolvem metade da zincita.</p>
+
+<h2>7. Sistema fechado: uma única EDO</h2>
+<p>Juntando (2), (3) e (6), com \(\Delta D = \int v\,dt\):</p>
+<div class="eq"><div class="m">\[ \boxed{\,\frac{d\,\Delta D}{dt} = v_0\left[1 - \frac{X(\Delta D)}{\eta}\right]^{+}, \qquad \Delta D(0) = 0\,} \]</div><div class="n">(8)</div></div>
+<p>com \(v_0\) de (4) e \([\cdot]^+ = \max(\cdot,0)\). Depois de resolver, \(X(t) = X(\Delta D(t))\) e \(C_{Af}(t)\) vem de (2).</p>
+
+<p><b>Solução implícita.</b> A EDO é separável:</p>
+\[ \frac{d\xi}{1 - X(\xi)/\eta} = v_0\,dt \]
+<div class="eq"><div class="m">\[ t(\Delta D) = \frac{1}{v_0}\int_0^{\Delta D} \frac{d\xi}{1 - X(\xi)/\eta} \]</div><div class="n">(9)</div></div>
+<p>Ou seja, o tempo é uma quadratura. O tempo só entra pela escala \(1/v_0 \propto 1/C_{A0}\); a forma da curva depende de \(\eta\) e da granulometria.</p>
+
+<p><b>Caso \(\eta < 1\) (ácido limitante).</b> O integrando de (9) diverge em \(\Delta D^*\), definido por \(X(\Delta D^*) = \eta\). Perto dele, expandindo \(X\) em Taylor:</p>
+\[ 1 - \frac{X(\Delta D)}{\eta} \approx \frac{X'(\Delta D^*)}{\eta}\,\big(\Delta D^* - \Delta D\big) \]
+<p>Substituindo em (8) com \(u = \Delta D^* - \Delta D\):</p>
+\[ \frac{du}{dt} = -\frac{v_0\,X'(\Delta D^*)}{\eta}\,u \quad\Rightarrow\quad u(t) \propto e^{-t/\tau^*}, \qquad \tau^* = \frac{\eta}{v_0\,X'(\Delta D^*)} \]
+<p>Para \(\eta = 0{,}535\): \(\Delta D^* = 5{,}56\) µm, e por (7) \(X'(\Delta D^*) = 0{,}0458\) µm⁻¹. Então</p>
+\[ \tau^* = \frac{0{,}535}{616{,}9\,C_{A0} \times 0{,}0458} = \frac{0{,}0189}{C_{A0}}\ \mathrm{min} \]
+<p>Com \(C_{A0} = 0{,}1\) mol/L, \(\tau^* = 0{,}19\) min (11 s). O modelo chega ao patamar \(X = \eta\) em menos de 1 min e nunca o passa.</p>
+
+<p><b>Caso \(\eta > 1\) (ácido em excesso).</b> Quando \(X \to 1\), (8) tende a uma velocidade constante:</p>
+\[ \frac{d\,\Delta D}{dt} \to v_0\left(1 - \frac{1}{\eta}\right), \qquad C_{Af} \to C_{A0}\left(1 - \frac{1}{\eta}\right) \]
+<p>\(\Delta D\) cresce linearmente e \(X = 1\) quando \(\Delta D \ge D_{\max}\). Na prática, \(X > 0{,}997\) já em \(\Delta D = 100\) µm.</p>
+
+<h2>8. Resolução numérica</h2>
+<ol>
+  <li><b>Tabela \(X(\Delta D)\)</b>: calcula-se (6) por quadratura adaptativa (QUADPACK, <code>scipy.integrate.quad</code>, tol. rel. \(10^{-6}\)) em 501 pontos entre 0 e 5 µm e 3000 pontos entre 5,01 e 296,9 µm. A malha é fina no início porque \(X\) sobe rápido ali. A tabela é feita uma vez só: não depende do ensaio.</li>
+  <li><b>EDO (8)</b>: LSODA (<code>solve_ivp</code>, rtol \(10^{-7}\), atol \(10^{-9}\)), com \(X(\Delta D)\) interpolado linearmente na tabela. LSODA troca sozinho para método rígido no patamar \(X \to \eta\), onde \(\tau^*\) é pequeno.</li>
+  <li><b>Saída</b>: \(X(t)\) pela tabela; \(C_{Af}(t)\) por (2), cortado em zero.</li>
+  <li><b>Conferência</b>: integração de referência com RK45 (rtol \(10^{-6}\)), recalculando a quadratura (6) a cada passo. Diferença máxima em \(X\) menor que \(10^{-4}\) (<code>tests/test_pbm.py</code>).</li>
+</ol>
+<p class="nota">Código: <code>scripts/kinetics.py</code> (Eqs. 2–4) e <code>scripts/population_balance.py</code> (Eqs. 6 e 8), método <code>simular_ensaio_rapido</code>.</p>
+
+<h2>9. Exemplos</h2>
+<p><b>Ensaio 6</b>: \(C_{A0} = 0{,}1\) mol/L, \(m_{B0} = 4{,}0\) g, \(V = 0{,}4\) L.</p>
+\[ \eta = \frac{0{,}4 \times 0{,}1}{4{,}0 \times 0{,}761/81{,}38} = \frac{0{,}0400}{0{,}03741} = 1{,}069, \qquad v_0 = 616{,}9 \times 0{,}1 = 61{,}7\ \mu\mathrm{m\,min^{-1}} \]
+<p>Velocidade final esperada: \(v_0(1 - 1/\eta) = 61{,}7 \times 0{,}0649 = 4{,}0\) µm/min.</p>
+<table>
+<thead><tr><th>\(t\) [min]</th><th>0</th><th>0,5</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>15</th></tr></thead>
+<tbody>
+<tr><td class="l">\(\Delta D\) [µm]</td><td>0</td><td>13,7</td><td>21,0</td><td>31,0</td><td>38,6</td><td>45,1</td><td>51,0</td><td>97,0</td></tr>
+<tr><td class="l">\(X_{\mathrm{WB}}\)</td><td>0</td><td>0,765</td><td>0,857</td><td>0,922</td><td>0,949</td><td>0,964</td><td>0,973</td><td>0,997</td></tr>
+<tr><td class="l">\(X_{\exp}\)</td><td>0</td><td>0,75</td><td>0,78</td><td>0,80</td><td>0,85</td><td>0,87</td><td>0,85</td><td>0,87</td></tr>
+<tr><td class="l">\(C_{Af}\) [mol/L]</td><td>0,100</td><td>0,0285</td><td>0,0199</td><td>0,0138</td><td>0,0113</td><td>0,0099</td><td>0,0090</td><td>0,0068</td></tr>
+</tbody>
+</table>
+<p>Entre 5 e 15 min, \(\Delta D\) sobe 4,6 µm/min, perto dos 4,0 da assíntota. O modelo vai a 1 e o experimento para em 0,87: é o patamar em \(\eta \approx 1\) que o White-Box não explica.</p>
+
+<p><b>Ensaio 1</b>: \(C_{A0} = 0{,}1\) mol/L, \(\eta = 0{,}535\), \(\tau^* = 0{,}19\) min.</p>
+<table>
+<thead><tr><th>\(t\) [min]</th><th>0</th><th>0,5</th><th>1</th><th>2</th><th>5</th><th>15</th></tr></thead>
+<tbody>
+<tr><td class="l">\(\Delta D\) [µm]</td><td>0</td><td>5,30</td><td>5,54</td><td>5,56</td><td>5,56</td><td>5,56</td></tr>
+<tr><td class="l">\(X_{\mathrm{WB}}\)</td><td>0</td><td>0,523</td><td>0,534</td><td>0,535</td><td>0,535</td><td>0,535</td></tr>
+<tr><td class="l">\(X_{\exp}\)</td><td>0</td><td>0,42</td><td>0,46</td><td>0,46</td><td>0,49</td><td>0,50</td></tr>
+</tbody>
+</table>
+<p>Conferindo \(\tau^*\): de 0,5 para 1 min a distância a \(\Delta D^*\) cai de 0,26 para 0,02 µm, razão \(\approx 13\), o que dá \(\tau \approx 0{,}5/\ln 13 = 0{,}19\) min. Bate com a seção 7. O patamar sai em \(\eta = 0{,}535\) e não em 0,50 porque \(\nu = 1\).</p>
+
+<h2>10. Parâmetros</h2>
+<table>
+<thead><tr><th class="l">Símbolo</th><th>Valor</th><th>Unidade</th><th class="l">Fonte</th></tr></thead>
+<tbody>
+<tr><td class="l">\(k_s\) (30 °C)</td><td>\(1{,}8\times10^4\)</td><td>µm·min⁻¹</td><td class="l">Balarini (2009)</td></tr>
+<tr><td class="l">\(E_a\)</td><td>13,45</td><td>kJ·mol⁻¹</td><td class="l">Balarini et al. (2025)</td></tr>
+<tr><td class="l">\(\rho_s\)</td><td>69,2</td><td>mol·L⁻¹</td><td class="l">Perry e Green (1984)</td></tr>
+<tr><td class="l">\(m\), \(D_{63,2}\)</td><td>1,022; 41,65</td><td>–; µm</td><td class="l">Bortot Coelho (2017), Tab. 5.9</td></tr>
+<tr><td class="l">\(D_{\min}\), \(D_{\max}\)</td><td>0,1; 297</td><td>µm</td><td class="l">Tab. 5.9</td></tr>
+<tr><td class="l">\(T_{\mathrm{ZnO}}\), \(M_{\mathrm{ZnO}}\)</td><td>0,761; 81,38</td><td>–; g·mol⁻¹</td><td class="l">Bortot Coelho (2017)</td></tr>
+<tr><td class="l">\(\nu\), \(\alpha\)</td><td>1; 0</td><td>–; µm·min⁻¹</td><td class="l">este trabalho</td></tr>
+<tr><td class="l">\(T\), \(V\)</td><td>40; 0,40</td><td>°C; L</td><td class="l">ensaios de bancada</td></tr>
+</tbody>
+</table>
+<p class="nota">Ressalva: \(k_s\) foi estimado com \(C_A = [\mathrm{H^+}]\) e aqui multiplica \(C_{Af}\), como na tese. Com \(C_{Af}\) o RMSE do White-Box é 0,081 (sem \(t = 0\)); com \([\mathrm{H^+}]\) por especiação cai para 0,044 (variante V0, comparativa).</p>
+
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}],
+    throwOnError: false
+  });
+</script>
+</body>
+</html>

@@ -33,6 +33,7 @@ DIR_SCRIPTS = os.path.dirname(os.path.abspath(__file__))
 if DIR_SCRIPTS not in sys.path:
     sys.path.insert(0, DIR_SCRIPTS)
 from data_loader import carregar_dados_bancada       # noqa: E402
+from hybrid_model import CONFIG_WB_PRINCIPAL         # noqa: E402
 
 DIR_RESULTADOS = os.path.abspath(os.path.join(DIR_SCRIPTS, '..', 'resultados'))
 
@@ -156,7 +157,7 @@ def f01_cinetica_logo(R, S):
             ens = int(dados[(dados['razao_molar_eta'] == eta) & (dados['C_acid_0_mol_L'] == ca)]['ensaio_id'].iloc[0])
             c = curvas[curvas['ensaio_id'] == ens]
             e = dados[dados['ensaio_id'] == ens]
-            teto = min(1.0, float(e['razao_molar_eta_real'].iloc[0]) / 1.06)
+            teto = min(1.0, float(e['razao_molar_eta_real'].iloc[0]) / CONFIG_WB_PRINCIPAL.nu)
             ax.plot(c['tempo_min'], c['X_pbm'], color=TINTA, lw=1.4, zorder=2)
             lo = np.clip(c['X_gp'] - 1.96 * c['sd_gp'], 0, teto)
             hi = np.clip(c['X_gp'] + 1.96 * c['sd_gp'], 0, teto)
@@ -177,7 +178,7 @@ def f01_cinetica_logo(R, S):
             if i == 3:
                 ax.set_xlabel('Tempo (min)')
     hs = [Line2D([], [], ls='none', marker='o', ms=5, mfc=SUP, mec=TINTA, mew=1.1, label='Experimental'),
-          Line2D([], [], color=TINTA, lw=1.4, label='White-Box (V2, ν a priori)'),
+          Line2D([], [], color=TINTA, lw=1.4, label='White-Box de laboratório (CAf, ν = 1)'),
           Line2D([], [], color=AZUL, lw=1.8, label='Híbrido GP, treinado SEM o ensaio (LOGO); faixa de 95%')]
     fig.legend(handles=hs, loc='upper center', bbox_to_anchor=(0.5, 0.975), ncol=3, columnspacing=1.8)
     fig.suptitle('Cinética dos 16 ensaios: cada curva vem de um modelo que não viu aquele ensaio', y=1.0,
@@ -274,7 +275,8 @@ def f03_curva_aprendizado(R, S):
 def f04_escada_whitebox(R, S):
     e = ler(R, 'escada_whitebox.csv')
     rot = ['Tese (α = 0)', 'Tese (α = 5500)', '+ RRB mássica', '+ k_s(T)', '+ [H⁺] V0 (K₂ = 0,0099; TCC)',
-           "V1: K₂(T) van't Hoff", 'V2: V1 + par iônico ZnSO₄', 'V0 + ν', 'V1 + ν', 'V2 + ν (principal)']
+           "V1: K₂(T) van't Hoff", 'V2: V1 + par iônico ZnSO₄', 'V0 + ν', 'V1 + ν', 'V2 + ν',
+           'Laboratório: CAf, ν = 1 (principal)']
     n = len(e)
     yy = np.arange(n)[::-1]
     sig = sigma(R)
@@ -477,7 +479,7 @@ def f09_residuo(R, S):
         ax.set_xlabel('η real (Eq. 4.3), escala log')
     a1.set_ylabel('$X_{exp} - X_{PBM}$ em 15 min')
     pior = p.loc[p['delta_X'].idxmin()]
-    a1.set_title(f"O que o White-Box (V2) não explica: pior em η real = {pior['razao_molar_eta_real']:.2f}".replace('.', ',') +
+    a1.set_title(f"O que o White-Box de laboratório não explica: pior em η real = {pior['razao_molar_eta_real']:.2f}".replace('.', ',') +
                  f" ({pior['delta_X']:.2f})".replace('.', ','), fontsize=9.4)
     hs = [Line2D([], [], color=RAMPA[i], marker='o', ls='none', label=f'$C_{{A0}}$ = {ca:g} mol/L'.replace('.', ',')) for i, ca in enumerate(niveis)]
     a1.legend(handles=hs, loc='lower right')
@@ -536,7 +538,7 @@ def f10_dominio(R, S):
 def f11_escada_hibrido(R, S):
     e = ler(R, 'escada_hibrido.csv')
     degraus = list(dict.fromkeys(e['degrau_whitebox']))
-    rot = ['1\nTese\n(α = 0)', '2\nTCC\n(V0, ν = 1)', '3\nV0 + ν', '4\nV2 + ν\n(principal)']
+    rot = ['1\nTese\n(α = 0)', '2\nTCC\n(V0, ν = 1)', '3\nV0 + ν', '4\nCAf, ν = 1\n(principal)']
     esq = list(dict.fromkeys(e['esquema']))
     fig, axes = plt.subplots(1, len(esq), figsize=(3.9 * len(esq), 4.6), sharey=False)
     modelos = ['White-Box', 'Híbrido gp [B]', 'Híbrido extra_trees [B]', 'Caixa-preta gp', 'Caixa-preta extra_trees']

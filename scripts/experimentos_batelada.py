@@ -9,7 +9,7 @@ PIPELINE ÚNICO dos resultados do TCC (batelada). Todo número do texto sai daqu
 
 Etapas (e arquivos gerados em lop/resultados/):
   dados          piso_ruido.csv
-  whitebox       escada_whitebox.csv, selecao_whitebox.csv, termodinamica_por_ensaio.csv   (Fase 2, D2)
+  whitebox       escada_whitebox.csv, selecao_whitebox.csv, termodinamica_por_ensaio.csv   (diagnóstico de pH; comparativo)
   ablacao        ablacao_entradas.csv                                                      (I6)
   benchmark      benchmark_batelada.csv, comparacoes_pareadas.csv, predicoes_oof.csv.gz    (I1, I2)
   nu             sensibilidade_nu.csv                                                      (proveniência de nu)
@@ -51,6 +51,11 @@ SLUGS_PRINCIPAIS = ('gp', 'extra_trees', 'gbdt', 'random_forest', 'svr', 'mlp_ta
 SLUGS_CAIXA_PRETA = ('gp', 'extra_trees', 'gbdt', 'svr')
 ETAPAS = ('dados', 'whitebox', 'ablacao', 'benchmark', 'nu', 'aprendizado', 'intervalos', 'residuo',
           'dominio', 'escada_hibrido', 'curvas')
+# O White-Box principal tem nu fixo (sem estimativa nos dados de treino): nenhum dado de conversão entra no fator de fechamento
+NU_MODO_PRINCIPAL = 'fixo'
+NU_FIXO_PRINCIPAL = CONFIG_WB_PRINCIPAL.nu
+# 'C' exige [H+] do White-Box; com força motriz CAf (principal) não há [H+] e o conjunto não existe
+CONJUNTOS_DISPONIVEIS = tuple(e for e in ('A', 'B', 'C') if not (e == 'C' and CONFIG_WB_PRINCIPAL.forca_motriz == 'H2SO4'))
 
 
 class Parametros:
@@ -90,14 +95,14 @@ def codigos_benchmark(entradas: str):
 # -----------------------------------------------------------------------------
 
 def esquemas_benchmark(df: pd.DataFrame, p: Parametros):
-    """(nome, dobras, nu_modo). A extrapolação temporal usa nu a priori (nu da dobra usaria o estado final de 15 min)."""
+    """(nome, dobras). Todos com nu fixo do White-Box principal: nenhuma dobra estima nu nos dados."""
     return [
-        ('GKF8 (partição do TCC)', V.esquema_gkf8_sklearn(df), 'dobra'),
-        (f'GKF8 repetido ({p.n_rep_gkf} partições)', V.esquema_gkf8_repetido(df, p.n_rep_gkf, p.semente), 'dobra'),
-        ('LOGO (16 ensaios)', V.esquema_logo(df), 'dobra'),
-        ('Deixa-um-η-fora (extrapolação em η)', V.esquema_deixa_nivel(df, 'razao_molar_eta'), 'dobra'),
-        ('Deixa-um-C_A0-fora', V.esquema_deixa_nivel(df, 'C_acid_0_mol_L'), 'dobra'),
-        ('Extrapolação temporal (t<=5 -> 15 min)', V.esquema_extrapolacao_temporal(df, 5.0), 'a_priori'),
+        ('GKF8 (partição do TCC)', V.esquema_gkf8_sklearn(df)),
+        (f'GKF8 repetido ({p.n_rep_gkf} partições)', V.esquema_gkf8_repetido(df, p.n_rep_gkf, p.semente)),
+        ('LOGO (16 ensaios)', V.esquema_logo(df)),
+        ('Deixa-um-η-fora (extrapolação em η)', V.esquema_deixa_nivel(df, 'razao_molar_eta')),
+        ('Deixa-um-C_A0-fora', V.esquema_deixa_nivel(df, 'C_acid_0_mol_L')),
+        ('Extrapolação temporal (t<=5 -> 15 min)', V.esquema_extrapolacao_temporal(df, 5.0)),
     ]
 
 
@@ -154,12 +159,8 @@ def etapa_whitebox(ctx):
         por_ensaio.append(t)
     salvar(pd.concat(por_ensaio, ignore_index=True), 'termodinamica_por_ensaio.csv', ctx['saida'])
     ctx['wb_selecionado'] = cfg
-    consistente = cfg.especiacao == CONFIG_WB_PRINCIPAL.especiacao
-    ctx['consistencia']['whitebox'] = bool(consistente)
-    print(f"   White-Box escolhido pela regra de pH: {cfg.rotulo()} "
-          f"({'consistente' if consistente else 'DIVERGE'} com hybrid_model.CONFIG_WB_PRINCIPAL)", flush=True)
-    if not consistente:
-        warnings.warn('A regra de seleção do White-Box diverge de hybrid_model.CONFIG_WB_PRINCIPAL; atualize a constante.')
+    print(f"   diagnóstico: especiação de menor erro de pH = {cfg.rotulo()} (comparativo; "
+          f"White-Box principal = {CONFIG_WB_PRINCIPAL.rotulo()})", flush=True)
 
 
 def etapa_ablacao(ctx):
@@ -167,10 +168,11 @@ def etapa_ablacao(ctx):
     linhas, por_rep = [], {}
     esquemas = [(f'GKF8 repetido ({p.n_rep_ablacao})', V.esquema_gkf8_repetido(df, p.n_rep_ablacao, p.semente)),
                 ('Deixa-um-η-fora', V.esquema_deixa_nivel(df, 'razao_molar_eta'))]
-    for ent in ('A', 'B', 'C'):
+    for ent in CONJUNTOS_DISPONIVEIS:
         cods = [('wb',)] + [('hibrido', s, ent) for s in ('gp', 'extra_trees', 'gbdt', 'svr')]
         for nome, dobras in esquemas:
-            pred, diag = V.executar_esquema(df, resp, nome, dobras, cods, CONFIG_WB_PRINCIPAL, 'dobra', None, ctx['n_jobs'])
+            pred, diag = V.executar_esquema(df, resp, nome, dobras, cods, CONFIG_WB_PRINCIPAL,
+                                            NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL, ctx['n_jobs'])
             r = V.resumo_benchmark(pred, diag, ctx['sigma'], n_boot=p.n_boot)
             r = r[r['modelo'] != V.REF_WB].copy()
             r['entradas'] = ent
@@ -203,9 +205,10 @@ def etapa_benchmark(ctx):
     df, resp, p = ctx['df'], ctx['resp'], ctx['p']
     cods = codigos_benchmark(ENTRADAS_PRINCIPAL)
     preds, diags, comps = [], [], []
-    for nome, dobras, nu_modo in esquemas_benchmark(df, p):
+    for nome, dobras in esquemas_benchmark(df, p):
         t0 = time.time()
-        pred, diag = V.executar_esquema(df, resp, nome, dobras, cods, CONFIG_WB_PRINCIPAL, nu_modo, None, ctx['n_jobs'])
+        pred, diag = V.executar_esquema(df, resp, nome, dobras, cods, CONFIG_WB_PRINCIPAL,
+                                        NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL, ctx['n_jobs'])
         preds.append(pred)
         diags.append(diag)
         resumo = V.resumo_benchmark(pred, diag, ctx['sigma'], n_boot=p.n_boot)
@@ -231,8 +234,10 @@ def etapa_nu(ctx):
     linhas = []
     esq = [('GKF8 (partição do TCC)', V.esquema_gkf8_sklearn(df)),
            ('Deixa-um-η-fora', V.esquema_deixa_nivel(df, 'razao_molar_eta'))]
-    for nu_modo, nu_fixo, rotulo in (('dobra', None, 'nu estimado na dobra'), ('a_priori', None, f'nu a priori ({NU_A_PRIORI})'),
-                                     ('fixo', 1.0, 'nu = 1 (sem consumo extra de ácido)')):
+    # Análise comparativa: o White-Box principal usa nu fixo (NU_FIXO_PRINCIPAL); aqui se mede o efeito de estimar nu
+    for nu_modo, nu_fixo, rotulo in (('dobra', None, 'nu estimado na dobra (comparativo)'),
+                                     ('a_priori', None, f'nu a priori ({NU_A_PRIORI}, comparativo)'),
+                                     (NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL, 'nu = 1 (White-Box principal)')):
         for nome, dobras in esq:
             pred, diag = V.executar_esquema(df, resp, nome, dobras, cods, CONFIG_WB_PRINCIPAL, nu_modo, nu_fixo, ctx['n_jobs'])
             r = V.resumo_benchmark(pred, diag, ctx['sigma'], n_boot=p.n_boot)
@@ -251,7 +256,8 @@ def etapa_aprendizado(ctx):
     cods = [('wb',), ('tabela',)] + [('hibrido', s, e) for s in ('gp', 'extra_trees', 'gbdt')] + \
            [('caixa', s) for s in ('gp', 'extra_trees', 'gbdt')]
     dobras = V.dobras_curva_aprendizado(df, p.ns_curva, p.n_sorteios_curva)
-    pred, _ = V.executar_esquema(df, resp, 'Curva de aprendizado', dobras, cods, CONFIG_WB_PRINCIPAL, 'dobra', None, ctx['n_jobs'])
+    pred, _ = V.executar_esquema(df, resp, 'Curva de aprendizado', dobras, cods, CONFIG_WB_PRINCIPAL,
+                                 NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL, ctx['n_jobs'])
     salvar(V.resumo_curva_aprendizado(pred), 'curva_aprendizado.csv', ctx['saida'])
 
 
@@ -263,7 +269,8 @@ def etapa_intervalos(ctx):
     pts = []
     for nome, dobras in esq:
         pts.append(V.cobertura_intervalos(df, resp, nome, dobras, ('gp', 'extra_trees', 'gbdt'), ENTRADAS_PRINCIPAL,
-                                          CONFIG_WB_PRINCIPAL, 0.95, 'dobra', ctx['n_jobs']))
+                                          CONFIG_WB_PRINCIPAL, 0.95, NU_MODO_PRINCIPAL, ctx['n_jobs'],
+                                          nu_fixo=NU_FIXO_PRINCIPAL))
     pts = pd.concat(pts, ignore_index=True)
     salvar(V.resumo_cobertura(pts), 'cobertura_intervalos.csv', ctx['saida'])
     salvar(pts, 'cobertura_intervalos_pontos.csv.gz', ctx['saida'])
@@ -295,7 +302,7 @@ def etapa_residuo(ctx):
     salvar(pd.DataFrame(linhas), 'residuo_aprendido.csv', ctx['saida'])
     # escalas do GP (em unidades padronizadas das entradas) para os conjuntos A, B e C
     esc = []
-    for ent in ('A', 'B', 'C'):
+    for ent in CONJUNTOS_DISPONIVEIS:
         m, _ = _treinar_com_tudo(ctx, 'gp', ent)
         k = m.regressor.named_steps['gpr'].kernel_
         nomes = CONJUNTOS_ENTRADA[ent]
@@ -338,8 +345,8 @@ def etapa_escada_hibrido(ctx):
     degraus = [
         ('1. Tese (α = 0)', ConfigWB.tese(0.0), 'fixo', 1.0),
         ('2. White-Box do TCC (V0, nu = 1)', ConfigWB(especiacao='V0'), 'fixo', 1.0),
-        ('3. V0 + nu', ConfigWB(especiacao='V0'), 'dobra', None),
-        ('4. V2 + nu (principal)', CONFIG_WB_PRINCIPAL, 'dobra', None),
+        ('3. V0 + nu (estimado na dobra, comparativo)', ConfigWB(especiacao='V0'), 'dobra', None),
+        ('4. CAf, nu = 1 (principal)', CONFIG_WB_PRINCIPAL, NU_MODO_PRINCIPAL, NU_FIXO_PRINCIPAL),
     ]
     esq = [(f'GKF8 repetido ({p.n_rep_escada})', V.esquema_gkf8_repetido(df, p.n_rep_escada, p.semente)),
            ('Deixa-um-η-fora', V.esquema_deixa_nivel(df, 'razao_molar_eta')),
@@ -360,10 +367,9 @@ def etapa_curvas(ctx):
     """Curvas contínuas fora-da-dobra (LOGO) para o White-Box e os híbridos GP e ET, para as figuras."""
     df, resp = ctx['df'], ctx['resp']
     t_fino = np.round(np.linspace(0.0, 15.0, 151), 4)
+    cfg = CONFIG_WB_PRINCIPAL
     linhas = []
     for dobra in V.esquema_logo(df):
-        nu = V.escolher_nu(resp, dobra.treino, 'dobra')
-        cfg = CONFIG_WB_PRINCIPAL.com_nu(nu)
         base = construir_base(df, cfg)
         tr = base[base['ensaio_id'].isin(dobra.treino)].reset_index(drop=True)
         ens = dobra.teste[0]

@@ -78,14 +78,32 @@ def test_teto_fisico_remove_a_correcao_oculta_do_whitebox(base_legado):
     assert _rmse_t_pos(base_legado, fisico) == pytest.approx(_ref('White-Box legado (PBM bruto)', 'RMSE_t>0'), abs=3e-4)
 
 
-def test_constante_do_whitebox_principal_segue_a_regra_de_ph(df, resp):
-    cfg, tab = V.selecionar_whitebox(df, resp)
-    assert cfg.especiacao == CONFIG_WB_PRINCIPAL.especiacao, \
-        'Atualize hybrid_model.CONFIG_WB_PRINCIPAL: a regra de pH escolheu outra especiação\n' + tab.to_string()
-    assert cfg.nu == CONFIG_WB_PRINCIPAL.nu
-    # a escolha tem margem: a melhor variante é pelo menos 2x melhor que as demais no erro combinado de pH
-    e = tab['RMSE_pH_combinado_espec'].to_numpy()
-    assert e[1] > 2.0 * e[0]
+def test_whitebox_principal_e_o_de_laboratorio():
+    """Contrato do White-Box principal: força motriz CAf livre, nu = 1, alpha = 0, ks(T) de Balarini, RRB mássica."""
+    assert CONFIG_WB_PRINCIPAL == ConfigWB.laboratorio()
+    assert (CONFIG_WB_PRINCIPAL.forca_motriz, CONFIG_WB_PRINCIPAL.nu, CONFIG_WB_PRINCIPAL.alpha) == ('H2SO4', 1.0, 0.0)
+    assert CONFIG_WB_PRINCIPAL.ks_arrhenius and CONFIG_WB_PRINCIPAL.rrb == 'massica'
+
+
+def test_whitebox_principal_nao_le_dados_de_conversao_nem_de_ph(df):
+    """Sem ajuste aos dados: a simulação não muda quando X medido e pH medido são alterados."""
+    alterado = df.copy()
+    alterado['X_zn_exp'] = 0.5
+    for col in ('pH_0', 'pH_final'):
+        if col in alterado.columns:
+            alterado[col] = 3.0
+    a = construir_base(df, CONFIG_WB_PRINCIPAL, usar_cache=False)
+    b = construir_base(alterado, CONFIG_WB_PRINCIPAL, usar_cache=False)
+    assert np.array_equal(a['X_pbm'].to_numpy(), b['X_pbm'].to_numpy())
+    assert np.array_equal(a['C_acid_pbm_mol_L'].to_numpy(), b['C_acid_pbm_mol_L'].to_numpy())
+
+
+def test_acido_livre_do_principal_e_o_balanco_do_tcc(df):
+    """CAf = CA0 (1 - X/eta): consumo de ácido só o estequiométrico (nu = 1)."""
+    b = construir_base(df, CONFIG_WB_PRINCIPAL)
+    eta = b['razao_molar_eta_real'].to_numpy()
+    esperado = np.maximum(b['C_acid_0_mol_L'].to_numpy() * (1.0 - b['X_pbm'].to_numpy() / eta), 0.0)
+    assert np.allclose(b['C_acid_pbm_mol_L'].to_numpy(), esperado, atol=1e-9)
 
 
 def test_regra_de_escolha_dos_atributos_prefere_o_mais_simples_em_caso_de_empate():

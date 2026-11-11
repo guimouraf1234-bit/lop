@@ -6,6 +6,7 @@ import os
 import pytest
 
 import experimentos_batelada as E
+from hybrid_model import CONFIG_WB_PRINCIPAL, ModeloHibridoCinza, obter_especificacoes
 
 
 def _hash_pasta(pasta):
@@ -21,8 +22,16 @@ def test_etapas_rapidas_geram_arquivos_e_sao_deterministicas(tmp_path):
     assert esperados <= set(os.listdir(a))
     assert _hash_pasta(str(a)) == _hash_pasta(str(b))
     cfg = json.load(open(a / 'config.json', encoding='utf-8'))
-    assert cfg['white_box_principal']['especiacao'] == 'V2'
-    assert cfg['consistencia_com_constantes']['whitebox'] is True
+    assert cfg['white_box_principal']['forca_motriz'] == 'H2SO4'
+    assert cfg['white_box_principal']['nu'] == 1.0
+
+
+def test_conjuntos_disponiveis_treinam_com_o_principal(df):
+    """Regressão: a etapa 'residuo' treinava o conjunto 'C' (precisa de [H+]) com o White-Box de laboratório e quebrava."""
+    assert 'C' not in E.CONJUNTOS_DISPONIVEIS
+    for ent in E.CONJUNTOS_DISPONIVEIS:
+        m = ModeloHibridoCinza(obter_especificacoes()['gp'].nome, entradas=ent, config_wb=CONFIG_WB_PRINCIPAL)
+        m.treinar(m.preparar_dados_base(df))
 
 
 @pytest.mark.slow

@@ -16,10 +16,15 @@ pontos de conversão. A configuração física completa é um objeto congelado, 
 | `nu` | float ≥ 0 | mol de H₂SO₄ consumidos por mol de ZnO dissolvido (seção 4) |
 | `T_celsius`, `alpha` | 40, 0 | temperatura e parâmetro $\alpha$ da Eq. 4.1 (0 = Eq. 3.42) |
 
-Fábricas: `ConfigWB.legado()` (White-Box do TCC antes da revisão: V0, ν = 1), `ConfigWB.tese(alpha)` (Apêndice A2.1),
-`cfg.com_nu(nu)`. O White-Box **principal** do trabalho é `hybrid_model.CONFIG_WB_PRINCIPAL = ConfigWB(especiacao='V2', nu=1.06)`.
+Fábricas: `ConfigWB.laboratorio()` (**White-Box principal**: força motriz $C_{Af}$, ν = 1, α = 0, $k_s(T)$ de Balarini com
+Arrhenius, RRB mássica medida), `ConfigWB.legado()` (White-Box do TCC antes da revisão: V0, ν = 1), `ConfigWB.tese(alpha)`
+(Apêndice A2.1), `cfg.com_nu(nu)`. `hybrid_model.CONFIG_WB_PRINCIPAL = ConfigWB.laboratorio()`. Sem dados de conversão nem de pH:
+o principal é função só de (t, $C_{A0}$, η) e das constantes acima.
 
-## 3. Especiação do H₂SO₄ (concentrações, sem coeficientes de atividade)
+## 3. Especiação do H₂SO₄ (comparativa: não entra no White-Box principal)
+A especiação só altera a força motriz quando `forca_motriz = 'H+'`. O principal usa $C_{Af}$ e fica fora dela; as variantes
+V0–V2 continuam disponíveis para comparação com o pH medido (`selecionar_whitebox`, diagnóstico).
+
 Com prótons totais $H_T = 2\,C_{Af}$ e sulfato total $S_T = C_{A0}$ (o sulfato do ZnSO₄ formado fica em solução):
 
 $$[\text{H}^+] + [\text{HSO}_4^-] = H_T,\qquad [\text{HSO}_4^-]+[\text{SO}_4^{2-}]+[\text{ZnSO}_4^0] = S_T,\qquad
@@ -44,10 +49,12 @@ $f(s) = K_2 b - (H_T - b)s$ em $s = [\text{SO}_4^{2-}]$ por `brentq` (`especiar_
 variante coerente com o pH final: ver `resultados/selecao_whitebox.csv`.
 
 ## 4. Fator de fechamento estequiométrico ν
-$C_{Af}(t) = C_{A0}\,(1 - \nu X/\eta)$ (Eq. 3.51 com ν = 1). Nos ensaios com η = 0,5 o ácido é totalmente consumido (pH final 5–6)
+$C_{Af}(t) = C_{A0}\,(1 - \nu X/\eta)$ (Eq. 3.51 com ν = 1). **O White-Box principal usa ν = 1**: o consumo de ácido é só o
+estequiométrico do ZnO, sem estimativa nos dados. Nos ensaios com η = 0,5 o ácido é totalmente consumido (pH final 5–6)
 com $X_{final} = 0{,}50 < \eta_{real} = 0{,}535$, logo $\nu = \eta_{real}/X_{final} \approx 1{,}07$: há outro consumo de ácido
-(óxidos de Ca, Cu, Cd e Mn; ferrita) ou erro de fechamento do balanço. `nu_a_priori()` = **1,06**, estimado só pela composição da
-calcina (ver docstring); `validacao.estimar_nu` o estima dentro de cada dobra de CV. O teto do acoplador passa a ser $\min(1, \eta_{real}/\nu)$.
+(óxidos de Ca, Cu, Cd e Mn; ferrita) ou erro de fechamento do balanço. Esse valor é **comparativo**: `nu_a_priori()` = **1,06**,
+estimado pela composição da calcina (ver docstring), e `validacao.estimar_nu` o estima dentro de cada dobra de CV, apenas
+para a análise de sensibilidade (`sensibilidade_nu.csv`). O teto do acoplador é $\min(1, \eta_{real}/\nu)$; com ν = 1 vira $\min(1, \eta_{real})$.
 
 ## 5. Funções
 | Função | Descrição |

@@ -63,7 +63,7 @@ DH_ZNSO4_J_MOL = 6000.0
 
 ESPECIACOES = ('V0', 'V1', 'V2')
 
-# Valor a priori de nu (ver `nu_a_priori`)
+# Valor a priori de nu (ver `nu_a_priori`). Análise comparativa: o White-Box principal usa nu = 1 (`ConfigWB.laboratorio`).
 NU_A_PRIORI = 1.06
 
 
@@ -142,6 +142,18 @@ class ConfigWB:
         return cls()
 
     @classmethod
+    def laboratorio(cls) -> 'ConfigWB':
+        """
+        White-Box principal, formulado como se fôssemos ao laboratório sem dados de conversão nem de pH:
+          - força motriz = CAf livre, CAf = CA0 (1 - X/eta) (Eq. 3.51 da tese), com nu = 1 (sem consumo extra);
+          - sem especiação (`especiacao` fica no padrão e não é usada com força motriz H2SO4), sem par iônico, alpha = 0;
+          - ks(T) de Balarini (2009), referido a 30 °C e corrigido por Arrhenius até 40 °C; Ea de Balarini et al. (2025);
+          - RRB em base mássica, com a granulometria medida no material (d632 e m).
+        Ressalva: ks foi estimado com C_A = [H+] a 30 °C; aqui ele multiplica a molaridade de H2SO4 livre, como faz a tese.
+        """
+        return cls(rrb='massica', ks_arrhenius=True, forca_motriz='H2SO4', nu=1.0, T_celsius=40.0, alpha=0.0)
+
+    @classmethod
     def tese(cls, alpha: float = 0.0) -> 'ConfigWB':
         """Formulação original da dissertação (Apêndice A2.1): RRB numérica, ks fixo, molaridade de H2SO4."""
         return cls(rrb='numerica', ks_arrhenius=False, forca_motriz='H2SO4', alpha=alpha)
@@ -164,7 +176,8 @@ class ConfigWB:
 
     def rotulo(self) -> str:
         if self.forca_motriz == 'H2SO4':
-            base = f"tese[rrb={self.rrb},ks_T={'s' if self.ks_arrhenius else 'n'}]"
+            nome = 'tese' if self.rrb == 'numerica' else 'CAf'
+            base = f"{nome}[rrb={self.rrb},ks_T={'s' if self.ks_arrhenius else 'n'}]"
         else:
             base = f"{self.especiacao}[rrb={self.rrb}]"
         return f"{base} nu={self.nu:.3f} alpha={self.alpha:g} T={self.T_celsius:g}C"

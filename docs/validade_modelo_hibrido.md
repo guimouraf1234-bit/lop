@@ -1,6 +1,7 @@
 # Validade do modelo híbrido da lixiviação em batelada
 
 **Escopo:** só a batelada (16 ensaios, 128 pontos). A planta piloto e o híbrido serial ficam fora (seção 9).
+**Atualização (2026-10-11):** o White-Box principal passou a ser o de laboratório (CAf, ν = 1); ver seções 1 e 6.0.
 **Fonte de todos os números:** `resultados/*.csv`, geradas por `scripts/experimentos_batelada.py`; as tabelas `T##` estão em
 `resultados/tabelas.md` e as figuras `F##` em `resultados/figuras/` (regeneráveis; ver `scripts/docs/README_experimentos_batelada.md`).
 
@@ -8,16 +9,15 @@
 
 ## 1. Resumo
 
-1. **O híbrido é válido dentro do planejamento ensaiado, e mais claramente onde há extrapolação ou poucos dados.**
-   * **Interpolação** (ensaios novos entre os níveis ensaiados): RMSE de **0,017 a 0,023** (GKF8 e LOGO), entre 1,0 e 1,35 vezes o ruído experimental (σ = 0,0175), contra 0,0597 do White-Box (T05, F02). Captura 92 a 100% do ganho que o ruído permite.
-   * Porém, **um ML puro (caixa-preta) já chega perto**: GP 0,0234 e GBDT 0,0238 contra 0,0224 e 0,0209 dos híbridos correspondentes (GKF8 × 20); as diferenças pareadas são empates estatísticos para GP e GBDT e marginais para Extra Trees (T07). **A física pouco acrescenta onde há dados em volta.**
-   * **Extrapolação em η** (um nível de η inteiro ausente do treino): os híbridos de árvore chegam a **0,042 a 0,045**, 24 a 30% abaixo do White-Box (0,0595). O melhor (Random Forest) é **significativamente** melhor que a tabela, o Ridge e **toda** caixa-preta, que ficam *piores que o White-Box*: 0,073 a 0,095 (T05 a T08, F07). O ganho é só ~50% do atingível (o erro fica em 2,4 σ).
-   * **Poucos dados** (4 ensaios de treino): híbrido 0,039 a 0,046 contra 0,086 a 0,099 da caixa-preta (F03, T09).
-2. **O White-Box principal mudou** e agora tem proveniência independente: especiação com **K₂(T)** (van't Hoff, Apêndice A4 da tese) e **par iônico ZnSO₄⁰** (IUPAC), mais um fator estequiométrico **ν = 1,06** estimado só pela composição da calcina. Foi escolhido pelo **pH medido**, a única medida independente do estado ácido (erro de pH final de 0,26 contra 0,99 e 1,08 das alternativas; T03, F05). Em troca, ajusta **pior** a conversão (RMSE 0,0620 contra 0,0443 do White-Box antigo; T02).
-3. **Trade-off a decidir (D2):** o híbrido construído sobre o White-Box antigo corrigido por ν (V0 + ν, ajusta X melhor e com K₂ constante) **extrapola melhor em η** (Extra Trees 0,0290 contra 0,0450) e com poucos dados (0,0296 contra 0,0431 com n = 4) (T12, F11). Ele é quimicamente inconsistente com o pH medido, mas prediz melhor. Ver seção 6.7.
-4. **Domínio de aplicabilidade:** os **4 níveis de η ensaiados** (0,5; 1,0; 1,5; 3,1) com $C_{A0} \in [0{,}1;\ 1{,}5]$ mol/L, t ≤ 15 min, 40 °C. **Entre os níveis de η o ML não tem informação:** os modelos discordam em até 0,09 de conversão (em η real = 0,85; 0,07 em média nessa faixa contra 0,004 a 0,017 nos níveis ensaiados) e o resíduo do White-Box, que concentra-se em η ≈ 1, é desconhecido ali (F09, F10).
-5. **Os intervalos de predição são confiáveis só na interpolação:** cobertura de 89 a 91% (nominal 95%) em LOGO e de **49 a 71%** quando se extrapola em η (T13, F08).
-6. **O que o ML precisa explicar é um único fenômeno:** o patamar em η ≈ 1 (conversão medida 0,85 a 0,87, o White-Box prevê 0,97 a 0,99; resíduo −0,10 a −0,14 aos 15 min). A causa é **desconhecida** (hipóteses na seção 7).
+> **Atualização de 2026-10-11.** O White-Box principal é o **de laboratório** (`ConfigWB.laboratorio()`): força motriz $C_{Af}$ (Eq. 3.51), ν = 1, α = 0, $k_s(T)$ de Balarini com correção de Arrhenius e RRB mássica medida, sem dado de conversão nem de pH na construção. A versão anterior (V2 + ν = 1,06, escolhida pelo pH) passa a ser comparativa. Os números abaixo são do principal atual; a comparação com a versão anterior está na seção 6.0. As seções 4.2, 4.4 e 6.7 analisam a versão anterior e estão marcadas.
+
+1. **Interpolação: os híbridos não mudam.** RMSE de **0,0215 a 0,0228** (GKF8 e LOGO), dentro do mesmo intervalo da versão anterior (0,0208 a 0,0230). O White-Box sozinho sobe de 0,0597 para **0,0813**. Contra a caixa-preta, o ganho é pequeno: o Extra Trees híbrido é significativamente melhor (Δ = −0,0043, IC 95% [−0,0082; −0,0004], GKF8 × 20), mas GP e GBDT empatam com a caixa-preta correspondente.
+2. **Extrapolação em η: piora, e o híbrido deixa de superar a tabela.** Com a deixa-um-η-fora, os híbridos vão a **0,064 a 0,070** (Extra Trees 0,0644; GBDT 0,0698; GP 0,0672), contra 0,043 a 0,054 da versão anterior. A tabela (η, t), que é um baseline só de dados, sai de 0,0527 para 0,0637 porque o acoplador passou a usar o teto η/ν com ν = 1. Assim, o Extra Trees híbrido empata com a tabela, enquanto antes ficava 15% abaixo dela. Contra a caixa-preta, o híbrido continua melhor (Extra Trees: Δ = −0,0120, IC 95% [−0,0206; −0,0053]).
+3. **Poucos dados (4 ensaios de treino):** híbridos 0,050 (GP) e 0,052 (Extra Trees), contra 0,043 a 0,047 antes e 0,065 a 0,087 da caixa-preta. Com 8 ensaios, o GP híbrido (0,032) fica atrás da caixa-preta GP (0,028).
+4. **O que explica a perda.** A força motriz [H⁺] é o que faz o White-Box ajustar a conversão: com [H⁺] e K₂ constante (V0), o RMSE cai de 0,0813 para 0,0443. CAf não tem esse efeito. A variante V1 (K₂ por van't Hoff com as constantes do Apêndice A4 da tese, também sem ajuste aos dados e com ν = 1) dá RMSE de 0,0426 na conversão, mas erro de pH combinado de 0,63, contra 0,17 da V2 + ν.
+5. **Intervalos:** cobertura de 90 a 96% em LOGO (nominal 95%) e de **36 a 60%** quando se extrapola em η (antes, 49 a 71%).
+6. **Patamar em η ≈ 1:** o principal dissolve tudo em 15 min (X = 1,000), e o experimento para em 0,85 a 0,87. O resíduo fica em −0,13 a −0,15 em η = 1,07. É o mesmo problema da versão anterior, com causa ainda desconhecida (seção 7).
+7. **Domínio:** a discordância entre modelos é, em média, 0,016 nos níveis de η ensaiados (η real ≈ 0,54; 1,07; 1,6; 3,2) e 0,030 fora deles. Em η ≈ 0,85, a média é 0,043 (máximo 0,055); o máximo geral é 0,081.
 
 ---
 
@@ -25,6 +25,7 @@
 
 | Ponto | Antes | Agora | Por quê |
 | :--- | :--- | :--- | :--- |
+| White-Box principal | V2 + ν = 1,06, escolhido pelo pH medido | CAf livre, ν = 1, sem especiação e sem dado de conversão nem de pH (`ConfigWB.laboratorio()`) | decisão do usuário (2026-10-11): o principal não pode usar dados para ajustar parâmetros |
 | Métricas | R² global (inclui 16 pontos triviais em t = 0), "violação 0%" depois do clip | RMSE/MAE/viés/R² **só em t > 0**, ganho sobre o White-Box e seu **teto pelo ruído**, violações **na saída bruta** | o R² global é dominado pela variância entre níveis de η, que o White-Box já explica |
 | Validação | GroupKFold(8) com η nominal igual no treino e no teste | 6 protocolos: GKF8 repetido (20), LOGO, **deixa-um-η-fora**, deixa-um-$C_{A0}$-fora, **extrapolação temporal**, curva de aprendizado | o GroupKFold só mede interpolação em $C_{A0}$, que quase não importa |
 | Baselines | nenhum | White-Box, tabela por (η, t), Ridge, **caixa-preta** | sem eles não se sabe o que a física acrescenta |
@@ -63,6 +64,8 @@ declaradas e reproduzíveis** (`validacao.selecionar_whitebox`, `experimentos_ba
 
 ## 4. White-Box
 
+> **Nota (2026-10-11):** esta seção analisa a versão anterior do White-Box (V2 + ν = 1,06, escolhida pelo pH). O principal atual não usa especiação nem ν; a escada da 4.1 continua válida como comparação, e o resultado do principal atual está na seção 6.0.
+
 ### 4.1. Escada de formulações (T02, F04)
 A correção da RRB para base mássica e a especiação de H⁺ reproduzem os valores já documentados (R² em t > 0: tese 0,7475 → 0,8347 → 0,8269 → **0,9486**).
 Os novos degraus são:
@@ -77,6 +80,8 @@ Os novos degraus são:
 | **V2 + ν (principal)** | 0,0620 | 0,256 |
 
 ### 4.2. Por que V2 (T03, T04, F05)
+
+> Comparativo. Esta análise justificava V2 como principal pelo pH medido; esse critério foi abandonado em 2026-10-11 (seção 1).
 Com K₂ constante, a especiação ideal prevê o pH final **0,8 a 0,9 unidade alcalino demais** (viés +0,82 para V0; até 1,75 unidade no ensaio 10): o sulfato do ZnSO₄
 tampona o H⁺ como HSO₄⁻ e o modelo subestima o H⁺ livre em até **56 vezes**. O par iônico libera o H⁺ (sequestra sulfato como ZnSO₄⁰) e reduz o erro
 de pH final de 0,99 para 0,26 unidade (viés +0,20), **sem ajustar nada**. O pH inicial é reproduzido em qualquer variante (RMSE 0,052).
@@ -92,6 +97,8 @@ do estado ácido, e os ν "medidos" de 1,07–1,13 vêm de uma especiação que 
 η real = 0,535, logo ν = 1,07 (1,09 no ensaio 5). A estimativa a priori (1,06) concorda.
 
 ### 4.4. ν (T11)
+
+> Comparativo. O principal atual usa ν = 1; esta seção mede o efeito de ν na versão anterior.
 Estimar ν dentro de cada dobra (mediana dos ensaios de treino com η ≤ 1,5) ou usar o valor a priori dá resultados equivalentes (White-Box 0,0597 contra 0,0620; Extra Trees em extrapolação 0,0450 contra 0,0471).
 **Sem ν (ν = 1)** o White-Box piora para 0,0750 e o Extra Trees em extrapolação em η para 0,0626: o ν importa.
 
@@ -110,6 +117,24 @@ Ver `scripts/docs/README_validacao.md`. Pontos de rigor:
 ---
 
 ## 6. Resultados
+
+> **Nota (2026-10-11):** os números das subseções 6.1 a 6.7 são da versão anterior (V2 + ν = 1,06). O resultado do principal atual está na 6.0, com a comparação lado a lado.
+
+### 6.0. Principal atual (CAf, ν = 1) e comparação com a versão anterior (V2 + ν)
+
+RMSE em t > 0, no formato **anterior → atual**. O baseline de tabela (η, t) também muda, porque o acoplador usa o teto η/ν.
+
+| Modelo | GKF8 × 20 | LOGO | Deixa-um-η-fora | Poucos dados (n = 4) |
+| :--- | :---: | :---: | :---: | :---: |
+| White-Box | 0,0594 → **0,0813** | 0,0597 → **0,0813** | 0,0595 → **0,0813** | 0,0571 → **0,0796** |
+| Tabela (η, t) | 0,0306 → 0,0299 | 0,0303 → 0,0296 | 0,0527 → **0,0637** | — |
+| Híbrido GP [B] | 0,0224 → 0,0223 | 0,0208 → 0,0216 | 0,0536 → **0,0672** | 0,0467 → **0,0501** |
+| Híbrido Extra Trees [B] | 0,0230 → 0,0228 | 0,0224 → 0,0218 | 0,0450 → **0,0644** | 0,0431 → **0,0524** |
+| Híbrido GBDT [B] | 0,0209 → 0,0220 | 0,0211 → 0,0215 | 0,0432 → **0,0698** | — |
+| Caixa-preta GP | 0,0234 → 0,0239 | 0,0236 → 0,0242 | 0,0950 → 0,0978 | 0,0606 → 0,0650 |
+| Caixa-preta Extra Trees | 0,0270 → 0,0271 | 0,0264 → 0,0265 | 0,0727 → 0,0764 | 0,0822 → 0,0873 |
+
+Leitura: a interpolação não muda. A extrapolação em η piora, e o híbrido de árvore deixa de ficar abaixo da tabela. A perda vem da força motriz: a escada da seção 4.1 mostra que [H⁺] (V0, com K₂ constante) leva o White-Box de 0,0813 para 0,0443, e CAf não tem esse efeito. Os dados de origem são os mesmos; só a física do principal mudou.
 
 ### 6.1. Interpolação (GKF8 do TCC, GKF8 × 20, LOGO, $C_{A0}$ ausente; T05, F02, F12)
 | Modelo | GKF8 (TCC) | GKF8 × 20 (± dp) | LOGO | $C_{A0}$ ausente |
@@ -171,6 +196,8 @@ O conjunto C (mais $C_{Af}$ e [H⁺]) empata com B; **por regra, vale o mais sim
 Cobertura de 95% nominal: **89 a 91% em LOGO** (GP analítico 89%, conformes 90–91%), **49 a 71% com η ausente** (GP analítico 71%, conforme 49 a 66%). Os intervalos calibrados por interpolação não valem para extrapolar.
 
 ### 6.7. O mesmo ML sobre degraus do White-Box (T12, F11): o trade-off de D2
+
+> Resolvido em 2026-10-11: o usuário escolheu o principal de laboratório (CAf, ν = 1). A análise abaixo vale para a escolha anterior, e a escada da F11 agora inclui o principal atual como degrau 4.
 | RMSE (Extra Trees / GP) | White-Box do TCC (V0, ν = 1) | **V0 + ν** | **V2 + ν (principal)** |
 | :--- | ---: | ---: | ---: |
 | GKF8 × 10 | 0,0200 / 0,0235 | 0,0196 / 0,0237 | 0,0229 / 0,0226 |
@@ -195,7 +222,7 @@ do grupo e deve ser **declarada e justificada**; este trabalho segue a regra D2 
 ## 8. Recomendações
 1. Apresentar o **GBDT** como híbrido de referência (nunca pior que o 3º em 6 protocolos) e o **GP** quando se precisar de incerteza; declarar a MLP como a melhor em interpolação.
 2. Declarar o **domínio** e o fato de que a vantagem do híbrido sobre uma caixa-preta é **grande em extrapolação e com poucos dados, pequena em interpolação**.
-3. Decidir a base (V2 ou V0 + ν) e justificar com a seção 6.7.
+3. Decidir a base: o principal atual é o de laboratório (CAf, ν = 1), decidido em 2026-10-11. Se a extrapolação em η for prioridade, V0 + ν (seção 6.7) continua sendo a alternativa comparativa.
 4. Enviar o pedido de réplicas; planejar 2 a 3 ensaios em η intermediários.
 
 ## 9. Fora do escopo
