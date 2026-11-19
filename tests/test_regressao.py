@@ -79,10 +79,12 @@ def test_teto_fisico_remove_a_correcao_oculta_do_whitebox(base_legado):
 
 
 def test_whitebox_principal_e_o_de_laboratorio():
-    """Contrato do White-Box principal: força motriz CAf livre, nu = 1, alpha = 0, ks(T) de Balarini, RRB mássica."""
+    """Contrato do White-Box principal: força motriz CAf livre, nu = 1, alpha = 0, ks fixo de 18000, eta nominal, RRB mássica."""
     assert CONFIG_WB_PRINCIPAL == ConfigWB.laboratorio()
     assert (CONFIG_WB_PRINCIPAL.forca_motriz, CONFIG_WB_PRINCIPAL.nu, CONFIG_WB_PRINCIPAL.alpha) == ('H2SO4', 1.0, 0.0)
-    assert CONFIG_WB_PRINCIPAL.ks_arrhenius and CONFIG_WB_PRINCIPAL.rrb == 'massica'
+    assert not CONFIG_WB_PRINCIPAL.ks_arrhenius and CONFIG_WB_PRINCIPAL.rrb == 'massica'
+    assert CONFIG_WB_PRINCIPAL.ks_um_min == 18000.0
+    assert CONFIG_WB_PRINCIPAL.eta_base == 'nominal'
 
 
 def test_whitebox_principal_nao_le_dados_de_conversao_nem_de_ph(df):
@@ -101,7 +103,7 @@ def test_whitebox_principal_nao_le_dados_de_conversao_nem_de_ph(df):
 def test_acido_livre_do_principal_e_o_balanco_do_tcc(df):
     """CAf = CA0 (1 - X/eta): consumo de ácido só o estequiométrico (nu = 1)."""
     b = construir_base(df, CONFIG_WB_PRINCIPAL)
-    eta = b['razao_molar_eta_real'].to_numpy()
+    eta = b['eta_pbm'].to_numpy()
     esperado = np.maximum(b['C_acid_0_mol_L'].to_numpy() * (1.0 - b['X_pbm'].to_numpy() / eta), 0.0)
     assert np.allclose(b['C_acid_pbm_mol_L'].to_numpy(), esperado, atol=1e-9)
 
@@ -117,3 +119,35 @@ def test_regra_de_escolha_dos_atributos_prefere_o_mais_simples_em_caso_de_empate
     # se B for claramente pior que C em todas as repetições, escolhe C
     por_rep['B'] = base + 0.004
     assert escolher_entradas(resumo, por_rep)['escolhido'] == 'C'
+
+
+def test_whitebox_comum_reproduz_baseline_matheus(df):
+    """Regressão independente: MatheusEnder172/LOP f62f39b, 5000 diâmetros e PCHIP.
+
+    A quadratura desta implementação usa Dmin=0,1 em vez de 0,01 µm;
+    tolerância 2e-5 na conversão cobre essa pequena diferença numérica.
+    """
+    b = construir_base(df, CONFIG_WB_PRINCIPAL)
+    assert _rmse_t_pos(b, b['X_pbm'].to_numpy()) == pytest.approx(0.0701703278, abs=2e-5)
+    t = b[b['ensaio_id'].isin([7, 8, 14])]
+    assert _rmse_t_pos(t, t['X_pbm'].to_numpy()) == pytest.approx(0.0780169638, abs=2e-5)
+    assert np.array_equal(b['eta_pbm'], b['razao_molar_eta'])
+    assert np.allclose(AcopladorFisico().teto(b), np.minimum(1, b['razao_molar_eta']))
+
+
+def test_whitebox_nominal_cache_e_condicao_arbitraria(df):
+    from hybrid_model import construir_base_condicao
+    a = construir_base(df, CONFIG_WB_PRINCIPAL)
+    alterado = df.copy()
+    alterado.loc[alterado['ensaio_id'] == 1, 'razao_molar_eta'] = 0.4
+    b = construir_base(alterado, CONFIG_WB_PRINCIPAL)
+    assert not np.array_equal(a['X_pbm'], b['X_pbm'])
+    g = a[a['ensaio_id'] == 1]
+    c = construir_base_condicao(float(g['razao_molar_eta_real'].iloc[0]),
+                               float(g['C_acid_0_mol_L'].iloc[0]), g['tempo_min'],
+                               CONFIG_WB_PRINCIPAL, eta_nominal=0.5)
+    assert np.allclose(c['X_pbm'], g['X_pbm'])
+    d = construir_base_condicao(float(g['razao_molar_eta_real'].iloc[0]),
+                               float(g['C_acid_0_mol_L'].iloc[0]), g['tempo_min'], CONFIG_WB_PRINCIPAL)
+    assert np.allclose(d['eta_pbm'], 0.5)
+    assert np.allclose(c['X_pbm'], d['X_pbm'])

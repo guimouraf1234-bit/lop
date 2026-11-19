@@ -1,0 +1,14 @@
+{
+  "white_box": {
+    "rrb": "massica",
+    "ks_arrhenius": false,
+    "forca_motriz": "H2SO4",
+    "especiacao": "V0",
+    "nu": 1.0,
+    "T_celsius": 40.0,
+    "alpha": 0.0,
+    "eta_base": "nominal"
+  },
+  "referencia_matheus_commit": "f62f39b4b24d0afa2443ee91d0203035b1ae9821",
+  "resultados_anteriores_requerem_recalculo": true
+}

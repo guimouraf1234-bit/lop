@@ -1,3 +1,8 @@
+> Atualização do white-box comum: o código principal usa η nominal e ks = 18000 µm/min sem Arrhenius,
+> ν = 1 e α = 0, conforme MatheusEnder172/LOP (f62f39b). Os CSV e figuras anteriores em `resultados/`
+> foram gerados com outra configuração e precisam ser recalculados, incluindo os resíduos e o GP.
+> A verificação atual está em `resultados/whitebox_comum_verificacao.csv` e seu JSON de configuração.
+
 # LOP -- Modelagem híbrida da lixiviação de calcina de zinco (batelada)
 
 TCC de Engenharia Química (UFMG, 2026). White-Box (balanço populacional) + Machine Learning residual, validado por ensaio inteiro,

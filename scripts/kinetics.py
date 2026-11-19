@@ -124,8 +124,11 @@ class ConfigWB:
     nu: float = 1.0
     T_celsius: float = 40.0
     alpha: float = 0.0
+    eta_base: str = 'real'  # nominal no baseline comum; real nas análises anteriores
 
     def __post_init__(self):
+        if self.eta_base not in ('nominal', 'real'):
+            raise ValueError("eta_base deve ser nominal ou real")
         if self.rrb not in ('massica', 'numerica'):
             raise ValueError("rrb deve ser 'massica' ou 'numerica'")
         if self.forca_motriz not in ('H+', 'H2SO4'):
@@ -147,11 +150,17 @@ class ConfigWB:
         White-Box principal, formulado como se fôssemos ao laboratório sem dados de conversão nem de pH:
           - força motriz = CAf livre, CAf = CA0 (1 - X/eta) (Eq. 3.51 da tese), com nu = 1 (sem consumo extra);
           - sem especiação (`especiacao` fica no padrão e não é usada com força motriz H2SO4), sem par iônico, alpha = 0;
-          - ks(T) de Balarini (2009), referido a 30 °C e corrigido por Arrhenius até 40 °C; Ea de Balarini et al. (2025);
+          - ks = 18000 µm/min fixo, sem Arrhenius, como no baseline de MatheusEnder172/LOP;
+          - eta nominal do planejamento (base operacional), comum às arquiteturas do grupo;
           - RRB em base mássica, com a granulometria medida no material (d632 e m).
         Ressalva: ks foi estimado com C_A = [H+] a 30 °C; aqui ele multiplica a molaridade de H2SO4 livre, como faz a tese.
         """
-        return cls(rrb='massica', ks_arrhenius=True, forca_motriz='H2SO4', nu=1.0, T_celsius=40.0, alpha=0.0)
+        return cls(rrb='massica', ks_arrhenius=False, forca_motriz='H2SO4', nu=1.0,
+                   T_celsius=40.0, alpha=0.0, eta_base='nominal')
+
+    @property
+    def coluna_eta(self) -> str:
+        return 'razao_molar_eta' if self.eta_base == 'nominal' else 'razao_molar_eta_real'
 
     @classmethod
     def tese(cls, alpha: float = 0.0) -> 'ConfigWB':
@@ -180,11 +189,12 @@ class ConfigWB:
             base = f"{nome}[rrb={self.rrb},ks_T={'s' if self.ks_arrhenius else 'n'}]"
         else:
             base = f"{self.especiacao}[rrb={self.rrb}]"
-        return f"{base} nu={self.nu:.3f} alpha={self.alpha:g} T={self.T_celsius:g}C"
+        return f"{base} nu={self.nu:.3f} alpha={self.alpha:g} T={self.T_celsius:g}C eta={self.eta_base}"
 
     def para_dict(self) -> Dict:
         return {'rrb': self.rrb, 'ks_arrhenius': self.ks_arrhenius, 'forca_motriz': self.forca_motriz,
-                'especiacao': self.especiacao, 'nu': self.nu, 'T_celsius': self.T_celsius, 'alpha': self.alpha}
+                'especiacao': self.especiacao, 'nu': self.nu, 'T_celsius': self.T_celsius, 'alpha': self.alpha,
+                'eta_base': self.eta_base}
 
 
 def calcular_ks(temperatura_celsius: float) -> float:

@@ -1,0 +1,49 @@
+{
+  "whitebox": {
+    "rrb": "massica",
+    "ks_arrhenius": false,
+    "forca_motriz": "H2SO4",
+    "especiacao": "V0",
+    "nu": 1.0,
+    "T_celsius": 40.0,
+    "alpha": 0.0,
+    "eta_base": "nominal"
+  },
+  "teste": [
+    7,
+    8,
+    14
+  ],
+  "treino": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12,
+    13,
+    15,
+    16
+  ],
+  "sementes": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "regressor": "GP Matérn 3/2 (adotado pelo autor)",
+  "passo_min": 0.25,
+  "projecao": "Uma projeção isotônica na malha comum; métricas extraídas dessa curva.",
+  "CV_RMSE_pp_media": 1.973379301144874,
+  "CV_RMSE_pp_dp_sementes": 3.81868580600201e-06
+}

@@ -8,22 +8,20 @@ batelada (Bortot Coelho, 2017: item 4.3, Tabela 5.9 e Apêndice A2.1). Integra o
 A configuração física é um `kinetics.ConfigWB` (ver `README_kinetics.md`). Sem `config`, `simular_ensaio` reproduz exatamente
 o comportamento anterior à revisão (`formulacao='corrigida'` ou `'tese'`).
 
-| | `ConfigWB.legado()` (TCC antes da revisão) | **`CONFIG_WB_PRINCIPAL`** (V2, ν = 1,06) | `ConfigWB.tese(α)` |
-| :--- | :--- | :--- | :--- |
-| RRB | base mássica | base mássica | numérica, peso $D^3$ (Eq. 3.49) |
-| $k_s$ | 18000 µm/min a 30 °C + Arrhenius | idem | 18000 µm/min fixo |
-| Força motriz | [H⁺], $K_2 = 0{,}0099$ | [H⁺], $K_2(T)$ + par iônico ZnSO₄⁰ | $C_{Af}$ |
-| $C_{Af}$ | $C_{A0}(1 - X/\eta)$ | $C_{A0}(1 - \nu X/\eta)$ | $C_{A0}(1 - X/\eta)$ |
-| RMSE / R² de X (t > 0) | 0,0443 / 0,9486 | 0,0620 / 0,8992 | 0,0981 / 0,7475 (α = 0) |
+O baseline principal (`ConfigWB.laboratorio()`) agora coincide com o white-box comum do grupo:
+`eta_base='nominal'`, `ks_arrhenius=False`, ks = 18000 µm/min, ν = 1 e α = 0, com força motriz CAf.
+A RRB continua integrada em base mássica, equivalente a converter f_m/D³ para número e calcular o terceiro momento.
+Fonte conferida: https://github.com/MatheusEnder172/LOP/tree/f62f39b4b24d0afa2443ee91d0203035b1ae9821/C%C3%B3digo/src/physics
 
-O White-Box principal ajusta **pior** a conversão que o legado: ele não "esconde" com o $K_2$ constante o patamar que
-a física não explica, e em troca é o único coerente com o pH medido (ver `docs/validade_modelo_hibrido.md`).
+O pipeline seleciona a coluna de η por `config.coluna_eta` e registra a razão efetiva em `eta_pbm`.
+As configurações `legado()`, `tese()` e V0/V1/V2 conservam a base real e seu comportamento anterior.
+As rotinas de baixo nível recebem η explicitamente; quem as chama deve fornecer a base da configuração.
 
 ## 2. Equações (resumo)
 * Balanço (Eq. 3.38) com $B = D = 0$ e $v$ independente de $D$: solução por características, $\psi(D,t) = \psi(D + \Delta D(t), 0)$, $\Delta D = \int_0^t v\,dt'$.
 * RRB (Tabela 5.9, ajustada a frações **mássicas**): $q_3(D) = \tfrac{m}{D_{63{,}2}}(D/D_{63{,}2})^{m-1}\exp[-(D/D_{63{,}2})^m]$, $m = 1{,}022$, $D_{63{,}2} = 41{,}65\ \mu$m, $D \in [0{,}1;\ 297]\ \mu$m.
 * Conversão (base mássica): $X = 1 - \dfrac{\int_{\max(\Delta D, D_{min})}^{D_{max}}(1-\Delta D/D)^3\,q_3\,dD}{\int_{D_{min}}^{D_{max}} q_3\,dD}$.
-* $\eta = V C_{A0} / (m_{B0} T_{ZnO}/M_{ZnO})$ (Eq. 4.3; $T_{ZnO} = 0{,}761$, $M_{ZnO} = 81{,}38$ g/mol), calculado com as massas de cada ensaio (`razao_molar_eta_real`).
+* Nas análises com base química, $\eta = V C_{A0} / (m_{B0} T_{ZnO}/M_{ZnO})$ (Eq. 4.3; $T_{ZnO} = 0{,}761$, $M_{ZnO} = 81{,}38$ g/mol), calculado com as massas de cada ensaio (`razao_molar_eta_real`).
 * EDO acoplada: $\dfrac{d\Delta D}{dt} = \dfrac{2k_s(T)}{\rho_s}\,C(t)$, com $C$ = [H⁺] (ou $C_{Af}$ na tese) obtida do estado químico para a conversão atual.
 
 ## 3. Dois integradores equivalentes

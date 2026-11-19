@@ -78,7 +78,7 @@ def test_diagnostico_conta_violacoes_da_saida_bruta():
     assert d['x0_max_abs'] == pytest.approx(0.03)
 
 
-def test_exige_eta_real(base):
-    sem = base.drop(columns=['razao_molar_eta_real'])
+def test_exige_eta_do_pbm_ou_real(base):
+    sem = base.drop(columns=['razao_molar_eta_real', 'eta_pbm'])
     with pytest.raises(KeyError):
         AcopladorFisico(nu=1.0).restringir(sem, np.zeros(len(sem)))

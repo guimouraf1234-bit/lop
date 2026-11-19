@@ -66,7 +66,7 @@ FEATURES_FISICAS = CONJUNTOS_ENTRADA['legado']
 # Conjunto principal: definido pela ablação (experimentos_batelada.py, etapa "ablacao") e fixado aqui.
 ENTRADAS_PRINCIPAL = 'B'
 
-# White-Box principal: de laboratório (CAf livre, nu = 1, alpha = 0, ks(T) de Balarini); sem dados de conversão ou pH.
+# White-Box comum do grupo: CAf livre, nu = 1, alpha = 0, ks = 18000 fixo e eta nominal.
 # A especiação por pH (V0, V1, V2) e nu a priori = 1,06 ficam como análises comparativas (etapa "whitebox", "nu").
 CONFIG_WB_PRINCIPAL = ConfigWB.laboratorio()
 
@@ -117,7 +117,7 @@ _CACHE_PBM_MAX = 256
 
 def _assinatura_dados(df: pd.DataFrame) -> int:
     """Identifica as ENTRADAS DO PBM (ensaio, tempo, CA0, eta real). Os dados medidos não entram na chave."""
-    cols = ['ensaio_id', 'tempo_min', 'C_acid_0_mol_L', 'razao_molar_eta_real']
+    cols = ['ensaio_id', 'tempo_min', 'C_acid_0_mol_L', 'razao_molar_eta_real', 'razao_molar_eta']
     return hash(df[cols].to_numpy(dtype=float).tobytes())
 
 
@@ -131,6 +131,7 @@ def construir_base(df_raw: pd.DataFrame, config: ConfigWB, rapido: bool = True,
     """
     chave = (config, _assinatura_dados(df_raw), rapido)
     df = df_raw.copy()
+    df['eta_pbm'] = df[config.coluna_eta]
     if usar_cache and chave in _CACHE_PBM:
         x, c, h = (a.copy() for a in _CACHE_PBM[chave])
     else:
@@ -143,7 +144,7 @@ def construir_base(df_raw: pd.DataFrame, config: ConfigWB, rapido: bool = True,
             pos = np.where(ids == g)[0]
             sub = df.iloc[pos]
             r = simular(sub['tempo_min'].tolist(), float(sub['C_acid_0_mol_L'].iloc[0]),
-                        float(sub['razao_molar_eta_real'].iloc[0]), config=config)
+                        float(sub['eta_pbm'].iloc[0]), config=config)
             x[pos], c[pos], h[pos] = r['X_pbm'], r['C_acid_mol_L'], r['C_H_mol_L']
         if usar_cache:
             if len(_CACHE_PBM) >= _CACHE_PBM_MAX:
@@ -159,16 +160,21 @@ def construir_base(df_raw: pd.DataFrame, config: ConfigWB, rapido: bool = True,
 
 def construir_base_condicao(eta_real: float, C_acid_0_mol_L: float, tempos_min, config: ConfigWB,
                             ensaio_id: int = 0, eta_nominal: Optional[float] = None) -> pd.DataFrame:
-    """Quadro (já com o White-Box simulado) para uma condição arbitrária, p.ex. curvas contínuas e mapas em η."""
+    """Quadro físico para uma condição arbitrária. Sem eta_nominal, converte a base química em operacional."""
     tempos = np.asarray(tempos_min, dtype=float)
     pbm = PopulationBalanceModel.para_config(config)
-    r = pbm.simular_ensaio_rapido(tempos.tolist(), C_acid_0_mol_L, eta_real, config=config)
+    if eta_nominal is None:
+        # Mesma massa e volume: base química 0,761 -> base operacional 0,8138 g ZnO/g.
+        eta_nominal = eta_real * TEOR_ZNO / 0.8138
+    eta_pbm = eta_nominal if config.eta_base == 'nominal' else eta_real
+    r = pbm.simular_ensaio_rapido(tempos.tolist(), C_acid_0_mol_L, eta_pbm, config=config)
     sl = C_acid_0_mol_L * MM_ZNO_G_MOL / (eta_real * TEOR_ZNO)   # g/L = m_B0 / V
     return pd.DataFrame({
         'ensaio_id': ensaio_id,
         'tempo_min': tempos,
-        'razao_molar_eta': eta_real if eta_nominal is None else eta_nominal,
+        'razao_molar_eta': eta_nominal,
         'razao_molar_eta_real': eta_real,
+        'eta_pbm': eta_pbm,
         'C_acid_0_mol_L': C_acid_0_mol_L,
         'razao_SL_g_L': sl,
         'X_pbm': r['X_pbm'],
@@ -467,7 +473,7 @@ class AcopladorFisico:
     """
     Impõe à saída bruta do modelo (X_bruto = X_pbm + ΔX_ML, ou X direto na caixa-preta):
       1. 0 <= X <= teto, com teto = min(1, η_real / ν): o ácido é o limitante e consome ν mol por mol de ZnO
-         (mesma estequiometria do PBM; o teto com η nominal da versão anterior era uma correção oculta);
+         (usa eta_pbm quando disponível, na mesma base da simulação);
       2. X(t = 0) = 0 (condição inicial conhecida);
       3. monotonia dX/dt >= 0 por ensaio, pela projeção L2 (regressão isotônica) -- não pelo máximo acumulado,
          que é viesado para cima e depende da ordem das linhas.
@@ -483,6 +489,8 @@ class AcopladorFisico:
         if self.modo == 'legado':
             eta = df['razao_molar_eta'].to_numpy(dtype=float)
             return np.where(eta < 1.0, np.minimum(1.0, eta), 1.0)
+        if 'eta_pbm' in df.columns:
+            return np.minimum(1.0, df['eta_pbm'].to_numpy(dtype=float) / self.nu)
         if 'razao_molar_eta_real' not in df.columns:
             raise KeyError("O acoplador físico exige a coluna 'razao_molar_eta_real'")
         return np.minimum(1.0, df['razao_molar_eta_real'].to_numpy(dtype=float) / self.nu)
