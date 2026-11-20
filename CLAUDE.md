@@ -46,3 +46,10 @@ por regressor em `resultados/figuras/particao_comum/` (essas são versionadas; a
 - Nunca usar os Ensaios 7, 8 e 14 para escolher modelo, hiperparâmetro ou critério (teste em `tests/test_validacao.py`).
 - Não alterar o benchmark principal (`obter_especificacoes`, `codigos_benchmark`) sem rodar o pipeline completo.
 - Branch de trabalho: `revisao/validade-hibrido`.
+
+## Formatação ABNT do relatório
+Skill `formatacao-tcc-abnt` (`.claude/skills/formatacao-tcc-abnt/`): regras da NBR 14724:2024, 10520:2023, 6023:2018,
+6024, 6027, 6028:2021, 6034, 12225 e IBGE, checklist e verificador de `.docx`:
+```bash
+python .claude/skills/formatacao-tcc-abnt/scripts/verificar_docx.py entregas/arquivo.docx
+```
