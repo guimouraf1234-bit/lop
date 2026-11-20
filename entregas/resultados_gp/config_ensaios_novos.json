@@ -40,7 +40,7 @@
   "volume_L": 0.2,
   "teor_zn_g_g": 0.611,
   "teor_Zn_total_usado_na_pesagem": 0.65,
-  "base_eta_avaliacao": "V * CA0 * M_Zn / (massa * 0,611)",
+  "base_eta_avaliacao": "eta nominal do planejamento (entrada do GP, white-box e teto); eta_ZnO = V * CA0 * M_Zn / (massa * 0,611) apenas informativo",
   "condicoes_efetivas": [
     {
       "ensaio": "E1",
@@ -95,6 +95,5 @@
   ],
   "rotulos": "E2 e E3 conforme arquivo já trocado, nota A48",
   "unidade_leituras_assumida": "g/L conforme tratamento do relatório",
-  "projecao": "malha 0,25 min; métricas extraídas da mesma curva",
-  "coluna_razao_molar_eta": "Razão efetiva na base zincita na avaliação externa; planejamento guardado separadamente."
+  "projecao": "malha 0,25 min; métricas extraídas da mesma curva"
 }

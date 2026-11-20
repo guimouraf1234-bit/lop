@@ -2,7 +2,7 @@
   "atributos_principais": {
     "colunas": [
       "tempo_min",
-      "razao_molar_eta_real",
+      "razao_molar_eta",
       "C_acid_0_mol_L",
       "X_pbm"
     ],
@@ -43,6 +43,49 @@
     "rapido": false,
     "semente": 0
   },
+  "particao_comum": {
+    "dobras_tabela_b3": [
+      [
+        1,
+        5,
+        11,
+        16
+      ],
+      [
+        4,
+        10,
+        15
+      ],
+      [
+        3,
+        9,
+        13
+      ],
+      [
+        2,
+        6,
+        12
+      ]
+    ],
+    "ensaios_teste_cego": [
+      7,
+      8,
+      14
+    ],
+    "selecionado_pela_cv": "Híbrido gp [B]",
+    "sementes": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ]
+  },
   "sementes": {
     "bootstrap": 0,
     "curva_aprendizado": 1000,
@@ -61,8 +104,9 @@
     "T_celsius": 40.0,
     "alpha": 0.0,
     "especiacao": "V0",
+    "eta_base": "nominal",
     "forca_motriz": "H2SO4",
-    "ks_arrhenius": true,
+    "ks_arrhenius": false,
     "nu": 1.0,
     "rrb": "massica"
   }

@@ -44,6 +44,6 @@
   "regressor": "GP Matérn 3/2 (adotado pelo autor)",
   "passo_min": 0.25,
   "projecao": "Uma projeção isotônica na malha comum; métricas extraídas dessa curva.",
-  "CV_RMSE_pp_media": 1.973379301144874,
-  "CV_RMSE_pp_dp_sementes": 3.81868580600201e-06
+  "CV_RMSE_pp_media": 1.9733283114610913,
+  "CV_RMSE_pp_dp_sementes": 0.0010635150156574937
 }

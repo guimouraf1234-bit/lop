@@ -40,6 +40,6 @@ Dependências: `requirements.txt` (numpy, scipy, pandas, scikit-learn, joblib, m
 
 ## Decisões de projeto que mudam o texto do TCC
 1. **White-Box principal = V2** (K₂(T) por van't Hoff + par iônico ZnSO₄⁰ + ν a priori), escolhido pelo **pH medido** (única medida independente do estado ácido), não pelo ajuste de X.
-2. **Atributos do ML = B** (t, η real, $C_{A0}$, $X_{PBM}$).
+2. **Atributos do ML = B** (t, η nominal, $C_{A0}$, $X_{PBM}$).
 3. **Validade:** o híbrido é avaliado contra White-Box, tabela e caixa-preta em seis protocolos; o domínio são os **quatro níveis de η ensaiados** (entre eles não há informação).
 4. **Fora do escopo:** planta piloto (volume 18 L × 6 L no JSON, fator 0,05 arbitrário no código); híbrido serial (ver branch `feat/modelagem-alpha`).

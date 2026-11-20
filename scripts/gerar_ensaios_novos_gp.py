@@ -41,15 +41,18 @@ def main():
         idx = len(malhas) + 1
         assert cells[f'F{idx+1}'] == ca0 and cells[f'G{idx+1}'] == massa
         eta_efetiva = .2 * ca0 * 65.38 / (massa * teor_zn)
+        # η nominal do planejamento (0,75; 1,25; 2,25; 0,40): a mesma base dos 16 ensaios originais, em que o GP foi
+        # treinado, e o mesmo valor usado pelo White-Box comum do grupo (MatheusEnder172/LOP, etapa 4.3).
+        eta_nominal = nominal
         condicoes_efetivas.append({'ensaio': eid, 'eta_planejada_Zn_total': nominal, 'eta_ZnO': eta_efetiva})
         malhas.append(construir_base_condicao(eta_efetiva, ca0,
                                               np.arange(0, 15.001, .25), CFG,
-                                              ensaio_id=eid, eta_nominal=eta_efetiva))
+                                              ensaio_id=eid, eta_nominal=eta_nominal))
         for row in range(inicio, inicio + 6):
             # Zn(g/L) = leitura × massa após diluição / massa da alíquota.
             zn = cells[f'E{row}'] * cells[f'C{row}'] / cells[f'B{row}']
             medidas.append({'ensaio_id': eid, 'tempo_min': cells[f'A{row}'],
-                             'C_acid_0_mol_L': ca0, 'razao_molar_eta': eta_efetiva,
+                             'C_acid_0_mol_L': ca0, 'razao_molar_eta': eta_nominal, 'eta_ZnO': eta_efetiva,
                              'eta_planejada_Zn_total': nominal,
                              'massa_solido_g': massa, 'Zn_g_L': zn,
                              'X_relatorio': zn * .2 / (massa * teor_zn)})
@@ -82,7 +85,7 @@ def main():
         for e, g in d.groupby('ensaio_id'):
             linhas.append({'base': versao, 'teor_Zn_g_g': teor, 'ensaio': e,
                            **_metricas_pp(g.X_zn_exp, g.x_hat),
-                           'eta_ZnO': float(g.iloc[0].razao_molar_eta),
+                           'eta_ZnO': float(g.iloc[0].eta_ZnO), 'eta_nominal': float(g.iloc[0].razao_molar_eta),
                            'medicoes_acima_teto': int((g.X_zn_exp > min(1, g.iloc[0].razao_molar_eta)).sum()),
                            'RMSE_whitebox_pp': _metricas_pp(g.X_zn_exp, g.X_pbm)['RMSE_pp'],
                            'medida_15min': float(g.iloc[-1].X_zn_exp),
@@ -92,7 +95,7 @@ def main():
         'whitebox': CFG.para_dict(), 'treino': list(treino), 'sementes': list(G.SEEDS),
         'ajuste_aos_ensaios_novos': False, 'volume_L': .2,
         'teor_zn_g_g': teor_zn, 'teor_Zn_total_usado_na_pesagem': .650,
-        'base_eta_avaliacao': 'V * CA0 * M_Zn / (massa * 0,611)',
+        'base_eta_avaliacao': 'eta nominal do planejamento (entrada do GP, white-box e teto); eta_ZnO = V * CA0 * M_Zn / (massa * 0,611) apenas informativo',
         'condicoes_efetivas': condicoes_efetivas,
         'condicoes': condicoes, 'rotulos': 'E2 e E3 conforme arquivo já trocado, nota A48',
         'unidade_leituras_assumida': 'g/L conforme tratamento do relatório',

@@ -54,12 +54,13 @@ from population_balance import PopulationBalanceModel, MM_ZNO_G_MOL, TEOR_ZNO
 CONJUNTOS_ENTRADA: Dict[str, List[str]] = {
     # Anterior à revisão: η nominal, S/L (função exata de C_A0/η) e atributos do PBM
     'legado': ['tempo_min', 'razao_molar_eta', 'C_acid_0_mol_L', 'razao_SL_g_L', 'X_pbm', 'C_acid_pbm_mol_L'],
-    # Só as três variáveis independentes do planejamento (sem informação do PBM)
-    'A': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L'],
+    # Só as três variáveis independentes do planejamento (sem informação do PBM). η nominal, a mesma base do
+    # White-Box comum e das entradas dos demais modelos do grupo.
+    'A': ['tempo_min', 'razao_molar_eta', 'C_acid_0_mol_L'],
     # A + conversão do White-Box (o ML "vê" onde a teoria está operando)
-    'B': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L', 'X_pbm'],
+    'B': ['tempo_min', 'razao_molar_eta', 'C_acid_0_mol_L', 'X_pbm'],
     # B + estado químico do licor segundo o White-Box (exige força motriz [H+]: indisponível no White-Box de laboratório)
-    'C': ['tempo_min', 'razao_molar_eta_real', 'C_acid_0_mol_L', 'X_pbm', 'C_acid_pbm_mol_L', 'H_pbm_mol_L'],
+    'C': ['tempo_min', 'razao_molar_eta', 'C_acid_0_mol_L', 'X_pbm', 'C_acid_pbm_mol_L', 'H_pbm_mol_L'],
 }
 FEATURES_FISICAS = CONJUNTOS_ENTRADA['legado']
 

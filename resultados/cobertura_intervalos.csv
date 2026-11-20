@@ -1,9 +1,9 @@
 esquema,modelo,metodo,cobertura,largura_media,n,nivel_nominal
-Deixa-um-η-fora,Híbrido extra_trees [B],Conforme (LOGO interno),0.42857143,0.079730758,112,0.95
-Deixa-um-η-fora,Híbrido gbdt [B],Conforme (LOGO interno),0.46428571,0.081546113,112,0.95
-Deixa-um-η-fora,Híbrido gp [B],Conforme (LOGO interno),0.35714286,0.095331363,112,0.95
-Deixa-um-η-fora,Híbrido gp [B],GP (analítico),0.59821429,0.1409003,112,0.95
-LOGO (16 ensaios),Híbrido extra_trees [B],Conforme (LOGO interno),0.9375,0.08435527,112,0.95
-LOGO (16 ensaios),Híbrido gbdt [B],Conforme (LOGO interno),0.95535714,0.08047617,112,0.95
-LOGO (16 ensaios),Híbrido gp [B],Conforme (LOGO interno),0.95535714,0.08524266,112,0.95
-LOGO (16 ensaios),Híbrido gp [B],GP (analítico),0.90178571,0.071581001,112,0.95
+Deixa-um-η-fora,Híbrido extra_trees [B],Conforme (LOGO interno),0.57142857,0.094032547,112,0.95
+Deixa-um-η-fora,Híbrido gbdt [B],Conforme (LOGO interno),0.69642857,0.0939196,112,0.95
+Deixa-um-η-fora,Híbrido gp [B],Conforme (LOGO interno),0.44642857,0.099623323,112,0.95
+Deixa-um-η-fora,Híbrido gp [B],GP (analítico),0.57142857,0.14385572,112,0.95
+LOGO (16 ensaios),Híbrido extra_trees [B],Conforme (LOGO interno),0.875,0.091392735,112,0.95
+LOGO (16 ensaios),Híbrido gbdt [B],Conforme (LOGO interno),0.90178571,0.071508432,112,0.95
+LOGO (16 ensaios),Híbrido gp [B],Conforme (LOGO interno),0.89285714,0.076743007,112,0.95
+LOGO (16 ensaios),Híbrido gp [B],GP (analítico),0.875,0.065150737,112,0.95

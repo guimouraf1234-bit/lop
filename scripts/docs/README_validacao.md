@@ -5,7 +5,7 @@
 * **Métricas só em $t > 0$.** Em $t = 0$ o resíduo é trivial e infla o R².
 * **Piso de ruído** $\sigma$ (`piso_ruido`): desvio-padrão combinado nos patamares das curvas (médias de triplicatas): **0,0175**
   (von Neumann, que ignora deriva lenta: 0,0156), 64 graus de liberdade. Como o RMSE do White-Box é $e_{WB}$, o ganho máximo possível sobre ele é $1 - \sigma^2/e_{WB}^2$ (`teto_ganho`).
-* **Baselines obrigatórios:** White-Box sozinho, tabela média por (η, t), Ridge e **caixa-preta** (o mesmo regressor prevendo X direto de t, η real, $C_{A0}$, com as mesmas restrições físicas). O híbrido só é "válido" onde supera todos.
+* **Baselines obrigatórios:** White-Box sozinho, tabela média por (η, t), Ridge e **caixa-preta** (o mesmo regressor prevendo X direto de t, η nominal, $C_{A0}$, com as mesmas restrições físicas). O híbrido só é "válido" onde supera todos.
 * **Incerteza:** IC95% por **bootstrap de ensaios** do RMSE e das diferenças pareadas; `empate` = IC da diferença contém 0.
 
 ## 2. Protocolos (`esquema_*`)

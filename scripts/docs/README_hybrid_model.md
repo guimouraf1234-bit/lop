@@ -14,12 +14,12 @@ O desempenho em condição **nova** depende do domínio (ver "Domínio de aplica
 ## 2. Atributos do ML (`CONJUNTOS_ENTRADA`)
 | Conjunto | Colunas | Observação |
 | :--- | :--- | :--- |
-| `'A'` | `tempo_min`, `razao_molar_eta_real`, `C_acid_0_mol_L` | só as três variáveis independentes do planejamento |
+| `'A'` | `tempo_min`, `razao_molar_eta` (nominal), `C_acid_0_mol_L` | só as três variáveis independentes do planejamento |
 | **`'B'`** (principal) | A + `X_pbm` | o ML "vê" onde a teoria opera |
 | `'C'` | B + `C_acid_pbm_mol_L`, `H_pbm_mol_L` | estado químico do licor segundo o PBM |
 | `'legado'` | `tempo_min`, η nominal, `C_acid_0_mol_L`, `razao_SL_g_L`, `X_pbm`, `C_acid_pbm_mol_L` | só para reproduzir os números antigos |
 
-Os atributos do ML conservam η real; η nominal é usada na física principal. A seleção anterior do conjunto B pela **ablação** precisa ser reavaliada após essa mudança. Historicamente, B foi escolhido pela **ablação** (`resultados/ablacao_entradas.csv`) com regra declarada: menor RMSE médio; havendo empate
+Os atributos do ML usam o η nominal, a mesma base do White-Box comum e dos demais modelos do grupo (`razao_molar_eta_real` continua disponível no quadro, mas não entra no regressor). Historicamente, B foi escolhido pela **ablação** (`resultados/ablacao_entradas.csv`) com regra declarada: menor RMSE médio; havendo empate
 (diferença pareada menor que o desvio-padrão da diferença entre repetições), vale o conjunto mais simples. $S/L$ foi retirado: é função
 exata de $C_{A0}/\eta$. Usa-se η **real** (Eq. 4.3), não o nível nominal.
 

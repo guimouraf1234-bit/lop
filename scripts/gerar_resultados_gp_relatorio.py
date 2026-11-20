@@ -43,51 +43,61 @@ def salvar_fig(fig, nome):
     plt.close(fig)
 
 
+# Paleta da modelagem paralela no relatório (Figuras 5.4.1 e 5.4.2): white-box azul pontilhado, GP azul-claro
+# tracejado, limite estequiométrico cinza pontilhado e pontos experimentais vazados.
+COR_WB, COR_GP, COR_LIMITE = '#0072B2', '#56B4E9', '#666666'
+TRACO_GP = (0, (6, 3))
+
+
 def painel(base, curvas, ensaios, shape, nome):
-    # Estilo da figura de referência: Times, azul/púrpura, círculos vazados e grade pontilhada.
     from matplotlib.ticker import FuncFormatter
     grande = len(ensaios) == 16
     fonte = 11 if grande else 14
     plt.rcParams.update({'font.family': 'Times New Roman', 'mathtext.fontset': 'stix',
                          'font.size': fonte, 'axes.linewidth': 1.2})
     fig, axes = plt.subplots(*shape, figsize=(17, 13) if grande else (12.8, 9.8),
-                             sharex=False, sharey=False, squeeze=False)
+                             sharex=True, sharey=True, squeeze=False)
     fmt = lambda v, n: f'{v:.{n}f}'.replace('.', ',')
-    for ax, e in zip(axes.flat, ensaios):
+    for k, (ax, e) in enumerate(zip(axes.flat, ensaios)):
+        lin, col = divmod(k, shape[1])
         g = curvas[curvas.ensaio_id == e]
-        p = base[(base.ensaio_id == e) & (base.tempo_min > 0)]
-        ax.plot(g.tempo_min, g.X_pbm, ':', color='#0072B2', lw=2.6)
-        ax.plot(g.tempo_min, g.x_hat, color='#CC79A7', lw=3)
-        ax.axhline(min(1, p.razao_molar_eta.iloc[0]), color='#666666', ls=':', lw=1.5)
-        ax.scatter(p.tempo_min, p.X_zn_exp, s=44 if grande else 58, facecolors='white',
-                   edgecolors='black', linewidths=1.2, zorder=5)
+        todos = base[base.ensaio_id == e]
+        p = todos[todos.tempo_min > 0]
+        ax.plot(g.tempo_min, g.X_pbm, ls=':', color=COR_WB, lw=2.6)
+        ax.plot(g.tempo_min, g.x_hat, ls=TRACO_GP, color=COR_GP, lw=3)
+        ax.axhline(min(1, p.razao_molar_eta.iloc[0]), color=COR_LIMITE, ls=':', lw=1.3)
+        ax.scatter(todos.tempo_min, todos.X_zn_exp, s=44 if grande else 62, facecolors='white',
+                   edgecolors='black', linewidths=1.4, zorder=5)
         r = p.iloc[0]
-        ax.text(.025, .97, f'Ensaio {e}{"*" if e in TESTE else ""}',
-                transform=ax.transAxes, ha='left', va='top', fontsize=fonte+1, fontweight='bold')
+        ax.text(.03, .97, f'Ensaio {e}{"*" if e in TESTE else ""}',
+                transform=ax.transAxes, ha='left', va='top', fontsize=fonte+3, fontweight='bold')
         met = _metricas_pp(p.X_zn_exp, p.x_hat)
         wb = _metricas_pp(p.X_zn_exp, p.X_pbm)
-        nota = (f'$C_{{A0}}$ = {fmt(r.C_acid_0_mol_L, 2)} mol/L, η = {fmt(r.razao_molar_eta, 2)}'
-                + '\n' + f'RMSE (p.p.): white-box {fmt(wb["RMSE_pp"], 1)}; GP {fmt(met["RMSE_pp"], 1)}')
-        ax.text(.97, .05, nota, transform=ax.transAxes, ha='right', va='bottom', fontsize=fonte-1)
-        ax.set(xlim=(-.3, 15.5), ylim=(0, 1.2), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
+        nota = (f'$C_{{A0}}$ = {fmt(r.C_acid_0_mol_L, 2)} mol/L, $\\eta$ = {fmt(r.razao_molar_eta, 2)}'
+                + '\n' + f'RMSE: white-box {fmt(wb["RMSE_pp"] / 100, 3)}; GP {fmt(met["RMSE_pp"] / 100, 3)}')
+        ax.text(.97, .05, nota, transform=ax.transAxes, ha='right', va='bottom', fontsize=fonte,
+                linespacing=1.5)
+        ax.set(xlim=(-.3, 15.5), ylim=(0, 1.12), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
         ax.yaxis.set_major_formatter(FuncFormatter(lambda v, pos: fmt(v, 1)))
-        ax.tick_params(axis='both', direction='in', top=True, right=True,
-                       labelbottom=True, labelleft=True, length=6, width=1.1, pad=5)
+        ax.tick_params(axis='both', direction='in', length=6, width=1.1, pad=5,
+                       labelbottom=lin == shape[0] - 1, labelleft=col == 0)
+        if lin == shape[0] - 1:
+            ax.set_xlabel('Tempo de reação, $t$ (min)', fontsize=fonte+2)
+        if col == 0:
+            ax.set_ylabel('Conversão de zinco, $X_{Zn}$ (–)', fontsize=fonte+2)
         ax.grid(color='#bfbfbf', lw=.9, ls=':')
         ax.set_axisbelow(True)
-    fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=fonte+1, y=.025)
-    fig.supylabel('Conversão de zinco, $X_{Zn}$ (–)', fontsize=fonte+1, x=.018)
-    handles = [Line2D([], [], color='#0072B2', ls=':', lw=2.6, marker='^', markersize=7,
+    handles = [Line2D([], [], color=COR_WB, ls=':', lw=2.6, marker='^', markersize=8,
                       label='White-box (novo)'),
-               Line2D([], [], color='#CC79A7', lw=3, marker='o', markersize=7,
+               Line2D([], [], color=COR_GP, ls=TRACO_GP, lw=3, marker='P', markersize=9,
                       label='Híbrido paralelo (GP)'),
-               Line2D([], [], color='#666666', ls=':', lw=1.5,
-                      label='Limite estequiométrico, min(1; η)'),
+               Line2D([], [], color=COR_LIMITE, ls=':', lw=1.3,
+                      label='Limite estequiométrico, min(1, $\\eta$)'),
                Line2D([], [], color='black', marker='o', markerfacecolor='white',
-                      markeredgewidth=1.2, markersize=7, ls='none', label='Experimental')]
-    fig.legend(handles=handles, loc='upper center', ncol=4, bbox_to_anchor=(.52, .985),
-               fontsize=fonte-1, frameon=False, handlelength=2.6, columnspacing=1.1)
-    fig.subplots_adjust(left=.095, right=.985, bottom=.10, top=.89, wspace=.13, hspace=.13)
+                      markeredgewidth=1.4, markersize=8, ls='none', label='Experimental')]
+    fig.legend(handles=handles, loc='upper center', ncol=4, bbox_to_anchor=(.53, .995),
+               fontsize=fonte+1, frameon=False, handlelength=3.0, columnspacing=1.6)
+    fig.subplots_adjust(left=.08, right=.985, bottom=.08, top=.92, wspace=.06, hspace=.06)
     salvar_fig(fig, nome)
 
 
@@ -156,7 +166,7 @@ def main():
     from matplotlib.ticker import FuncFormatter
     plt.rcParams.update({'font.family': 'Times New Roman', 'mathtext.fontset': 'stix', 'font.size': 14})
     fig, ax = plt.subplots(figsize=(6, 5.5))
-    for nome, cor, marker in [('Treino', '#0072B2', '^'), ('Teste', '#CC79A7', 'o')]:
+    for nome, cor, marker in [('Treino', COR_WB, '^'), ('Teste', COR_GP, 'o')]:
         p = b[(b.conjunto == nome) & (b.tempo_min > 0)]
         ax.scatter(p.X_zn_exp, p.x_hat, facecolors='white', edgecolors=cor, marker=marker, s=40, label=nome, linewidths=1.3)
     ax.plot([0, 1.05], [0, 1.05], ':', color='#666666', lw=1.5)
