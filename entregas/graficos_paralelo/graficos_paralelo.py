@@ -74,7 +74,7 @@ for ax, (e, g) in zip(axs.flat, cn.groupby('ensaio_id')):
     ax.plot(g.tempo_min, g.X_pbm, ':', color=COR_WB, lw=2.4)
     ax.plot(g.tempo_min, g.x_hat, '-', color=COR_GP, lw=2.6)
     ax.axhline(min(1, eta), color=COR_LIM, ls=':', lw=1.2)
-    ax.scatter(np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], s=48, fc='white', ec='black', lw=1.3, zorder=5)
+    ax.scatter(np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], s=48, fc='white', ec='black', lw=1.3, zorder=6, clip_on=False)
     ax.text(.03, .96, f'Ensaio {e}', transform=ax.transAxes, fontweight='bold', va='top', fontsize=14)
     ax.text(.97, .05, f'$C_{{\\mathrm{{A0}}}}$ = {ca:.2f} mol/L, η = {eta:.2f}\n'
             f'RMSE: white-box {r.RMSE_white_box:.3f}; paralelo {r.RMSE:.3f}'.replace('.', ',').replace('mol/L,', 'mol/L,'),
@@ -113,12 +113,12 @@ for t_alvo, rot in [(15., '15'), (.5, '0,5')]:
     ax.plot([0, 1, 5], [0, 1, 1], ':', color=COR_LIM, lw=1.2, zorder=1)
     for ca in cas:
         g, st = s[s.C_acid_0_mol_L == ca], ESTILO[ca]
-        ax.plot(g.razao_molar_eta, g.x_hat, color=COR_GP, lw=2.4, ls=st['ls'], alpha=st['alpha'], zorder=3)
+        ax.plot(g.razao_molar_eta, g.x_hat, color=COR_GP, lw=2.4, ls=st['ls'], alpha=st['alpha'], zorder=3, clip_on=False)
         gm = g[np.isclose((g.razao_molar_eta * 2) % 1, 0) | np.isclose((g.razao_molar_eta * 2) % 1, 1)]
-        ax.plot(gm.razao_molar_eta, gm.x_hat, ls='none', marker=st['marker'], ms=6, color=COR_GP, alpha=st['alpha'], zorder=3)
+        ax.plot(gm.razao_molar_eta, gm.x_hat, ls='none', marker=st['marker'], ms=6, color=COR_GP, alpha=st['alpha'], zorder=6, clip_on=False)
         q = exp[np.isclose(exp.C_acid_0_mol_L, ca)]
         ax.scatter(q.razao_molar_eta, q.X_zn_exp, s=70, marker=st['marker'], fc='white', ec='black', lw=1.5, zorder=5)
-    ax.set(xlim=(0, 5), ylim=(-.02, 1.05), xticks=np.arange(0, 5.01, .5), yticks=np.arange(0, 1.01, .2))
+    ax.set(xlim=(0, 5), ylim=(-.03, 1.05), xticks=np.arange(0, 5.01, .5), yticks=np.arange(0, 1.01, .2))
     ax.xaxis.set_major_formatter(virg); ax.yaxis.set_major_formatter(virg)
     ax.set_xlabel('η (–)'); ax.set_ylabel(fr'$X_{{\mathrm{{Zn}}}}$ em $t$ = {rot} min (–)')
     ax.grid(color='#bfbfbf', lw=.8, ls=':'); ax.tick_params(direction='in', top=True, right=True)
