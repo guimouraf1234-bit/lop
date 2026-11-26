@@ -69,23 +69,23 @@ t542 = pd.DataFrame(t542); t542.to_csv(OUT / 'tabela_5_4_2.csv', index=False)
 cn.to_csv(OUT / 'curvas_ensaios_novos.csv', index=False)
 
 TRACO_GP = (0, (6, 3))
-LEG = [Line2D([], [], color=COR_WB, ls=':', lw=2.4, marker='^', ms=8, label='White-box (novo)'),
-       Line2D([], [], color=COR_GP, ls=TRACO_GP, lw=2.8, marker='P', ms=9, label='Híbrido paralelo (GP)'),
-       Line2D([], [], color=COR_LIM, ls=':', lw=1.2, label=r'Limite estequiométrico, min(1, $\eta$)'),
+LEG = [Line2D([], [], color=COR_WB, ls=':', lw=3, marker='^', ms=9, label='White-box'),
+       Line2D([], [], color=COR_GP, ls='-', lw=3, marker='o', ms=8, label='Híbrido paralelo'),
+       Line2D([], [], color=COR_LIM, ls=':', lw=1.2, label='Limite estequiométrico, min(1; η)'),
        Line2D([], [], ls='none', marker='o', mfc='white', mec='black', mew=1.3, ms=7, label='Experimental')]
 
 
 def painel(ax, g, tp, yp, titulo, rmse_wb, rmse_gp, rotulo_y=True):
     """g: curva (tempo_min, X_pbm, x_hat); tp, yp: medições incluindo t = 0."""
     eta, ca = g.razao_molar_eta.iloc[0], g.C_acid_0_mol_L.iloc[0]
-    ax.plot(g.tempo_min, g.X_pbm, ':', color=COR_WB, lw=2.4)
-    ax.plot(g.tempo_min, g.x_hat, ls=TRACO_GP, color=COR_GP, lw=2.8)
+    ax.plot(g.tempo_min, g.X_pbm, ':', color=COR_WB, lw=2.8)
+    ax.plot(g.tempo_min, g.x_hat, '-', color=COR_GP, lw=3)
     ax.axhline(min(1, eta), color=COR_LIM, ls=':', lw=1.2)
     ax.scatter(tp, yp, s=50, fc='white', ec='black', lw=1.3, zorder=6, clip_on=False)
-    ax.text(.03, .96, titulo, transform=ax.transAxes, fontweight='bold', va='top', fontsize=15)
-    txt = (f'$C_{{A0}}$ = {ca:.2f} mol/L, $\\eta$ = {eta:.2f}').replace('.', ',')
+    ax.text(.03, .96, titulo, transform=ax.transAxes, fontweight='bold', va='top', fontsize=15.5)
+    txt = (f'$C_{{\\mathrm{{A0}}}}$ = {ca:.2f} mol/L, η = {eta:.2f}').replace('.', ',')
     ax.text(.97, .05, txt, transform=ax.transAxes, ha='right', va='bottom', fontsize=12, linespacing=1.6)
-    ax.set(xlim=(-.3, 15.5), ylim=(0, 1.12), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
+    ax.set(xlim=(-.3, 15.5), ylim=(0, 1.2), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
     ax.yaxis.set_major_formatter(virg); ax.grid(color='#bfbfbf', lw=.8, ls=':')
     ax.tick_params(direction='in', top=True, right=True)
 
@@ -107,7 +107,7 @@ for ax, e in zip(axs.flat, ['E1', 'E2', 'E3', 'E4']):
     m = med[med.ensaio_id == e]
     y, ph, pw = com_ponto_inicial(g, m.X_relatorio, m.x_hat, m.X_pbm)
     painel(ax, g, np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], f'Ensaio {e}', rmse(y, pw), rmse(y, ph))
-fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
+fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{\mathrm{Zn}}$ (–)', fontsize=15)
 fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .95))
 for ext in ('png', 'pdf'):
@@ -124,7 +124,7 @@ for e, ax in eixos.items():
     mp = m[m.tempo_min > 0]
     y, ph, pw = com_ponto_inicial(g, mp.X_zn_exp, mp.x_hat, mp.X_pbm)
     painel(ax, g, m.tempo_min, m.X_zn_exp, f'Ensaio {e}*', rmse(y, pw), rmse(y, ph))
-fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
+fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{\mathrm{Zn}}$ (–)', fontsize=15)
 fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .95))
 for ext in ('png', 'pdf'):
