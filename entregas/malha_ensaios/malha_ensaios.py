@@ -1,6 +1,6 @@
-"""Malha do planejamento: quadrados encostados (um por condição), ensaios numerados e E1-E4 circulados em vermelho."""
+"""Malha do planejamento: quadrados encostados (um por condição), ensaios numerados e E1-E4 com borda vermelha."""
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, Circle
+from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 
 originais = [(1, .1, .5), (2, .1, 3.1), (3, .5, .5), (4, 1., .5), (5, 1.5, .5), (6, .1, 1.), (7, .5, 3.1),
@@ -30,7 +30,7 @@ for n, ca, eta in originais:
         ax.add_patch(Rectangle((i + .06, j + .06), .88, .88, fill=False, ec='black', lw=1.6, zorder=3))
 for e, ca, eta in novos:
     i, j = celula(eta, ca, AZUL_CLARO, e, 'black')
-    ax.add_patch(Circle((i + .5, j + .5), .38, fill=False, ec=VERMELHO, lw=2.6, zorder=5))
+    ax.add_patch(Rectangle((i + .04, j + .04), .92, .92, fill=False, ec=VERMELHO, lw=3.0, zorder=5))
 # contorno do domínio do planejamento original (η 0,5-3,1; C_A0 0,1-1,5)
 ax.add_patch(Rectangle((1.02, .02), 6.96, 5.96, fill=False, ec='#1F1F1F', lw=2.0, ls='--', zorder=6))
 ax.set_xlim(-.02, 8.02); ax.set_ylim(-.02, 6.02); ax.set_aspect('equal')
@@ -42,7 +42,7 @@ ax.set_xlabel(r'Razão molar, $\eta$ (–)'); ax.set_ylabel(r'$C_{\mathrm{A0}}$ 
 h = [Line2D([], [], ls='none', marker='s', ms=14, mfc=AZUL, mec='#9DB7CC', label='Treino'),
      Line2D([], [], ls='none', marker='s', ms=14, mfc='white', mec='black', label='Teste cego'),
      Line2D([], [], ls='none', marker='s', ms=14, mfc=AZUL_CLARO, mec='#9DB7CC', label='Ensaios novos'),
-     Line2D([], [], ls='none', marker='o', ms=16, mfc='none', mec=VERMELHO, mew=2.2, label='E1 a E4'),
+     Line2D([], [], ls='none', marker='s', ms=15, mfc='none', mec=VERMELHO, mew=2.4, label='E1 a E4'),
      Line2D([], [], color='#1F1F1F', ls='--', lw=2.0, label='Domínio original')]
 fig.legend(handles=h, loc='upper center', ncol=5, frameon=False, fontsize=12.5, bbox_to_anchor=(.53, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .94))
