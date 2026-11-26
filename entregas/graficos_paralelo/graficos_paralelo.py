@@ -44,6 +44,7 @@ malha = pd.concat([construir_base_condicao(float(g.razao_molar_eta_real.iloc[0])
                    for e, g in b.groupby('ensaio_id')], ignore_index=True)
 curvas = hibrido(malha)
 b['x_hat'] = G.pontos_da_malha(b, curvas, curvas.x_hat)
+b['X_pbm'] = G.pontos_da_malha(b, curvas, curvas.X_pbm)
 treino = V.ensaios_treino_comum(b)
 t541 = []
 for nome, ids in [('Treino', treino), ('Teste cego', V.ENSAIOS_TESTE_CEGO), ('Global', range(1, 17))]:
@@ -93,15 +94,19 @@ def rmse(y, p):
     return float(np.sqrt(np.mean((np.asarray(y) - np.asarray(p)) ** 2)))
 
 
-# ensaios novos sem o E1, em pirâmide (E2 em cima; E3 e E4 embaixo)
-fig = plt.figure(figsize=(10, 7.8))
-gs = fig.add_gridspec(2, 4)
-eixos = {'E2': fig.add_subplot(gs[0, 1:3]), 'E3': fig.add_subplot(gs[1, 0:2]), 'E4': fig.add_subplot(gs[1, 2:4])}
-for e, ax in eixos.items():
+def com_ponto_inicial(g, y, p_hat, p_wb):
+    """Acrescenta o ponto t = 1e-6 min (X_exp = 0) às medições, para as métricas."""
+    g0 = g[np.isclose(g.tempo_min, 1e-6)].iloc[0]
+    return np.r_[0., y], np.r_[g0.x_hat, p_hat], np.r_[g0.X_pbm, p_wb]
+
+
+# ensaios novos E1-E4 (2 x 2); RMSE com o ponto t = 1e-6 min
+fig, axs = plt.subplots(2, 2, figsize=(10, 7.8))
+for ax, e in zip(axs.flat, ['E1', 'E2', 'E3', 'E4']):
     g = cn[cn.ensaio_id == e]
     m = med[med.ensaio_id == e]
-    painel(ax, g, np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], f'Ensaio {e}',
-           rmse(m.X_relatorio, m.X_pbm), rmse(m.X_relatorio, m.x_hat))
+    y, ph, pw = com_ponto_inicial(g, m.X_relatorio, m.x_hat, m.X_pbm)
+    painel(ax, g, np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], f'Ensaio {e}', rmse(y, pw), rmse(y, ph))
 fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
 fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .95))
@@ -117,7 +122,8 @@ for e, ax in eixos.items():
     g = curvas[curvas.ensaio_id == e]
     m = b[(b.ensaio_id == e)]
     mp = m[m.tempo_min > 0]
-    painel(ax, g, m.tempo_min, m.X_zn_exp, f'Ensaio {e}*', rmse(mp.X_zn_exp, mp.X_pbm), rmse(mp.X_zn_exp, mp.x_hat))
+    y, ph, pw = com_ponto_inicial(g, mp.X_zn_exp, mp.x_hat, mp.X_pbm)
+    painel(ax, g, m.tempo_min, m.X_zn_exp, f'Ensaio {e}*', rmse(y, pw), rmse(y, ph))
 fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
 fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .95))

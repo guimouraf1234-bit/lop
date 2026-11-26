@@ -22,9 +22,12 @@ for e, g in M.groupby('ensaio_id'):
     rows.append(dict(Ensaio=e, C_A0=g.C_acid_0_mol_L.dropna().iloc[0], eta=g.razao_molar_eta.dropna().iloc[0], Pontos=len(g),
                      **met(g.X_relatorio, g.x_hat), RMSE_wb=met(g.X_relatorio, g.X_pbm)['RMSE'], R2_wb=met(g.X_relatorio, g.X_pbm)['R2']))
 T2 = pd.DataFrame(rows)
-g = M[M.ensaio_id != 'E1']; T3 = pd.DataFrame([dict(Conjunto='E2-E4', Pontos=len(g), **met(g.X_relatorio, g.x_hat))])
+g = M; T3 = pd.DataFrame([dict(Conjunto='E1-E4', Pontos=len(g), **met(g.X_relatorio, g.x_hat))])
 T1.to_csv('entregas/graficos_paralelo/tabela_5_4_1_com_t1e-6.csv', index=False)
 T2.to_csv('entregas/graficos_paralelo/tabela_5_4_2_com_t1e-6.csv', index=False)
 pd.set_option('display.float_format', lambda v: f'{v:.4f}')
 print(T1.to_string(index=False)); print(); print(T2.to_string(index=False)); print(); print(T3.to_string(index=False))
-print(); print(p0[p0.ensaio_id.isin([7,8,14])].to_string(index=False)); print(q0.to_string(index=False))
+rows=[]
+for e in (7, 8, 14):
+    g = B[B.ensaio_id == e]; rows.append(dict(Ensaio=e, Pontos=len(g), **met(g.X_zn_exp, g.x_hat)))
+print(); print(pd.DataFrame(rows).to_string(index=False))
