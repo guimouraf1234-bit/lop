@@ -83,7 +83,7 @@ def painel(ax, g, tp, yp, titulo, rmse_wb, rmse_gp, rotulo_y=True):
     ax.axhline(min(1, eta), color=COR_LIM, ls=':', lw=1.2)
     ax.scatter(tp, yp, s=50, fc='white', ec='black', lw=1.3, zorder=6, clip_on=False)
     ax.text(.03, .96, titulo, transform=ax.transAxes, fontweight='bold', va='top', fontsize=15)
-    txt = (f'$C_{{A0}}$ = {ca:.2f} mol/L, $\\eta$ = {eta:.2f}\nRMSE: white-box {rmse_wb:.3f}; GP {rmse_gp:.3f}').replace('.', ',')
+    txt = (f'$C_{{A0}}$ = {ca:.2f} mol/L, $\\eta$ = {eta:.2f}').replace('.', ',')
     ax.text(.97, .05, txt, transform=ax.transAxes, ha='right', va='bottom', fontsize=12, linespacing=1.6)
     ax.set(xlim=(-.3, 15.5), ylim=(0, 1.12), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
     ax.yaxis.set_major_formatter(virg); ax.grid(color='#bfbfbf', lw=.8, ls=':')
