@@ -1,40 +1,46 @@
-"""Malha do planejamento (C_A0 x η): 16 ensaios de Bortot Coelho (2017) e ensaios novos E1-E4."""
-import numpy as np
+"""Malha do planejamento: cada quadrado é um experimento (16 de Bortot Coelho, 2017, e E1-E4)."""
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
+from matplotlib.patches import Patch, Rectangle
 
-# (ensaio, C_A0 mol/L, η nominal) - Bortot Coelho (2017)
 originais = [(1, .1, .5), (2, .1, 3.1), (3, .5, .5), (4, 1., .5), (5, 1.5, .5), (6, .1, 1.), (7, .5, 3.1),
              (8, .5, 1.), (9, 1., 1.), (10, 1.5, 1.), (11, .1, 1.5), (12, 1., 3.1), (13, .5, 1.5),
              (14, 1., 1.5), (15, 1.5, 1.5), (16, 1.5, 3.1)]
 teste = {7, 8, 14}
 novos = [('E1', .25, .75), ('E2', .75, 1.25), ('E3', .75, 2.25), ('E4', .25, .40)]
-COR_TREINO, COR_NOVO = '#0072B2', '#56B4E9'
+cas = [.1, .25, .5, .75, 1., 1.5]
+etas = [.4, .5, .75, 1., 1.25, 1.5, 2.25, 3.1]
+COR_TREINO, COR_TESTE, COR_NOVO, COR_VAZIO = '#0072B2', '#FFFFFF', '#56B4E9', '#F2F2F2'
+virg = lambda v: f'{v:.2f}'.rstrip('0').rstrip('.').replace('.', ',') if v not in (1., 3.1) else f'{v:.1f}'.replace('.', ',')
 
-plt.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix', 'font.size': 13, 'axes.linewidth': 1.2})
-fig, ax = plt.subplots(figsize=(8, 5.6))
-ax.add_patch(plt.Rectangle((.1, .5), 1.4, 2.6, fill=False, ls='--', lw=1.1, ec='#888888', zorder=1))
+plt.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix', 'font.size': 13})
+fig, ax = plt.subplots(figsize=(8, 7.2))
+for i in range(len(cas)):
+    for j in range(len(etas)):
+        ax.add_patch(Rectangle((i, j), 1, 1, fc=COR_VAZIO, ec='white', lw=3))
+def quadrado(ca, eta, cor, rotulo, cor_txt, hatch=None):
+    i, j = cas.index(ca), etas.index(eta)
+    ax.add_patch(Rectangle((i + .04, j + .04), .92, .92, fc=cor, ec='black', lw=1.6, hatch=hatch))
+    ax.text(i + .5, j + .5, rotulo, ha='center', va='center', fontsize=15, fontweight='bold', color=cor_txt)
 for n, ca, eta in originais:
     if n in teste:
-        ax.scatter(ca, eta, s=150, marker='s', facecolors='white', edgecolors='black', linewidths=1.8, zorder=4)
+        quadrado(ca, eta, COR_TESTE, str(n), 'black')
     else:
-        ax.scatter(ca, eta, s=120, marker='o', color=COR_TREINO, edgecolors='black', linewidths=.8, zorder=4)
-    ax.annotate(str(n), (ca, eta), xytext=(8, 6), textcoords='offset points', fontsize=11)
+        quadrado(ca, eta, COR_TREINO, str(n), 'white')
 for e, ca, eta in novos:
-    ax.scatter(ca, eta, s=190, marker='*', color=COR_NOVO, edgecolors='black', linewidths=.8, zorder=5)
-    ax.annotate(e, (ca, eta), xytext=(9, -4), textcoords='offset points', fontsize=12, fontweight='bold')
-ax.set_xlim(0, 1.65); ax.set_ylim(0, 3.4)
-ax.set_xticks([0, .1, .25, .5, .75, 1., 1.5]); ax.set_yticks([0, .4, .5, .75, 1., 1.25, 1.5, 2.25, 3.1])
-fmt = lambda v, _: (f'{v:g}').replace('.', ',')
-ax.xaxis.set_major_formatter(fmt); ax.yaxis.set_major_formatter(fmt)
+    quadrado(ca, eta, COR_NOVO, e, 'black')
+ax.set_xlim(0, len(cas)); ax.set_ylim(0, len(etas))
+ax.set_xticks([i + .5 for i in range(len(cas))]); ax.set_xticklabels([virg(c) for c in cas])
+ax.set_yticks([j + .5 for j in range(len(etas))]); ax.set_yticklabels([virg(e) for e in etas])
+ax.tick_params(length=0)
+for s in ax.spines.values(): s.set_visible(False)
 ax.set_xlabel(r'Concentração inicial de ácido, $C_{\mathrm{A0}}$ (mol/L)')
 ax.set_ylabel(r'Razão molar, $\eta$ (–)')
-ax.grid(color='#bfbfbf', lw=.8, ls=':'); ax.tick_params(direction='in', top=True, right=True)
-h = [Line2D([], [], ls='none', marker='o', ms=10, mfc=COR_TREINO, mec='black', label='Treino (13 ensaios)'),
-     Line2D([], [], ls='none', marker='s', ms=10, mfc='white', mec='black', mew=1.8, label='Teste cego (7, 8 e 14)'),
-     Line2D([], [], ls='none', marker='*', ms=14, mfc=COR_NOVO, mec='black', label='Ensaios novos (E1 a E4)'),
-     Line2D([], [], ls='--', color='#888888', label='Domínio do planejamento original')]
-fig.legend(handles=h, loc='upper center', ncol=2, frameon=False, fontsize=11.5, bbox_to_anchor=(.53, 1.06))
-fig.tight_layout()
+ax.set_aspect('equal')
+h = [Patch(fc=COR_TREINO, ec='black', label='Treino (13 ensaios)'),
+     Patch(fc=COR_TESTE, ec='black', label='Teste cego (7, 8 e 14)'),
+     Patch(fc=COR_NOVO, ec='black', label='Ensaios novos (E1 a E4)'),
+     Patch(fc=COR_VAZIO, ec='#cccccc', label='Condição não ensaiada')]
+fig.legend(handles=h, loc='upper center', ncol=2, frameon=False, fontsize=12, bbox_to_anchor=(.5, 1.02))
+fig.tight_layout(rect=(0, 0, 1, .93))
 for ext in ('png', 'pdf'):
     fig.savefig(f'entregas/malha_ensaios/malha_ensaios.{ext}', dpi=300, bbox_inches='tight', facecolor='white')
