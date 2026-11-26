@@ -93,9 +93,12 @@ def rmse(y, p):
     return float(np.sqrt(np.mean((np.asarray(y) - np.asarray(p)) ** 2)))
 
 
-# ensaios novos E1-E4 (2 x 2)
-fig, axs = plt.subplots(2, 2, figsize=(10, 7.8))
-for ax, (e, g) in zip(axs.flat, cn.groupby('ensaio_id')):
+# ensaios novos sem o E1, em pirâmide (E2 em cima; E3 e E4 embaixo)
+fig = plt.figure(figsize=(10, 7.8))
+gs = fig.add_gridspec(2, 4)
+eixos = {'E2': fig.add_subplot(gs[0, 1:3]), 'E3': fig.add_subplot(gs[1, 0:2]), 'E4': fig.add_subplot(gs[1, 2:4])}
+for e, ax in eixos.items():
+    g = cn[cn.ensaio_id == e]
     m = med[med.ensaio_id == e]
     painel(ax, g, np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], f'Ensaio {e}',
            rmse(m.X_relatorio, m.X_pbm), rmse(m.X_relatorio, m.x_hat))
