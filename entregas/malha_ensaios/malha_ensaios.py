@@ -13,13 +13,13 @@ COR_TREINO, COR_TESTE, COR_NOVO, COR_VAZIO = '#0072B2', '#FFFFFF', '#56B4E9', '#
 virg = lambda v: f'{v:.2f}'.rstrip('0').rstrip('.').replace('.', ',') if v not in (1., 3.1) else f'{v:.1f}'.replace('.', ',')
 
 plt.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix', 'font.size': 13})
-fig, ax = plt.subplots(figsize=(8, 7.2))
-for i in range(len(cas)):
-    for j in range(len(etas)):
+fig, ax = plt.subplots(figsize=(10, 6.4))
+for i in range(len(etas)):
+    for j in range(len(cas)):
         ax.add_patch(Rectangle((i, j), 1, 1, fc=COR_VAZIO, ec='white', lw=3))
-def quadrado(ca, eta, cor, rotulo, cor_txt, hatch=None):
-    i, j = cas.index(ca), etas.index(eta)
-    ax.add_patch(Rectangle((i + .04, j + .04), .92, .92, fc=cor, ec='black', lw=1.6, hatch=hatch))
+def quadrado(ca, eta, cor, rotulo, cor_txt, borda='black', lw=1.6):
+    i, j = etas.index(eta), cas.index(ca)
+    ax.add_patch(Rectangle((i + .04, j + .04), .92, .92, fc=cor, ec=borda, lw=lw))
     ax.text(i + .5, j + .5, rotulo, ha='center', va='center', fontsize=15, fontweight='bold', color=cor_txt)
 for n, ca, eta in originais:
     if n in teste:
@@ -27,20 +27,20 @@ for n, ca, eta in originais:
     else:
         quadrado(ca, eta, COR_TREINO, str(n), 'white')
 for e, ca, eta in novos:
-    quadrado(ca, eta, COR_NOVO, e, 'black')
-ax.set_xlim(0, len(cas)); ax.set_ylim(0, len(etas))
-ax.set_xticks([i + .5 for i in range(len(cas))]); ax.set_xticklabels([virg(c) for c in cas])
-ax.set_yticks([j + .5 for j in range(len(etas))]); ax.set_yticklabels([virg(e) for e in etas])
+    quadrado(ca, eta, COR_NOVO, e, 'black', borda='#D62728', lw=3.2)
+ax.set_xlim(0, len(etas)); ax.set_ylim(0, len(cas))
+ax.set_xticks([i + .5 for i in range(len(etas))]); ax.set_xticklabels([virg(e) for e in etas])
+ax.set_yticks([j + .5 for j in range(len(cas))]); ax.set_yticklabels([virg(c) for c in cas])
 ax.tick_params(length=0)
 for s in ax.spines.values(): s.set_visible(False)
-ax.set_xlabel(r'Concentração inicial de ácido, $C_{\mathrm{A0}}$ (mol/L)')
-ax.set_ylabel(r'Razão molar, $\eta$ (–)')
+ax.set_xlabel(r'Razão molar, $\eta$ (–)')
+ax.set_ylabel(r'$C_{\mathrm{A0}}$ (mol/L)')
 ax.set_aspect('equal')
 h = [Patch(fc=COR_TREINO, ec='black', label='Treino (13 ensaios)'),
      Patch(fc=COR_TESTE, ec='black', label='Teste cego (7, 8 e 14)'),
-     Patch(fc=COR_NOVO, ec='black', label='Ensaios novos (E1 a E4)'),
+     Patch(fc=COR_NOVO, ec='#D62728', lw=2.5, label='Ensaios novos (E1 a E4)'),
      Patch(fc=COR_VAZIO, ec='#cccccc', label='Condição não ensaiada')]
-fig.legend(handles=h, loc='upper center', ncol=2, frameon=False, fontsize=12, bbox_to_anchor=(.5, 1.02))
-fig.tight_layout(rect=(0, 0, 1, .93))
+fig.legend(handles=h, loc='upper center', ncol=4, frameon=False, fontsize=12, bbox_to_anchor=(.5, 1.0))
+fig.tight_layout(rect=(0, 0, 1, .95))
 for ext in ('png', 'pdf'):
     fig.savefig(f'entregas/malha_ensaios/malha_ensaios.{ext}', dpi=300, bbox_inches='tight', facecolor='white')
