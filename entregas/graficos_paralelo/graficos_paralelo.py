@@ -67,30 +67,59 @@ for e, g in med.groupby('ensaio_id'):
 t542 = pd.DataFrame(t542); t542.to_csv(OUT / 'tabela_5_4_2.csv', index=False)
 cn.to_csv(OUT / 'curvas_ensaios_novos.csv', index=False)
 
-fig, axs = plt.subplots(2, 2, figsize=(10, 7.6), sharex=True, sharey=True)
-for ax, (e, g) in zip(axs.flat, cn.groupby('ensaio_id')):
-    m = med[med.ensaio_id == e]; r = t542[t542.Ensaio == e].iloc[0]
+TRACO_GP = (0, (6, 3))
+LEG = [Line2D([], [], color=COR_WB, ls=':', lw=2.4, marker='^', ms=8, label='White-box (novo)'),
+       Line2D([], [], color=COR_GP, ls=TRACO_GP, lw=2.8, marker='P', ms=9, label='Híbrido paralelo (GP)'),
+       Line2D([], [], color=COR_LIM, ls=':', lw=1.2, label=r'Limite estequiométrico, min(1, $\eta$)'),
+       Line2D([], [], ls='none', marker='o', mfc='white', mec='black', mew=1.3, ms=7, label='Experimental')]
+
+
+def painel(ax, g, tp, yp, titulo, rmse_wb, rmse_gp, rotulo_y=True):
+    """g: curva (tempo_min, X_pbm, x_hat); tp, yp: medições incluindo t = 0."""
     eta, ca = g.razao_molar_eta.iloc[0], g.C_acid_0_mol_L.iloc[0]
     ax.plot(g.tempo_min, g.X_pbm, ':', color=COR_WB, lw=2.4)
-    ax.plot(g.tempo_min, g.x_hat, '-', color=COR_GP, lw=2.6)
+    ax.plot(g.tempo_min, g.x_hat, ls=TRACO_GP, color=COR_GP, lw=2.8)
     ax.axhline(min(1, eta), color=COR_LIM, ls=':', lw=1.2)
-    ax.scatter(np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], s=48, fc='white', ec='black', lw=1.3, zorder=6, clip_on=False)
-    ax.text(.03, .96, f'Ensaio {e}', transform=ax.transAxes, fontweight='bold', va='top', fontsize=14)
-    ax.text(.97, .05, f'$C_{{\\mathrm{{A0}}}}$ = {ca:.2f} mol/L, η = {eta:.2f}\n'
-            f'RMSE: white-box {r.RMSE_white_box:.3f}; paralelo {r.RMSE:.3f}'.replace('.', ',').replace('mol/L,', 'mol/L,'),
-            transform=ax.transAxes, ha='right', va='bottom', fontsize=11.5, linespacing=1.5)
-    ax.set(xlim=(-.3, 15.5), ylim=(0, 1.18), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
+    ax.scatter(tp, yp, s=50, fc='white', ec='black', lw=1.3, zorder=6, clip_on=False)
+    ax.text(.03, .96, titulo, transform=ax.transAxes, fontweight='bold', va='top', fontsize=15)
+    txt = (f'$C_{{A0}}$ = {ca:.2f} mol/L, $\\eta$ = {eta:.2f}\nRMSE: white-box {rmse_wb:.3f}; GP {rmse_gp:.3f}').replace('.', ',')
+    ax.text(.97, .05, txt, transform=ax.transAxes, ha='right', va='bottom', fontsize=12, linespacing=1.6)
+    ax.set(xlim=(-.3, 15.5), ylim=(0, 1.12), xticks=[0, 5, 10, 15], yticks=np.arange(0, 1.01, .2))
     ax.yaxis.set_major_formatter(virg); ax.grid(color='#bfbfbf', lw=.8, ls=':')
     ax.tick_params(direction='in', top=True, right=True)
-fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=14); fig.supylabel(r'Conversão de zinco, $X_{\mathrm{Zn}}$ (–)', fontsize=14)
-h = [Line2D([], [], color=COR_WB, ls=':', lw=2.4, label='White-box'),
-     Line2D([], [], color=COR_GP, lw=2.6, label='Híbrido paralelo'),
-     Line2D([], [], color=COR_LIM, ls=':', lw=1.2, label=r'Limite estequiométrico, min(1; η)'),
-     Line2D([], [], ls='none', marker='o', mfc='white', mec='black', mew=1.3, ms=7, label='Experimental')]
-fig.legend(handles=h, loc='upper center', ncol=4, frameon=False, fontsize=12, bbox_to_anchor=(.5, 1.0))
+
+
+def rmse(y, p):
+    return float(np.sqrt(np.mean((np.asarray(y) - np.asarray(p)) ** 2)))
+
+
+# ensaios novos E1-E4 (2 x 2)
+fig, axs = plt.subplots(2, 2, figsize=(10, 7.8))
+for ax, (e, g) in zip(axs.flat, cn.groupby('ensaio_id')):
+    m = med[med.ensaio_id == e]
+    painel(ax, g, np.r_[0, m.tempo_min], np.r_[0, m.X_relatorio], f'Ensaio {e}',
+           rmse(m.X_relatorio, m.X_pbm), rmse(m.X_relatorio, m.x_hat))
+fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
+fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
 fig.tight_layout(rect=(0, 0, 1, .95))
 for ext in ('png', 'pdf'):
     fig.savefig(OUT / f'ensaios_novos_paralelo.{ext}', dpi=300, bbox_inches='tight', facecolor='white')
+plt.close(fig)
+
+# teste cego: Ensaios 7, 8 e 14 (7 em cima, centralizado; 8 e 14 embaixo)
+fig = plt.figure(figsize=(10, 7.8))
+gs = fig.add_gridspec(2, 4)
+eixos = {7: fig.add_subplot(gs[0, 1:3]), 8: fig.add_subplot(gs[1, 0:2]), 14: fig.add_subplot(gs[1, 2:4])}
+for e, ax in eixos.items():
+    g = curvas[curvas.ensaio_id == e]
+    m = b[(b.ensaio_id == e)]
+    mp = m[m.tempo_min > 0]
+    painel(ax, g, m.tempo_min, m.X_zn_exp, f'Ensaio {e}*', rmse(mp.X_zn_exp, mp.X_pbm), rmse(mp.X_zn_exp, mp.x_hat))
+fig.supxlabel('Tempo de reação, $t$ (min)', fontsize=15); fig.supylabel(r'Conversão de zinco, $X_{Zn}$ (–)', fontsize=15)
+fig.legend(handles=LEG, loc='upper center', ncol=4, frameon=False, fontsize=12.5, bbox_to_anchor=(.5, 1.0))
+fig.tight_layout(rect=(0, 0, 1, .95))
+for ext in ('png', 'pdf'):
+    fig.savefig(OUT / f'teste_cego_paralelo.{ext}', dpi=300, bbox_inches='tight', facecolor='white')
 plt.close(fig)
 
 # ---------------------------------------------------------------- sensibilidade a η (t = 15 e 0,5 min)
