@@ -58,7 +58,6 @@ const D2 = tabela(['Etapa', 'Ferramenta', 'Motivação', 'O que a IA fez', 'O qu
    'Explicou métodos, conferiu tabelas e comparou métodos numéricos', 'Decisões de critério e interpretação final'],
   ['Híbrido serial', '[ ]', '[ ]', '[ ]', '[ ]'],
   ['Black-box (MLP)', '[ ]', '[ ]', '[ ]', '[ ]'],
-  ['PINN', '[ ]', '[ ]', '[ ]', '[ ]'],
   ['Texto', '[ ]', '[ ]', '[ ]', 'Redação autoral e revisão crítica'],
 ], [1450, 1250, 1800, 2200, 2371]);
 
